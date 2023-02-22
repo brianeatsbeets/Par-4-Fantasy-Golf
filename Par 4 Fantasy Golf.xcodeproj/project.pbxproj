@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		E1C4B10D29A560DF00F0DF67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B10C29A560DF00F0DF67 /* AppDelegate.swift */; };
 		E1C4B10F29A560DF00F0DF67 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B10E29A560DF00F0DF67 /* SceneDelegate.swift */; };
-		E1C4B11129A560DF00F0DF67 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B11029A560DF00F0DF67 /* ViewController.swift */; };
 		E1C4B11429A560DF00F0DF67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1C4B11229A560DF00F0DF67 /* Main.storyboard */; };
 		E1C4B11629A560E300F0DF67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E1C4B11529A560E300F0DF67 /* Assets.xcassets */; };
 		E1C4B11929A560E300F0DF67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1C4B11729A560E300F0DF67 /* LaunchScreen.storyboard */; };
@@ -19,7 +18,6 @@
 		E1C4B10929A560DF00F0DF67 /* Par 4 Fantasy Golf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Par 4 Fantasy Golf.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1C4B10C29A560DF00F0DF67 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E1C4B10E29A560DF00F0DF67 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		E1C4B11029A560DF00F0DF67 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E1C4B11329A560DF00F0DF67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E1C4B11529A560E300F0DF67 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E1C4B11829A560E300F0DF67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -58,7 +56,6 @@
 			children = (
 				E1C4B10C29A560DF00F0DF67 /* AppDelegate.swift */,
 				E1C4B10E29A560DF00F0DF67 /* SceneDelegate.swift */,
-				E1C4B11029A560DF00F0DF67 /* ViewController.swift */,
 				E1C4B11229A560DF00F0DF67 /* Main.storyboard */,
 				E1C4B11529A560E300F0DF67 /* Assets.xcassets */,
 				E1C4B11729A560E300F0DF67 /* LaunchScreen.storyboard */,
@@ -138,7 +135,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1C4B11129A560DF00F0DF67 /* ViewController.swift in Sources */,
 				E1C4B10D29A560DF00F0DF67 /* AppDelegate.swift in Sources */,
 				E1C4B10F29A560DF00F0DF67 /* SceneDelegate.swift in Sources */,
 			);
