@@ -5,24 +5,54 @@
 //  Created by Aguirre, Brian P. on 2/22/23.
 //
 
-import UIKit
+// TODO: Have the user confirm before signing out
 
+// MARK: - Imported libraries
+
+import UIKit
+import FirebaseAuth
+
+// MARK: - Main class
+
+// This class/view controller allows the user to manage their account
 class AccountViewController: UIViewController {
 
+    // MARK: - Properties
+    
+    // MARK: - View life cycle functions
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
     
+    // MARK: - Other functions
+    
+    // Attempt to sign the user out
+    @IBAction func signOutPressed() {
+        
+        // If there is an error, present it to the user; otherwise, transition to the sign in view controller
+        do {
+            try Auth.auth().signOut()
+        } catch let signOutError as NSError {
+            print("Error signing out: %@", signOutError)
+            return
+        }
+        
+        print("Sign out successful!")
+        transitionToAuthenticationViewController()
+    }
+    
     // MARK: - Navigation
     
-    // Transition to the sign in view controller
+    // Transition to the main tab bar controller
     // Is there a better way to do this? Seems a little wonky
-    @IBAction func signOutPressed() {
+    func transitionToAuthenticationViewController() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let authenticationRootViewController = storyboard.instantiateViewController(withIdentifier: "AuthenticationRoot")
         
+        // Set a new root view controller
         (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(to: authenticationRootViewController)
     }
     

@@ -5,15 +5,22 @@
 //  Created by Aguirre, Brian P. on 2/21/23.
 //
 
+// MARK: - Imported libraries
+
 import UIKit
+import FirebaseCore
+
+// MARK: - Main class
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // Instantiate Firebase services
+        FirebaseApp.configure()
+        
         return true
     }
 

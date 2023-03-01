@@ -5,9 +5,16 @@
 //  Created by Aguirre, Brian P. on 2/21/23.
 //
 
+// MARK: - Imported libraries
+
 import UIKit
+import FirebaseAuth
+
+// MARK: - Main class
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    
+    // MARK: - Properties
 
     var window: UIWindow?
 
@@ -20,7 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
         // Check if user is logged in, and if so, set the main tab bar controller as the root view controller
-        if 1 == 2 {
+        if Auth.auth().currentUser != nil {
             let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarRoot")
             window?.rootViewController = tabBarController
         }
