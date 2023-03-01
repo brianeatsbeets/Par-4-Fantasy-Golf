@@ -111,7 +111,7 @@
         <!--Leagues-->
         <scene sceneID="ZDR-ca-3bt">
             <objects>
-                <tableViewController id="HXs-Ek-aEB" sceneMemberID="viewController">
+                <tableViewController id="HXs-Ek-aEB" customClass="LeaguesTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="e5V-n6-Zvm">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -296,7 +296,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="390" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <datePicker contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="WJ3-gj-cRB">
+                                                <datePicker contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" translatesAutoresizingMaskIntoConstraints="NO" id="WJ3-gj-cRB">
                                                     <rect key="frame" x="0.0" y="0.0" width="390" height="44"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                 </datePicker>
@@ -320,6 +320,7 @@
                         <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="J0Q-5U-gQd">
                             <connections>
                                 <action selector="saveButtonPressed:" destination="mL8-7X-6yZ" id="xHe-xl-A0V"/>
+                                <segue destination="v0p-O2-XaO" kind="unwind" identifier="createLeagueUnwind" unwindAction="unwindFromCreateLeagueWithSegue:" id="fAz-vd-iez"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -329,6 +330,7 @@
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TMG-Ml-bV5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="v0p-O2-XaO" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="6470.7692307692305" y="-1184.3601895734596"/>
         </scene>
