@@ -14,6 +14,7 @@
 		E1AB1C2D29AFE1A8002A354B /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = E1AB1C2C29AFE1A8002A354B /* FirebaseDatabase */; };
 		E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C2E29AFE537002A354B /* RegistrationViewController.swift */; };
 		E1AB1C3129AFFD61002A354B /* LeaguesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C3029AFFD61002A354B /* LeaguesTableViewController.swift */; };
+		E1AB1C3429B12A19002A354B /* LeagueTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C3329B12A19002A354B /* LeagueTableViewCell.swift */; };
 		E1C4B10D29A560DF00F0DF67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B10C29A560DF00F0DF67 /* AppDelegate.swift */; };
 		E1C4B10F29A560DF00F0DF67 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B10E29A560DF00F0DF67 /* SceneDelegate.swift */; };
 		E1C4B11429A560DF00F0DF67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1C4B11229A560DF00F0DF67 /* Main.storyboard */; };
@@ -27,9 +28,9 @@
 		E138DE5B29AE88D300BBE47F /* CreateLeagueTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateLeagueTableViewController.swift; sourceTree = "<group>"; };
 		E138DE5E29AE89E400BBE47F /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
 		E138DE6029AE940000BBE47F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		E138DE6729AEB52A00BBE47F /* Par 4 Fantasy Golf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Par 4 Fantasy Golf.entitlements"; sourceTree = "<group>"; };
 		E1AB1C2E29AFE537002A354B /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		E1AB1C3029AFFD61002A354B /* LeaguesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaguesTableViewController.swift; sourceTree = "<group>"; };
+		E1AB1C3329B12A19002A354B /* LeagueTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueTableViewCell.swift; sourceTree = "<group>"; };
 		E1C4B10929A560DF00F0DF67 /* Par 4 Fantasy Golf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Par 4 Fantasy Golf.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1C4B10C29A560DF00F0DF67 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E1C4B10E29A560DF00F0DF67 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -62,6 +63,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		E1AB1C3229B129B8002A354B /* View Classes */ = {
+			isa = PBXGroup;
+			children = (
+				E1AB1C3329B12A19002A354B /* LeagueTableViewCell.swift */,
+			);
+			path = "View Classes";
+			sourceTree = "<group>";
+		};
 		E1C4B10029A560DF00F0DF67 = {
 			isa = PBXGroup;
 			children = (
@@ -81,14 +90,13 @@
 		E1C4B10B29A560DF00F0DF67 /* Par 4 Fantasy Golf */ = {
 			isa = PBXGroup;
 			children = (
-				E138DE6729AEB52A00BBE47F /* Par 4 Fantasy Golf.entitlements */,
+				E1AB1C3229B129B8002A354B /* View Classes */,
 				E138DE5D29AE89CE00BBE47F /* Models */,
-				E1C4B12129A6C15900F0DF67 /* Authentication */,
 				E1C4B12229A6C16600F0DF67 /* View Controllers */,
 				E1C4B12029A6C14700F0DF67 /* App_Scene Delegate */,
 				E1C4B11229A560DF00F0DF67 /* Main.storyboard */,
-				E1C4B11529A560E300F0DF67 /* Assets.xcassets */,
 				E1C4B11729A560E300F0DF67 /* LaunchScreen.storyboard */,
+				E1C4B11529A560E300F0DF67 /* Assets.xcassets */,
 				E1C4B11A29A560E300F0DF67 /* Info.plist */,
 				E138DE6029AE940000BBE47F /* GoogleService-Info.plist */,
 			);
@@ -116,6 +124,7 @@
 		E1C4B12229A6C16600F0DF67 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				E1C4B12129A6C15900F0DF67 /* Authentication */,
 				E1C4B12429A6C19700F0DF67 /* Leagues */,
 				E1C4B12329A6C18E00F0DF67 /* Account */,
 			);
@@ -222,6 +231,7 @@
 				E1C4B10D29A560DF00F0DF67 /* AppDelegate.swift in Sources */,
 				E138DE5C29AE88D300BBE47F /* CreateLeagueTableViewController.swift in Sources */,
 				E1C4B10F29A560DF00F0DF67 /* SceneDelegate.swift in Sources */,
+				E1AB1C3429B12A19002A354B /* LeagueTableViewCell.swift in Sources */,
 				E1C4B12829A6C89C00F0DF67 /* AccountViewController.swift in Sources */,
 				E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */,
 				E138DE5F29AE89E400BBE47F /* League.swift in Sources */,
@@ -370,7 +380,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Par 4 Fantasy Golf/Par 4 Fantasy Golf.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -401,7 +411,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Par 4 Fantasy Golf/Par 4 Fantasy Golf.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

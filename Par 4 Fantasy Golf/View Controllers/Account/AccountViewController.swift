@@ -19,15 +19,25 @@ class AccountViewController: UIViewController {
 
     // MARK: - Properties
     
+    @IBOutlet var emailLabel: UILabel!
+    
     // MARK: - View life cycle functions
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        updateUI()
     }
     
     // MARK: - Other functions
+    
+    func updateUI() {
+        if let user = Auth.auth().currentUser {
+            emailLabel.text = "Email: " + user.email!
+        } else {
+            emailLabel.text = "No email found"
+        }
+    }
     
     // Attempt to sign the user out
     @IBAction func signOutPressed() {

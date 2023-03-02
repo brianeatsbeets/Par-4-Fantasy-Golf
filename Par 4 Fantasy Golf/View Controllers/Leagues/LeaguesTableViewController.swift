@@ -18,24 +18,66 @@ class LeaguesTableViewController: UITableViewController {
     
     // MARK: - Properties
     
+    lazy var dataSource = createDataSource()
+    var leagues = [League]()
+    
     let ref = Database.database().reference(withPath: "leagues")
+    var refObservers: [DatabaseHandle] = []
     
     // MARK: - View life cycle functions
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        tableView.dataSource = dataSource
+        
+        updateTableView()
     }
     
-    // MARK: - Navigation
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        createLeagueDataObserver()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Remove all observers
+        refObservers.forEach(ref.removeObserver(withHandle:))
+        refObservers = []
+    }
+    
+    // MARK: - Other functions
+    
+    // Create the reference observer for league data
+    func createLeagueDataObserver() {
+        
+        // Observe league data
+        let refHandle = ref.observe(.value) { snapshot in
+            
+            var newLeagues = [League]()
+            
+            // Fetch updated leagues
+            for child in snapshot.children {
+                if let snapshot = child as? DataSnapshot,
+                   let league = League(snapshot: snapshot) {
+                    newLeagues.append(league)
+                }
+            }
+            
+            // Update local datasource and table view
+            self.leagues = newLeagues
+            self.updateTableView()
+        }
+        
+        refObservers.append(refHandle)
+    }
     
     // Handle the incoming new league data
     @IBAction func unwindFromCreateLeague(segue: UIStoryboardSegue) {
+        
+        // Check that we have new league data to parse
         guard segue.identifier == "createLeagueUnwind",
               let sourceViewController = segue.source as? CreateLeagueTableViewController,
               let league = sourceViewController.league
@@ -45,62 +87,38 @@ class LeaguesTableViewController: UITableViewController {
         let postRef = ref.child(league.id.uuidString)
         postRef.setValue(league.toAnyObject())
     }
+}
 
-    // MARK: - Table view data source
+// MARK: - Extensions
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+// This extention houses table view management functions that utilize the diffable data source API
+extension LeaguesTableViewController {
+    
+    // Create the the data source and specify what to do with a provided cell
+    func createDataSource() -> UITableViewDiffableDataSource<Section, League> {
+        
+        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, league in
+            
+            // Configure the cell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueCell", for: indexPath) as! LeagueTableViewCell
+            cell.configure(with: league)
+
+            return cell
+        }
     }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+    
+    // Apply a snapshot with updated league data
+    func updateTableView(animated: Bool = true) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, League>()
+        snapshot.appendSections(Section.allCases)
+        snapshot.appendItems(leagues)
+        dataSource.apply(snapshot, animatingDifferences: animated)
     }
+}
 
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+// MARK: - Enums
 
-        // Configure the cell...
-
-        return cell
-    }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
+// This enum declares table view sections
+enum Section: CaseIterable {
+    case one
 }

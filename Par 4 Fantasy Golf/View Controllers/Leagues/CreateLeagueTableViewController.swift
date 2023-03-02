@@ -35,15 +35,10 @@ class CreateLeagueTableViewController: UITableViewController {
     
     // MARK: - Navigation
     
-    // Cancel creating a new league
-    @IBAction func cancelButtonPressed(_ sender: UIBarButtonItem) {
-        dismiss(animated: true)
-    }
-    
     // Compile the league data for sending back to the leagues table view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "createLeagueUnwind" {
-            league = League(id: UUID(), name: nameTextField.text ?? "", startDate: startDatePicker.date)
+            league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970)
         }
     }
 }
