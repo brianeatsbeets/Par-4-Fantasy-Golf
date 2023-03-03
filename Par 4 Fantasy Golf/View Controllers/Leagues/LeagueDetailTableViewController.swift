@@ -1,8 +1,8 @@
 //
-//  LeaguesTableViewController.swift
+//  LeagueDetailTableViewController.swift
 //  Par 4 Fantasy Golf
 //
-//  Created by Aguirre, Brian P. on 3/1/23.
+//  Created by Aguirre, Brian P. on 3/3/23.
 //
 
 // MARK: - Imported libraries
@@ -12,16 +12,28 @@ import FirebaseDatabase
 
 // MARK: - Main class
 
-// This class/view controller displays available leagues
-class LeaguesTableViewController: UITableViewController {
+// This class/view controller displays details for the selected league
+class LeagueDetailTableViewController: UITableViewController {
     
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    var leagues = [League]()
+    var league: League
     
-    let ref = Database.database().reference(withPath: "leagues")
+    let ref: DatabaseReference
     var refObservers: [DatabaseHandle] = []
+    
+    // MARK: - Initializers
+    
+    init?(coder: NSCoder, league: League) {
+        self.league = league
+        self.ref = Database.database().reference(withPath: "leagues/" + league.id.uuidString)
+        super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - View life cycle functions
     
@@ -29,6 +41,8 @@ class LeaguesTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
+        
+        title = league.name
         
         updateTableView()
     }
@@ -55,60 +69,26 @@ class LeaguesTableViewController: UITableViewController {
         // Observe league data
         let refHandle = ref.observe(.value) { snapshot in
             
-            var newLeagues = [League]()
-            
-            // Fetch updated leagues
-            for child in snapshot.children {
-                if let snapshot = child as? DataSnapshot,
-                   let league = League(snapshot: snapshot) {
-                    newLeagues.append(league)
-                }
+            // Fetch updated league
+            guard let newLeague = League(snapshot: snapshot) else {
+                print("Error fetching league detail data")
+                return
             }
             
             // Update local datasource and table view
-            self.leagues = newLeagues
+            self.league = newLeague
+            self.title = newLeague.name
             self.updateTableView()
         }
         
         refObservers.append(refHandle)
     }
-    
-    // Handle the incoming new league data
-    @IBAction func unwindFromCreateLeague(segue: UIStoryboardSegue) {
-        
-        // Check that we have new league data to parse
-        guard segue.identifier == "createLeagueUnwind",
-              let sourceViewController = segue.source as? CreateLeagueTableViewController,
-              let league = sourceViewController.league
-        else { return }
-        
-        // Save the league to Firebase
-        let postRef = ref.child(league.id.uuidString)
-        postRef.setValue(league.toAnyObject())
-    }
-    
-    // Prepare league data to send to LeagueDetailViewController
-    @IBSegueAction func viewLeague(_ coder: NSCoder, sender: Any?) -> LeagueDetailTableViewController? {
-        
-        // Check to see if a cell was tapped
-        guard let cell = sender as? UITableViewCell,
-              let indexPath = tableView.indexPath(for: cell),
-              let league = dataSource.itemIdentifier(for: indexPath)
-        else {
-            return nil
-        }
-        
-        // If so, pass the tapped post to view/edit
-        return LeagueDetailTableViewController(coder: coder, league: league)
-    }
-    
-    
 }
 
 // MARK: - Extensions
 
 // This extention houses table view management functions that utilize the diffable data source API
-extension LeaguesTableViewController {
+extension LeagueDetailTableViewController {
     
     // This enum declares table view sections
     enum Section: CaseIterable {
@@ -121,7 +101,7 @@ extension LeaguesTableViewController {
         return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, league in
             
             // Configure the cell
-            let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueCell", for: indexPath) as! LeagueTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! LeagueStandingTableViewCell
             cell.configure(with: league)
 
             return cell
@@ -132,7 +112,9 @@ extension LeaguesTableViewController {
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, League>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(leagues)
+        snapshot.appendItems([league])
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
+
+
