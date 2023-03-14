@@ -19,10 +19,9 @@ class LeagueStandingTableViewCell: UITableViewCell {
     // MARK: - Functions
     
     // Set up the cell UI elements
-    func configure(with league: League) {
+    func configure(with user: User) {
         var config = defaultContentConfiguration()
-        config.text = league.name
-        config.secondaryText = league.startDate.formattedDate()
+        config.text = user.email
         contentConfiguration = config
     }
 

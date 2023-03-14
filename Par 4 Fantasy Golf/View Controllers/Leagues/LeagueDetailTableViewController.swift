@@ -19,15 +19,16 @@ class LeagueDetailTableViewController: UITableViewController {
     
     lazy var dataSource = createDataSource()
     var league: League
+    var users = [User]()
     
-    let ref: DatabaseReference
+    let leagueRef: DatabaseReference
     var refObservers: [DatabaseHandle] = []
     
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.ref = Database.database().reference(withPath: "leagues/" + league.id.uuidString)
+        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id.uuidString)
         super.init(coder: coder)
     }
     
@@ -57,7 +58,7 @@ class LeagueDetailTableViewController: UITableViewController {
         super.viewWillDisappear(animated)
         
         // Remove all observers
-        refObservers.forEach(ref.removeObserver(withHandle:))
+        refObservers.forEach(leagueRef.removeObserver(withHandle:))
         refObservers = []
     }
     
@@ -67,7 +68,7 @@ class LeagueDetailTableViewController: UITableViewController {
     func createLeagueDataObserver() {
         
         // Observe league data
-        let refHandle = ref.observe(.value) { snapshot in
+        let refHandle = leagueRef.observe(.value) { snapshot in
             
             // Fetch updated league
             guard let newLeague = League(snapshot: snapshot) else {
@@ -78,10 +79,49 @@ class LeagueDetailTableViewController: UITableViewController {
             // Update local datasource and table view
             self.league = newLeague
             self.title = newLeague.name
-            self.updateTableView()
+            self.getUsersFromIds(ids: newLeague.memberIds) { newUsers in
+                self.users = newUsers
+                self.updateTableView()
+            }
         }
         
         refObservers.append(refHandle)
+    }
+    
+    // Helper function to fetch user objects from user ids
+    func getUsersFromIds(ids: [String], completion: @escaping(_ newUsers: [User]) -> Void) {
+        
+        var newUsers = [User]()
+        
+        for id in ids {
+            
+            // Set user database reference
+            let userRef = Database.database().reference(withPath: "users/" + id)
+            
+            userRef.observeSingleEvent(of: .value, with: { snapshot in
+                
+                // Fetch user data
+                guard let user = User(snapshot: snapshot) else {
+                    print("Error fetching user data")
+                    return
+                }
+                
+                newUsers.append(user)
+                
+                guard let lastId = ids.last else {
+                    print("No last id in league members list")
+                    return
+                }
+                
+                // Call the completion handler when we've added the last user
+                if id == lastId {
+                    completion(newUsers)
+                }
+                
+            }) { error in
+              print(error.localizedDescription)
+            }
+        }
     }
 }
 
@@ -96,13 +136,13 @@ extension LeagueDetailTableViewController {
     }
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, League> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, User> {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, league in
+        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, user in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! LeagueStandingTableViewCell
-            cell.configure(with: league)
+            cell.configure(with: user)
 
             return cell
         }
@@ -110,9 +150,9 @@ extension LeagueDetailTableViewController {
     
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, League>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, User>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems([league])
+        snapshot.appendItems(users)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }

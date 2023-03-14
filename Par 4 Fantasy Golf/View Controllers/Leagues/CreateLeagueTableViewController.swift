@@ -10,6 +10,7 @@
 // MARK: - Imported libraries
 
 import UIKit
+import FirebaseAuth
 
 // MARK: - Main class
 
@@ -38,7 +39,7 @@ class CreateLeagueTableViewController: UITableViewController {
     // Compile the league data for sending back to the leagues table view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "createLeagueUnwind" {
-            league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970)
+            league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, memberIds: [Auth.auth().currentUser?.uid ?? ""])
         }
     }
 }

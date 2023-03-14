@@ -56,11 +56,13 @@ struct League: Hashable {
         self.name = name
         self.startDate = startDate
         self.creator = creator
+        self.memberIds = []
         
-        if let memberIds = value["memberIds"] as? [String] {
-            self.memberIds = memberIds
-        } else {
-            self.memberIds = []
+        // Convert memberIds dictionary to an array
+        if let memberDict = value["memberIds"] as? [String: Bool] {
+            for member in memberDict {
+                self.memberIds.append(member.key)
+            }
         }
     }
     
@@ -68,11 +70,19 @@ struct League: Hashable {
     
     // Convert the league to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
+        
+        // Convert mebmerIds array to Firebase-style dictionary
+        var memberDict = [String: Bool]()
+        
+        for id in memberIds {
+            memberDict[id] = true
+        }
+        
         return [
             "name": name,
             "startDate": startDate,
             "creator": creator,
-            "memberIds": memberIds
+            "memberIds": memberDict
         ]
     }
 }

@@ -14,6 +14,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseDatabase
 
 // MARK: - Main class
 
@@ -21,6 +22,8 @@ import FirebaseAuth
 class RegistrationViewController: UIViewController {
     
     // MARK: - Properties
+    
+    let ref = Database.database().reference(withPath: "users")
     
     // IBOutlets
     
@@ -43,8 +46,20 @@ class RegistrationViewController: UIViewController {
             if let error = error {
                 print("Error: \(error.localizedDescription)")
                 return
+            } else if authResult == nil {
+                print("Error: authResult is nil")
+                return
             } else {
                 print("Registration successful!")
+                
+                // Get user data
+                let userId = authResult!.user.uid
+                let user = User(id: userId, email: self.emailTextField.text ?? "")
+                
+                // Save the user to Firebase
+                let usersRef = self.ref.child(userId)
+                usersRef.setValue(user.toAnyObject())
+                
                 self.transitionToTabBarController()
             }
         }
