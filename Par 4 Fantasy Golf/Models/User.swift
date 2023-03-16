@@ -51,4 +51,49 @@ struct User: Hashable {
             "email": email
         ]
     }
+    
+//    // Helper function to fetch a user object from a user id
+//    static func getUserFromId(id: String, completion: ((_ newUser: User) -> Void)? = nil) {
+//
+//        // Set user database reference
+//        let userRef = Database.database().reference(withPath: "users/" + id)
+//
+//        userRef.observeSingleEvent(of: .value, with: { snapshot in
+//
+//            // Fetch user data
+//            guard let user = User(snapshot: snapshot) else {
+//                print("Error fetching user data")
+//                return
+//            }
+//
+//            if completion != nil {
+//                completion!(user)
+//            }
+//
+//        }) { error in
+//          print(error.localizedDescription)
+//        }
+//    }
+    
+    // Helper function to fetch a user object from a user id
+    static func getUserFromId(id: String) async -> User? {
+            
+        // Set user database reference
+        let userRef = Database.database().reference(withPath: "users/" + id)
+        
+        // Attempt to create a user from a snapshot
+        do {
+            let snapshot = try await userRef.getData()
+            if let user = User(snapshot: snapshot) {
+                print("Created user from snapshot")
+                return user
+            } else {
+                print("Couldn't create user from snapshot")
+                return nil
+            }
+        } catch {
+            print("Error fetching user data from firebase")
+            return nil
+        }
+    }
 }

@@ -19,7 +19,7 @@ class LeagueDetailTableViewController: UITableViewController {
     
     lazy var dataSource = createDataSource()
     var league: League
-    var users = [User]()
+    //var users = [User]()
     
     let leagueRef: DatabaseReference
     var refObservers: [DatabaseHandle] = []
@@ -79,8 +79,12 @@ class LeagueDetailTableViewController: UITableViewController {
             // Update local datasource and table view
             self.league = newLeague
             self.title = newLeague.name
-            self.getUsersFromIds(ids: newLeague.memberIds) { newUsers in
-                self.users = newUsers
+//            self.users = newLeague.members.map {
+//                User(id: $0.key, email: $0.value)
+//            }
+            
+            Task {
+                self.league.members = await self.fetchUserObjects(from: self.league.memberIds)
                 self.updateTableView()
             }
         }
@@ -88,41 +92,76 @@ class LeagueDetailTableViewController: UITableViewController {
         refObservers.append(refHandle)
     }
     
+//    // Helper function to fetch user objects from user ids
+//    func getUsersFromIds(ids: [String], completion: @escaping(_ newUsers: [User]) -> Void) {
+//
+//        // Make sure we have at least one user ID
+//        guard let lastId = ids.last else {
+//            print("no ids with which to fetch users")
+//            return
+//        }
+//
+//        var newUsers = [User]()
+//
+//        for id in ids {
+//            User.getUserFromId(id: id) { user in
+//                newUsers.append(user)
+//
+//                // Call the completion handler when we've added the last user
+//                if id == lastId {
+//                    completion(newUsers)
+//                }
+//            }
+//        }
+//    }
+    
     // Helper function to fetch user objects from user ids
-    func getUsersFromIds(ids: [String], completion: @escaping(_ newUsers: [User]) -> Void) {
+    func fetchUserObjects(from ids: [String]) async -> [User] {
         
-        var newUsers = [User]()
-        
-        for id in ids {
+        return await withTaskGroup(of: User?.self, returning: [User].self) { group in
             
-            // Set user database reference
-            let userRef = Database.database().reference(withPath: "users/" + id)
+            var users = [User]()
             
-            userRef.observeSingleEvent(of: .value, with: { snapshot in
+            // Loop through user IDs
+            for id in ids {
                 
-                // Fetch user data
-                guard let user = User(snapshot: snapshot) else {
-                    print("Error fetching user data")
-                    return
+                // Add a group task for each ID
+                print("Fetching user from ID...")
+                group.addTask {
+                    
+                    // Fetch user from ID
+                    await User.getUserFromId(id: id)
                 }
                 
-                newUsers.append(user)
-                
-                guard let lastId = ids.last else {
-                    print("No last id in league members list")
-                    return
+                for await user in group {
+                    
+                    // Check each user that was generated. If it's a real user and not nil, append it
+                    if let user = user {
+                        users.append(user)
+                        print("Appended user to array")
+                    }
                 }
-                
-                // Call the completion handler when we've added the last user
-                if id == lastId {
-                    completion(newUsers)
-                }
-                
-            }) { error in
-              print(error.localizedDescription)
             }
+            
+            return users
         }
     }
+        
+//        do {
+//            for id in ids {
+//                let user = try await User.asyncGetUserFromId(id: id)
+//                if let user = user {
+//                    newUsers.append(user)
+//                } else {
+//                    print("Failed to get user from ID1")
+//                }
+//            }
+//
+//            return newUsers
+//        } catch {
+//            print("Failed to get user from ID2")
+//            return []
+//        }
 }
 
 // MARK: - Extensions
@@ -152,7 +191,7 @@ extension LeagueDetailTableViewController {
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, User>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(users)
+        snapshot.appendItems(league.members)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }

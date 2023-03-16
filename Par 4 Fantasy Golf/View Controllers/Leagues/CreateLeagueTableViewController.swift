@@ -39,7 +39,7 @@ class CreateLeagueTableViewController: UITableViewController {
     // Compile the league data for sending back to the leagues table view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "createLeagueUnwind" {
-            league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, memberIds: [Auth.auth().currentUser?.uid ?? ""])
+            league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, members: [User(id: Auth.auth().currentUser?.uid ?? "unknown uid", email: Auth.auth().currentUser?.email ?? "unknown email")])
         }
     }
 }

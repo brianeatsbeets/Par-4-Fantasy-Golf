@@ -176,27 +176,23 @@
                         <centerItemGroups>
                             <barButtonItemGroup customizationDisposition="fixed" id="Sb5-6h-Dd8">
                                 <barButtonItems>
-                                    <barButtonItem title="Add Users" id="PaB-d9-Qmv">
-                                        <connections>
-                                            <segue destination="8mo-m3-naI" kind="presentation" id="aew-wp-2gX"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem title="Make Picks" id="nRR-j2-5FW">
-                                        <connections>
-                                            <segue destination="fXs-Nf-Z1i" kind="show" id="aMd-Qe-bwT"/>
-                                        </connections>
-                                    </barButtonItem>
+                                    <barButtonItem title="Add Users" id="PaB-d9-Qmv" userLabel="Manage Users"/>
+                                    <barButtonItem title="Make Picks" id="nRR-j2-5FW"/>
                                 </barButtonItems>
                             </barButtonItemGroup>
                             <barButtonItemGroup customizationDisposition="fixed" id="10C-ph-27c"/>
                         </centerItemGroups>
                     </navigationItem>
+                    <connections>
+                        <segue destination="fXs-Nf-Z1i" kind="show" id="pLx-7I-Uwh"/>
+                        <segue destination="4W3-j6-8eq" kind="show" id="1oc-Oj-dQu"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Idz-HM-wJR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5562" y="-417"/>
         </scene>
-        <!--Picks for League-->
+        <!--Make Picks-->
         <scene sceneID="QBn-oE-bdY">
             <objects>
                 <tableViewController id="fXs-Nf-Z1i" sceneMemberID="viewController">
@@ -219,47 +215,43 @@
                             <outlet property="delegate" destination="fXs-Nf-Z1i" id="b2g-aK-faW"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Picks for League" id="9aE-ip-W5T">
+                    <navigationItem key="navigationItem" title="Make Picks" id="9aE-ip-W5T">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="rss-sA-qEC"/>
                         <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="jM3-Wu-GKm"/>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Eoo-ZX-fvI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6471" y="-417"/>
+            <point key="canvasLocation" x="7329" y="-769"/>
         </scene>
-        <!--Add Users-->
-        <scene sceneID="635-hQ-orE">
+        <!--Manage Users-->
+        <scene sceneID="WCJ-oa-6Hw">
             <objects>
-                <viewController id="Ucl-7Q-bnu" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="l5H-qJ-7hJ">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="787"/>
+                <tableViewController id="4W3-j6-8eq" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="V9U-A5-vLp">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter user email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fYs-sV-6Ym">
-                                <rect key="frame" x="45" y="127" width="300" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DFI-BH-sjG">
-                                <rect key="frame" x="148" y="208" width="95" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Add User"/>
-                            </button>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="wJM-zc-1WX"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Add Users" id="0fj-Uk-bMc">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="HgT-nk-rmy"/>
-                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="01k-CC-2Co"/>
-                    </navigationItem>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="0yk-Wj-t7b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="i3r-g6-YAj">
+                                <rect key="frame" x="0.0" y="50" width="390" height="43.666667938232422"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="i3r-g6-YAj" id="RPu-Bb-DG3">
+                                    <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="4W3-j6-8eq" id="gkj-Dm-87d"/>
+                            <outlet property="delegate" destination="4W3-j6-8eq" id="bZs-oN-a3Q"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Manage Users" id="3cu-Yv-ryH"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TwC-Kj-3Wl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7400" y="335.54502369668245"/>
+            <point key="canvasLocation" x="7328" y="-97"/>
         </scene>
         <!--Create League-->
         <scene sceneID="S54-ja-mGi">
@@ -473,24 +465,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDM-nv-Lxl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5563" y="-1183"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="qUh-6C-xJY">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="8mo-m3-naI" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="YHv-YJ-zj7">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="56"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="Ucl-7Q-bnu" kind="relationship" relationship="rootViewController" id="MXx-US-AyD"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="mS4-PR-TIk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="6470.7692307692305" y="335.54502369668245"/>
         </scene>
     </scenes>
     <resources>

@@ -23,11 +23,12 @@ struct League: Hashable {
     var startDate: Double
     let creator: String
     var memberIds: [String]
+    var members: [User]
     
     // MARK: - Initializers
     
     // Standard init
-    init(name: String, startDate: Double, memberIds: [String] = []) {
+    init(name: String, startDate: Double, members: [User] = []) {
         id = UUID()
         self.name = name
         self.startDate = startDate
@@ -36,10 +37,11 @@ struct League: Hashable {
         if let user = Auth.auth().currentUser {
             creator = user.email!
         } else {
-            creator = "No creator found"
+            creator = "unknown user"
         }
         
-        self.memberIds = memberIds
+        self.memberIds = members.map { $0.id }
+        self.members = members
     }
     
     // Init with snapshot data
@@ -50,20 +52,22 @@ struct League: Hashable {
               let id = UUID(uuidString: snapshot.key),
               let name = value["name"] as? String,
               let startDate = value["startDate"] as? Double,
-              let creator = value["creator"] as? String else { return nil }
+              let creator = value["creator"] as? String,
+              let memberIds = value["memberIds"] as? [String: Bool] else { return nil }
         
         self.id = id
         self.name = name
         self.startDate = startDate
         self.creator = creator
-        self.memberIds = []
+        self.memberIds = memberIds.map { $0.key }
+        self.members = []
         
-        // Convert memberIds dictionary to an array
-        if let memberDict = value["memberIds"] as? [String: Bool] {
-            for member in memberDict {
-                self.memberIds.append(member.key)
-            }
-        }
+//        // Convert members dictionary to an array
+//        if let memberDict = value["members"] as? [String: Bool] {
+//            for member in memberDict {
+//                self.memberIds.append(member.key)
+//            }
+//        }
     }
     
     // MARK: - Functions
@@ -73,9 +77,9 @@ struct League: Hashable {
         
         // Convert mebmerIds array to Firebase-style dictionary
         var memberDict = [String: Bool]()
-        
-        for id in memberIds {
-            memberDict[id] = true
+
+        for member in members {
+            memberDict[member.id] = true
         }
         
         return [
