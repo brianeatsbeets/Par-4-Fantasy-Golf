@@ -61,13 +61,6 @@ struct League: Hashable {
         self.creator = creator
         self.memberIds = memberIds.map { $0.key }
         self.members = []
-        
-//        // Convert members dictionary to an array
-//        if let memberDict = value["members"] as? [String: Bool] {
-//            for member in memberDict {
-//                self.memberIds.append(member.key)
-//            }
-//        }
     }
     
     // MARK: - Functions

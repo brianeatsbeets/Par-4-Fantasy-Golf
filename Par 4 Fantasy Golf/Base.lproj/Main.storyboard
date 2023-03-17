@@ -128,7 +128,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="nTR-1R-Y3k" kind="show" destinationCreationSelector="viewLeague:sender:" id="8bk-Dq-F0f"/>
+                                    <segue destination="nTR-1R-Y3k" kind="show" destinationCreationSelector="segueToLeagueDetails:sender:" id="8bk-Dq-F0f"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -176,17 +176,21 @@
                         <centerItemGroups>
                             <barButtonItemGroup customizationDisposition="fixed" id="Sb5-6h-Dd8">
                                 <barButtonItems>
-                                    <barButtonItem title="Add Users" id="PaB-d9-Qmv" userLabel="Manage Users"/>
-                                    <barButtonItem title="Make Picks" id="nRR-j2-5FW"/>
+                                    <barButtonItem title="Manage Users" id="PaB-d9-Qmv" userLabel="Manage Users">
+                                        <connections>
+                                            <segue destination="4W3-j6-8eq" kind="show" destinationCreationSelector="segueToManageUsers:" id="4yg-xd-1Zd"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="Make Picks" id="nRR-j2-5FW">
+                                        <connections>
+                                            <segue destination="fXs-Nf-Z1i" kind="show" id="KbW-xQ-KlO"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </barButtonItems>
                             </barButtonItemGroup>
                             <barButtonItemGroup customizationDisposition="fixed" id="10C-ph-27c"/>
                         </centerItemGroups>
                     </navigationItem>
-                    <connections>
-                        <segue destination="fXs-Nf-Z1i" kind="show" id="pLx-7I-Uwh"/>
-                        <segue destination="4W3-j6-8eq" kind="show" id="1oc-Oj-dQu"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Idz-HM-wJR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -227,13 +231,13 @@
         <!--Manage Users-->
         <scene sceneID="WCJ-oa-6Hw">
             <objects>
-                <tableViewController id="4W3-j6-8eq" sceneMemberID="viewController">
+                <tableViewController id="4W3-j6-8eq" customClass="ManageUsersTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="V9U-A5-vLp">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="i3r-g6-YAj">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="UserCell" id="i3r-g6-YAj">
                                 <rect key="frame" x="0.0" y="50" width="390" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="i3r-g6-YAj" id="RPu-Bb-DG3">
@@ -247,7 +251,13 @@
                             <outlet property="delegate" destination="4W3-j6-8eq" id="bZs-oN-a3Q"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Manage Users" id="3cu-Yv-ryH"/>
+                    <navigationItem key="navigationItem" title="Manage Users" id="3cu-Yv-ryH">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="3k2-xV-AGV">
+                            <connections>
+                                <action selector="addButtonPressed:" destination="4W3-j6-8eq" id="4ov-ej-Gui"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TwC-Kj-3Wl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

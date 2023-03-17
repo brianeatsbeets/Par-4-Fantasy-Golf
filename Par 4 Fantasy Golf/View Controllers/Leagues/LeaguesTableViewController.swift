@@ -5,6 +5,8 @@
 //  Created by Aguirre, Brian P. on 3/1/23.
 //
 
+// TODO: Figure out why league sometimes updates after returning from league details (maybe related to sorting?)
+
 // MARK: - Imported libraries
 
 import UIKit
@@ -20,7 +22,7 @@ class LeaguesTableViewController: UITableViewController {
     lazy var dataSource = createDataSource()
     var leagues = [League]()
     
-    let ref = Database.database().reference(withPath: "leagues")
+    let leaguesRef = Database.database().reference(withPath: "leagues")
     var refObservers: [DatabaseHandle] = []
     
     // MARK: - View life cycle functions
@@ -29,31 +31,29 @@ class LeaguesTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
-        
-        updateTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        createLeagueDataObserver()
+        createLeaguesDataObserver()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         // Remove all observers
-        refObservers.forEach(ref.removeObserver(withHandle:))
+        refObservers.forEach(leaguesRef.removeObserver(withHandle:))
         refObservers = []
     }
     
     // MARK: - Other functions
     
     // Create the reference observer for league data
-    func createLeagueDataObserver() {
+    func createLeaguesDataObserver() {
         
         // Observe league data
-        let refHandle = ref.observe(.value) { snapshot in
+        let refHandle = leaguesRef.observe(.value) { snapshot in
             
             var newLeagues = [League]()
             
@@ -83,12 +83,12 @@ class LeaguesTableViewController: UITableViewController {
         else { return }
         
         // Save the league to Firebase
-        let postRef = ref.child(league.id.uuidString)
-        postRef.setValue(league.toAnyObject())
+        let leagueRef = leaguesRef.child(league.id.uuidString)
+        leagueRef.setValue(league.toAnyObject())
     }
     
     // Prepare league data to send to LeagueDetailViewController
-    @IBSegueAction func viewLeague(_ coder: NSCoder, sender: Any?) -> LeagueDetailTableViewController? {
+    @IBSegueAction func segueToLeagueDetails(_ coder: NSCoder, sender: Any?) -> LeagueDetailTableViewController? {
         
         // Check to see if a cell was tapped
         guard let cell = sender as? UITableViewCell,

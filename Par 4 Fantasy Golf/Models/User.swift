@@ -47,36 +47,12 @@ struct User: Hashable {
     func toAnyObject() -> Any {
         
         return [
-            //"id": id.uuidString,
             "email": email
         ]
     }
     
-//    // Helper function to fetch a user object from a user id
-//    static func getUserFromId(id: String, completion: ((_ newUser: User) -> Void)? = nil) {
-//
-//        // Set user database reference
-//        let userRef = Database.database().reference(withPath: "users/" + id)
-//
-//        userRef.observeSingleEvent(of: .value, with: { snapshot in
-//
-//            // Fetch user data
-//            guard let user = User(snapshot: snapshot) else {
-//                print("Error fetching user data")
-//                return
-//            }
-//
-//            if completion != nil {
-//                completion!(user)
-//            }
-//
-//        }) { error in
-//          print(error.localizedDescription)
-//        }
-//    }
-    
     // Helper function to fetch a user object from a user id
-    static func getUserFromId(id: String) async -> User? {
+    static func fetchSingleUser(from id: String) async -> User? {
             
         // Set user database reference
         let userRef = Database.database().reference(withPath: "users/" + id)
@@ -85,7 +61,6 @@ struct User: Hashable {
         do {
             let snapshot = try await userRef.getData()
             if let user = User(snapshot: snapshot) {
-                print("Created user from snapshot")
                 return user
             } else {
                 print("Couldn't create user from snapshot")
@@ -94,6 +69,39 @@ struct User: Hashable {
         } catch {
             print("Error fetching user data from firebase")
             return nil
+        }
+    }
+    
+    // Helper function to fetch multiple user objects from an array of user ids
+    static func fetchMultipleUsers(from ids: [String]) async -> [User] {
+        
+        // Use a task group to make sure that all user fetch requests return a response before we return the user array to the caller
+        return await withTaskGroup(of: User?.self, returning: [User].self) { group in
+            
+            var users = [User]()
+            
+            // Loop through user IDs
+            for id in ids {
+                
+                // Add a group task for each ID
+                group.addTask {
+                    
+                    // Fetch user from ID
+                    await User.fetchSingleUser(from: id)
+                }
+                
+                // Wait for each user request to receive a response
+                for await user in group {
+                    
+                    // Check each user that was generated. If it's not nil, append it
+                    if let user = user {
+                        users.append(user)
+                    }
+                }
+            }
+            
+            // Return the users sorted in ascending order
+            return users.sorted { $0.email < $1.email }
         }
     }
 }

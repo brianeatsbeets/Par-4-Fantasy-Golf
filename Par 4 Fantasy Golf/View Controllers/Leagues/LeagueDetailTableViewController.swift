@@ -19,7 +19,6 @@ class LeagueDetailTableViewController: UITableViewController {
     
     lazy var dataSource = createDataSource()
     var league: League
-    //var users = [User]()
     
     let leagueRef: DatabaseReference
     var refObservers: [DatabaseHandle] = []
@@ -42,15 +41,13 @@ class LeagueDetailTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
-        
         title = league.name
-        
-        updateTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Create league data observer
         createLeagueDataObserver()
     }
     
@@ -76,15 +73,12 @@ class LeagueDetailTableViewController: UITableViewController {
                 return
             }
             
-            // Update local datasource and table view
             self.league = newLeague
             self.title = newLeague.name
-//            self.users = newLeague.members.map {
-//                User(id: $0.key, email: $0.value)
-//            }
             
+            // Fetch users via task and update the table view when finished
             Task {
-                self.league.members = await self.fetchUserObjects(from: self.league.memberIds)
+                self.league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
                 self.updateTableView()
             }
         }
@@ -92,76 +86,12 @@ class LeagueDetailTableViewController: UITableViewController {
         refObservers.append(refHandle)
     }
     
-//    // Helper function to fetch user objects from user ids
-//    func getUsersFromIds(ids: [String], completion: @escaping(_ newUsers: [User]) -> Void) {
-//
-//        // Make sure we have at least one user ID
-//        guard let lastId = ids.last else {
-//            print("no ids with which to fetch users")
-//            return
-//        }
-//
-//        var newUsers = [User]()
-//
-//        for id in ids {
-//            User.getUserFromId(id: id) { user in
-//                newUsers.append(user)
-//
-//                // Call the completion handler when we've added the last user
-//                if id == lastId {
-//                    completion(newUsers)
-//                }
-//            }
-//        }
-//    }
-    
-    // Helper function to fetch user objects from user ids
-    func fetchUserObjects(from ids: [String]) async -> [User] {
-        
-        return await withTaskGroup(of: User?.self, returning: [User].self) { group in
-            
-            var users = [User]()
-            
-            // Loop through user IDs
-            for id in ids {
-                
-                // Add a group task for each ID
-                print("Fetching user from ID...")
-                group.addTask {
-                    
-                    // Fetch user from ID
-                    await User.getUserFromId(id: id)
-                }
-                
-                for await user in group {
-                    
-                    // Check each user that was generated. If it's a real user and not nil, append it
-                    if let user = user {
-                        users.append(user)
-                        print("Appended user to array")
-                    }
-                }
-            }
-            
-            return users
-        }
+    // MARK: - Navigation
+
+    @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
+        return ManageUsersTableViewController(coder: coder, league: league)
     }
-        
-//        do {
-//            for id in ids {
-//                let user = try await User.asyncGetUserFromId(id: id)
-//                if let user = user {
-//                    newUsers.append(user)
-//                } else {
-//                    print("Failed to get user from ID1")
-//                }
-//            }
-//
-//            return newUsers
-//        } catch {
-//            print("Failed to get user from ID2")
-//            return []
-//        }
+    
 }
 
 // MARK: - Extensions
