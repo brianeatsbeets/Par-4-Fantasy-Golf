@@ -186,9 +186,13 @@
                                             <segue destination="fXs-Nf-Z1i" kind="show" id="KbW-xQ-KlO"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem title="Delete League" id="pbC-Ly-OLH">
+                                        <connections>
+                                            <action selector="deleteLeaguePressed:" destination="nTR-1R-Y3k" id="uF5-f0-1AY"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </barButtonItems>
                             </barButtonItemGroup>
-                            <barButtonItemGroup customizationDisposition="fixed" id="10C-ph-27c"/>
                         </centerItemGroups>
                     </navigationItem>
                 </tableViewController>

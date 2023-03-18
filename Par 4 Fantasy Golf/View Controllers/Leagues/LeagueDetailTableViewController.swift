@@ -86,6 +86,35 @@ class LeagueDetailTableViewController: UITableViewController {
         refObservers.append(refHandle)
     }
     
+    // Remove league data and user associations
+    @IBAction func deleteLeaguePressed(_ sender: Any) {
+        let deleteLeagueAlert = UIAlertController(title: "Are you sure?", message: "If you delete this league, all of the league data will be permenantly deleted.", preferredStyle: .alert)
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        let confirm = UIAlertAction(title: "Yes", style: .destructive) { [unowned deleteLeagueAlert] _ in
+            
+            // Dismiss the current alert
+            deleteLeagueAlert.dismiss(animated: true)
+            
+            // Remove the league from each user's leagues
+            let usersRef = Database.database().reference(withPath: "users/")
+            for user in self.league.members {
+                usersRef.child(user.id).child("leagues").child(self.league.id.uuidString).removeValue()
+            }
+            
+            // Remove the league data
+            self.leagueRef.removeValue()
+            
+            // Return to LeaguesTableViewController
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+        deleteLeagueAlert.addAction(cancel)
+        deleteLeagueAlert.addAction(confirm)
+        
+        present(deleteLeagueAlert, animated: true)
+    }
+    
     // MARK: - Navigation
 
     @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
