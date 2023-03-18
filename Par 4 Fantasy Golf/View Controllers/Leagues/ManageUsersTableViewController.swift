@@ -12,6 +12,9 @@
 import UIKit
 import FirebaseDatabase
 
+// Global variable that allows custom data source to access the current league's firebase database reference to delete data
+fileprivate var leagueUsersRef = DatabaseReference()
+
 // MARK: - Main class
 
 // This class/view controller allows for management of the selected league's members
@@ -22,14 +25,14 @@ class ManageUsersTableViewController: UITableViewController {
     lazy var dataSource = createDataSource()
     var league: League
     
-    let leagueUsersRef: DatabaseReference
+    //let leagueUsersRef: DatabaseReference
     var refObservers: [DatabaseHandle] = []
     
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.leagueUsersRef = Database.database().reference(withPath: "leagues/" + league.id.uuidString + "/memberIds")
+        leagueUsersRef = Database.database().reference(withPath: "leagues/" + league.id.uuidString + "/memberIds")
         super.init(coder: coder)
     }
     
@@ -147,15 +150,31 @@ class ManageUsersTableViewController: UITableViewController {
 // This extention houses table view management functions that utilize the diffable data source API
 extension ManageUsersTableViewController {
     
+    // Subclass of UITableViewDiffableDataSource that supports swipe-to-delete
+    class SwipeToDeleteDataSource: UITableViewDiffableDataSource<Section, User> {
+        
+        // Enable swipe-to-delete
+        override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+            return true
+        }
+        
+        override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+            guard let user = itemIdentifier(for: indexPath) else { return }
+            
+            // Remove the user's memberId from firebase
+            leagueUsersRef.child(user.id).removeValue()
+        }
+    }
+    
     // This enum declares table view sections
     enum Section: CaseIterable {
         case one
     }
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, User> {
+    func createDataSource() -> SwipeToDeleteDataSource {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, user in
+        return SwipeToDeleteDataSource(tableView: tableView) { tableView, indexPath, user in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath)
