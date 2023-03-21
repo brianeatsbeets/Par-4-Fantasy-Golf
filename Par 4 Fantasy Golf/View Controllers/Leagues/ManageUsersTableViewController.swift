@@ -14,6 +14,7 @@ import FirebaseDatabase
 
 // Global variable that allows custom data source to access the current league's firebase database reference to delete data
 fileprivate var leagueUsersRef = DatabaseReference()
+fileprivate var selectedLeague: League!
 
 // MARK: - Main class
 
@@ -23,7 +24,7 @@ class ManageUsersTableViewController: UITableViewController {
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    var league: League
+    fileprivate var league: League
     
     //let leagueUsersRef: DatabaseReference
     var refObservers: [DatabaseHandle] = []
@@ -33,6 +34,7 @@ class ManageUsersTableViewController: UITableViewController {
     init?(coder: NSCoder, league: League) {
         self.league = league
         leagueUsersRef = Database.database().reference(withPath: "leagues/" + league.id.uuidString + "/memberIds")
+        selectedLeague = league
         super.init(coder: coder)
     }
     
@@ -156,7 +158,14 @@ extension ManageUsersTableViewController {
         
         // Enable swipe-to-delete
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-            return true
+            
+            // Check if selected user is league owner; if so, disable swipe-to-delete
+            if let user = itemIdentifier(for: indexPath),
+               user.email != selectedLeague.creator {
+                return true
+            } else {
+                return false
+            }
         }
         
         override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -182,6 +191,9 @@ extension ManageUsersTableViewController {
             
             var config = cell.defaultContentConfiguration()
             config.text = user.email
+            if user.email == self.league.creator {
+                config.text! += " (owner)"
+            }
             cell.contentConfiguration = config
 
             return cell
