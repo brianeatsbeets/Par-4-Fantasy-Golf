@@ -110,13 +110,13 @@ class ManageUsersTableViewController: UITableViewController {
             // TODO: This would be more efficient if email was the ID for a user instead of a UUID from firebase
             let usersRef = Database.database().reference(withPath: "users")
             usersRef.observeSingleEvent(of: .value) { snapshot in
-                guard let usersList = snapshot.value as? [String:[String: String]] else {
+                guard let usersList = snapshot.value as? [String:[String: AnyObject]] else {
                     print("Error getting users list")
                     return
                 }
                 
                 // Check for a user with a matching email address
-                let matchingUsers = usersList.filter { $0.value["email"] == email }
+                let matchingUsers = usersList.filter { $0.value["email"] as? String == email }
                 
                 if matchingUsers.isEmpty {
                     
@@ -127,10 +127,11 @@ class ManageUsersTableViewController: UITableViewController {
                     self.present(userNotFoundAlert, animated: true)
                 } else {
                     
-                    // If a matching user was found, add the user
+                    // If a matching user was found, add the user to the league and add the league to the user's data
                     let matchedUser = matchingUsers.first!
                     let leagueMembersRef = Database.database().reference(withPath: "leagues/\(self.league.id)/memberIds")
                     leagueMembersRef.child(matchedUser.key).setValue(true)
+                    usersRef.child(matchedUser.key).child("leagues").child(self.league.id.uuidString).setValue(true)
                 }
             }
             

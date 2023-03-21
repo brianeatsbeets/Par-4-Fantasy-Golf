@@ -23,6 +23,7 @@ class LeaguesTableViewController: UITableViewController {
     var leagues = [League]()
     
     let leaguesRef = Database.database().reference(withPath: "leagues")
+    let usersRef = Database.database().reference(withPath: "users")
     var refObservers: [DatabaseHandle] = []
     
     // MARK: - View life cycle functions
@@ -85,6 +86,11 @@ class LeaguesTableViewController: UITableViewController {
         // Save the league to Firebase
         let leagueRef = leaguesRef.child(league.id.uuidString)
         leagueRef.setValue(league.toAnyObject())
+        
+        // Save the league to the league members' data
+        for user in league.members {
+            usersRef.child(user.id).child("leagues").child(league.id.uuidString).setValue(true)
+        }
     }
     
     // Prepare league data to send to LeagueDetailViewController
