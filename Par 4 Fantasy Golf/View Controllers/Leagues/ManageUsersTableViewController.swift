@@ -12,10 +12,6 @@
 import UIKit
 import FirebaseDatabase
 
-// Global variable that allows custom data source to access the current league's firebase database reference to delete data
-fileprivate var leagueUsersRef = DatabaseReference()
-fileprivate var selectedLeague: League!
-
 // MARK: - Main class
 
 // This class/view controller allows for management of the selected league's members
@@ -26,15 +22,14 @@ class ManageUsersTableViewController: UITableViewController {
     lazy var dataSource = createDataSource()
     fileprivate var league: League
     
-    //let leagueUsersRef: DatabaseReference
+    let leagueUsersRef: DatabaseReference
     var refObservers: [DatabaseHandle] = []
     
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        leagueUsersRef = Database.database().reference(withPath: "leagues/" + league.id.uuidString + "/memberIds")
-        selectedLeague = league
+        leagueUsersRef = Database.database().reference(withPath: "leagues/" + self.league.id.uuidString + "/memberIds")
         super.init(coder: coder)
     }
     
@@ -156,6 +151,9 @@ extension ManageUsersTableViewController {
     // Subclass of UITableViewDiffableDataSource that supports swipe-to-delete
     class SwipeToDeleteDataSource: UITableViewDiffableDataSource<Section, User> {
         
+        var leagueUsersRef = DatabaseReference()
+        var selectedLeague: League!
+        
         // Enable swipe-to-delete
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
             
@@ -184,7 +182,7 @@ extension ManageUsersTableViewController {
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> SwipeToDeleteDataSource {
         
-        return SwipeToDeleteDataSource(tableView: tableView) { tableView, indexPath, user in
+        var dataSource = SwipeToDeleteDataSource(tableView: tableView) { tableView, indexPath, user in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath)
@@ -198,6 +196,12 @@ extension ManageUsersTableViewController {
 
             return cell
         }
+        
+        // Variables that allow the custom data source to access the current league's firebase database reference to delete data
+        dataSource.leagueUsersRef = Database.database().reference(withPath: "leagues/" + self.league.id.uuidString + "/memberIds")
+        dataSource.selectedLeague = self.league
+        
+        return dataSource
     }
     
     // Apply a snapshot with updated user data
