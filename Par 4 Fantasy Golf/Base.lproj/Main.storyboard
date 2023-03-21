@@ -138,7 +138,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Leagues" id="6Kn-L9-xHR">
-                        <barButtonItem key="rightBarButtonItem" title="Create League" id="v2M-av-0s1">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="v2M-av-0s1">
                             <connections>
                                 <segue destination="MPO-es-Opv" kind="presentation" modalPresentationStyle="fullScreen" id="aqd-yr-Fdh"/>
                             </connections>
@@ -195,6 +195,10 @@
                             </barButtonItemGroup>
                         </centerItemGroups>
                     </navigationItem>
+                    <connections>
+                        <outlet property="leagueActionBarButtonItemGroup" destination="Sb5-6h-Dd8" id="jhT-rp-Ed2"/>
+                        <outlet property="makePicksButton" destination="nRR-j2-5FW" id="9Ns-8w-CZJ"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Idz-HM-wJR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

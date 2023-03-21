@@ -8,6 +8,7 @@
 // MARK: - Imported libraries
 
 import UIKit
+import FirebaseAuth
 import FirebaseDatabase
 
 // MARK: - Main class
@@ -16,6 +17,9 @@ import FirebaseDatabase
 class LeagueDetailTableViewController: UITableViewController {
     
     // MARK: - Properties
+    
+    @IBOutlet var makePicksButton: UIBarButtonItem!
+    @IBOutlet var leagueActionBarButtonItemGroup: UIBarButtonItemGroup!
     
     lazy var dataSource = createDataSource()
     var league: League
@@ -42,6 +46,12 @@ class LeagueDetailTableViewController: UITableViewController {
         
         tableView.dataSource = dataSource
         title = league.name
+        
+        // If the current user is not the league owner, hide administrative actions
+        if league.creator != Auth.auth().currentUser!.email {
+            leagueActionBarButtonItemGroup.isHidden = true
+            navigationItem.rightBarButtonItem = makePicksButton
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
