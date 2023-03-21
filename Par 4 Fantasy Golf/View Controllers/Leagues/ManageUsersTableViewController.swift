@@ -152,6 +152,7 @@ extension ManageUsersTableViewController {
     class SwipeToDeleteDataSource: UITableViewDiffableDataSource<Section, User> {
         
         var leagueUsersRef = DatabaseReference()
+        var usersRef = DatabaseReference()
         var selectedLeague: League!
         
         // Enable swipe-to-delete
@@ -169,8 +170,9 @@ extension ManageUsersTableViewController {
         override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
             guard let user = itemIdentifier(for: indexPath) else { return }
             
-            // Remove the user's memberId from firebase
+            // Remove the user's id from the league's memberIds and remove the league's id from the user's league ids
             leagueUsersRef.child(user.id).removeValue()
+            usersRef.child(user.id).child("leagues").child(selectedLeague.id.uuidString).removeValue()
         }
     }
     
@@ -199,6 +201,7 @@ extension ManageUsersTableViewController {
         
         // Variables that allow the custom data source to access the current league's firebase database reference to delete data
         dataSource.leagueUsersRef = Database.database().reference(withPath: "leagues/" + self.league.id.uuidString + "/memberIds")
+        dataSource.usersRef = Database.database().reference(withPath: "users")
         dataSource.selectedLeague = self.league
         
         return dataSource
