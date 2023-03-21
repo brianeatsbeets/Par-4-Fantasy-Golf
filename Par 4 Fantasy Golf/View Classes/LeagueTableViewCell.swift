@@ -25,7 +25,7 @@ class LeagueTableViewCell: UITableViewCell {
         
         var config = defaultContentConfiguration()
         config.text = league.name
-        config.secondaryText = league.startDate.formattedDate()
+        config.secondaryText = "Start date: " + league.startDate.formattedDate()
         contentConfiguration = config
     }
 

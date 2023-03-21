@@ -10,6 +10,7 @@
 // MARK: - Imported libraries
 
 import UIKit
+import FirebaseAuth
 import FirebaseDatabase
 
 // MARK: - Main class
@@ -24,6 +25,7 @@ class LeaguesTableViewController: UITableViewController {
     
     let leaguesRef = Database.database().reference(withPath: "leagues")
     let usersRef = Database.database().reference(withPath: "users")
+    let currentUserLeaguesRef = Database.database().reference(withPath: "users/\(Auth.auth().currentUser?.uid ?? "")/leagues")
     var refObservers: [DatabaseHandle] = []
     
     // MARK: - View life cycle functions
@@ -37,38 +39,39 @@ class LeaguesTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        createLeaguesDataObserver()
+        createCurrentUserLeaguesDataObserver()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         // Remove all observers
-        refObservers.forEach(leaguesRef.removeObserver(withHandle:))
+        refObservers.forEach(currentUserLeaguesRef.removeObserver(withHandle:))
         refObservers = []
     }
     
     // MARK: - Other functions
     
     // Create the reference observer for league data
-    func createLeaguesDataObserver() {
+    func createCurrentUserLeaguesDataObserver() {
         
         // Observe league data
-        let refHandle = leaguesRef.observe(.value) { snapshot in
-            
-            var newLeagues = [League]()
+        let refHandle = currentUserLeaguesRef.observe(.value) { snapshot in
             
             // Fetch updated leagues
-            for child in snapshot.children {
-                if let snapshot = child as? DataSnapshot,
-                   let league = League(snapshot: snapshot) {
-                    newLeagues.append(league)
-                }
+            guard let userLeaguesIdsDict = snapshot.value as? [String: Bool] else {
+                print("Error fetching league users")
+                return
             }
             
-            // Update local datasource and table view
-            self.leagues = newLeagues
-            self.updateTableView()
+            // Get array from disctionary
+            let userLeaguesIds = userLeaguesIdsDict.map { $0.key }
+            
+            // Fetch users via task and update the table view when finished
+            Task {
+                self.leagues = await League.fetchMultipleLeagues(from: userLeaguesIds)
+                self.updateTableView()
+            }
         }
         
         refObservers.append(refHandle)
