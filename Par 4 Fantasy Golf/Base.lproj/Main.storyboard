@@ -233,7 +233,11 @@
                                 <segue destination="35M-Jp-Hd6" kind="unwind" unwindAction="unwindFromMakePicksWithSegue:" id="ZZt-T5-IdU"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="jM3-Wu-GKm"/>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="jM3-Wu-GKm">
+                            <connections>
+                                <segue destination="35M-Jp-Hd6" kind="unwind" identifier="makePicksUnwind" unwindAction="unwindFromMakePicksWithSegue:" id="nyU-1B-MP3"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Eoo-ZX-fvI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

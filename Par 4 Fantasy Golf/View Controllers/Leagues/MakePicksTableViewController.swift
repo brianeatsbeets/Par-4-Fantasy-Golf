@@ -50,41 +50,10 @@ class MakePicksTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Create league data observer
-        createLeagueDataObserver()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // Remove all observers
-        refObservers.forEach(leagueRef.removeObserver(withHandle:))
-        refObservers = []
+        updateTableView(animated: false)
     }
     
     // MARK: - Other functions
-    
-    // Create the reference observer for league data
-    func createLeagueDataObserver() {
-        
-        // Observe league data
-        let refHandle = leagueRef.observe(.value) { snapshot in
-            
-            // Fetch updated league
-            guard let newLeague = League(snapshot: snapshot) else {
-                print("Error fetching league detail data")
-                return
-            }
-            
-            self.league = newLeague
-            self.title = newLeague.name
-            self.pickItems = self.getPickItems()
-            
-            self.updateTableView()
-        }
-        
-        refObservers.append(refHandle)
-    }
     
     // Populate the list of PickItems to be used in the data source
     func getPickItems() -> [PickItem] {
@@ -106,6 +75,16 @@ class MakePicksTableViewController: UITableViewController {
         }
         
         return pickItems
+    }
+    
+    // Update the data source when a cell is tapped
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let dataSourcePick = dataSource.itemIdentifier(for: indexPath),
+              let index = pickItems.firstIndex(of: dataSourcePick) else { return }
+        
+        tableView.deselectRow(at: indexPath, animated: false)
+        pickItems[index].isSelected.toggle()
+        updateTableView(animated: false)
     }
 }
 

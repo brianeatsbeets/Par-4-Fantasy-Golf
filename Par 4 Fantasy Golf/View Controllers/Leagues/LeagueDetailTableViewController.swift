@@ -137,6 +137,7 @@ class LeagueDetailTableViewController: UITableViewController {
     @IBSegueAction func segueToMakePicks(_ coder: NSCoder) -> MakePicksTableViewController? {
         return MakePicksTableViewController(coder: coder, league: league)
     }
+    
     // Handle the incoming new picks data
     @IBAction func unwindFromMakePicks(segue: UIStoryboardSegue) {
         
@@ -144,16 +145,19 @@ class LeagueDetailTableViewController: UITableViewController {
         guard segue.identifier == "makePicksUnwind",
               let sourceViewController = segue.source as? MakePicksTableViewController else { return }
         
-        let league = sourceViewController.league
+        let pickItems = sourceViewController.pickItems
+        let userPicksRef = leagueRef.child("picks").child(Auth.auth().currentUser!.uid)
+        var pickDict = [String: Bool]()
+        
+        // Convert pickItems array to Firebase-style dictionary
+        for pick in pickItems {
+            if pick.isSelected {
+                pickDict[pick.athlete] = true
+            }
+        }
         
         // Save the picks to Firebase
-        let userPicksRef = leagueRef.child("memberIds").child(Auth.auth().currentUser!.uid).child("picks")
-        userPicksRef.setValue(league.toAnyObject())
-        
-        // Save the league to the league members' data
-//        for user in league.members {
-//            usersRef.child(user.id).child("leagues").child(league.id.uuidString).setValue(true)
-//        }
+        userPicksRef.setValue(pickDict)
     }
 }
 

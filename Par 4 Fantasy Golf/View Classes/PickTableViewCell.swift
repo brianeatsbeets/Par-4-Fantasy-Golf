@@ -25,5 +25,4 @@ class PickTableViewCell: UITableViewCell {
         config.secondaryText = pickItem.isSelected.description
         contentConfiguration = config
     }
-
 }
