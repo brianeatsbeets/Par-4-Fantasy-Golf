@@ -45,7 +45,6 @@ struct User: Hashable {
     
     // Convert the user to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
-        
         return [
             "email": email
         ]

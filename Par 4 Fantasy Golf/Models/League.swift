@@ -24,6 +24,8 @@ struct League: Hashable {
     let creator: String
     var memberIds: [String]
     var members: [User]
+    var athletes: [String]
+    var picks: [String: [String]]
     
     // MARK: - Initializers
     
@@ -42,6 +44,8 @@ struct League: Hashable {
         
         self.memberIds = members.map { $0.id }
         self.members = members
+        self.athletes = [String]()
+        self.picks = [String: [String]]()
     }
     
     // Init with snapshot data
@@ -53,7 +57,9 @@ struct League: Hashable {
               let name = value["name"] as? String,
               let startDate = value["startDate"] as? Double,
               let creator = value["creator"] as? String,
-              let memberIds = value["memberIds"] as? [String: Bool] else { return nil }
+              let memberIds = value["memberIds"] as? [String: Bool],
+              let athletes = value["athletes"] as? [String: Bool],
+              let picks = value["picks"] as? [String: [String: Bool]] else { return nil }
         
         self.id = id
         self.name = name
@@ -61,6 +67,10 @@ struct League: Hashable {
         self.creator = creator
         self.memberIds = memberIds.map { $0.key }
         self.members = []
+        self.athletes = athletes.map { $0.key }
+        self.picks = picks.reduce(into: [String: [String]]()) {
+            $0[$1.key] = $1.value.map { $0.key }
+        }
     }
     
     // MARK: - Functions
@@ -70,16 +80,33 @@ struct League: Hashable {
         
         // Convert mebmerIds array to Firebase-style dictionary
         var memberDict = [String: Bool]()
-
         for member in members {
             memberDict[member.id] = true
+        }
+        
+        // Convert athletes array to Firebase-style dictionary
+        var athleteDict = [String: Bool]()
+        for athlete in athletes {
+            athleteDict[athlete] = true
+        }
+        
+        // Convert picks dictionary to Firebase-style dictionary
+        var pickDict = [String: [String: Bool]]()
+        for member in picks {
+            var memberPicks = [String: Bool]()
+            for pick in member.value {
+                memberPicks[pick] = true
+            }
+            pickDict[member.key] = memberPicks
         }
         
         return [
             "name": name,
             "startDate": startDate,
             "creator": creator,
-            "memberIds": memberDict
+            "memberIds": memberDict,
+            "athletes": athleteDict,
+            "picks": pickDict
         ]
     }
     

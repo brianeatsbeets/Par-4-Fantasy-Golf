@@ -11,6 +11,8 @@
 		E138DE5F29AE89E400BBE47F /* League.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138DE5E29AE89E400BBE47F /* League.swift */; };
 		E138DE6129AE940000BBE47F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E138DE6029AE940000BBE47F /* GoogleService-Info.plist */; };
 		E16C1E7529C3970E003F037B /* ManageUsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C1E7429C3970E003F037B /* ManageUsersTableViewController.swift */; };
+		E19E3EA629CC75AB008A7D2E /* MakePicksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */; };
+		E19E3EA829CC897D008A7D2E /* PickTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E3EA729CC897D008A7D2E /* PickTableViewCell.swift */; };
 		E1AB1C2B29AFE1A8002A354B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E1AB1C2A29AFE1A8002A354B /* FirebaseAuth */; };
 		E1AB1C2D29AFE1A8002A354B /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = E1AB1C2C29AFE1A8002A354B /* FirebaseDatabase */; };
 		E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C2E29AFE537002A354B /* RegistrationViewController.swift */; };
@@ -33,6 +35,8 @@
 		E138DE5E29AE89E400BBE47F /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
 		E138DE6029AE940000BBE47F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E16C1E7429C3970E003F037B /* ManageUsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageUsersTableViewController.swift; sourceTree = "<group>"; };
+		E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePicksTableViewController.swift; sourceTree = "<group>"; };
+		E19E3EA729CC897D008A7D2E /* PickTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickTableViewCell.swift; sourceTree = "<group>"; };
 		E1AB1C2E29AFE537002A354B /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		E1AB1C3029AFFD61002A354B /* LeaguesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaguesTableViewController.swift; sourceTree = "<group>"; };
 		E1AB1C3329B12A19002A354B /* LeagueTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueTableViewCell.swift; sourceTree = "<group>"; };
@@ -77,6 +81,7 @@
 			children = (
 				E1AB1C3329B12A19002A354B /* LeagueTableViewCell.swift */,
 				E1AB1C3729B28B8E002A354B /* LeagueStandingTableViewCell.swift */,
+				E19E3EA729CC897D008A7D2E /* PickTableViewCell.swift */,
 			);
 			path = "View Classes";
 			sourceTree = "<group>";
@@ -156,6 +161,7 @@
 				E1AB1C3029AFFD61002A354B /* LeaguesTableViewController.swift */,
 				E1AB1C3529B2828B002A354B /* LeagueDetailTableViewController.swift */,
 				E16C1E7429C3970E003F037B /* ManageUsersTableViewController.swift */,
+				E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */,
 			);
 			path = Leagues;
 			sourceTree = "<group>";
@@ -245,7 +251,9 @@
 				E1C4B10F29A560DF00F0DF67 /* SceneDelegate.swift in Sources */,
 				E16C1E7529C3970E003F037B /* ManageUsersTableViewController.swift in Sources */,
 				E1AB1C3429B12A19002A354B /* LeagueTableViewCell.swift in Sources */,
+				E19E3EA629CC75AB008A7D2E /* MakePicksTableViewController.swift in Sources */,
 				E1C4B12829A6C89C00F0DF67 /* AccountViewController.swift in Sources */,
+				E19E3EA829CC897D008A7D2E /* PickTableViewCell.swift in Sources */,
 				E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */,
 				E138DE5F29AE89E400BBE47F /* League.swift in Sources */,
 				E1AB1C3A29B29F9E002A354B /* User.swift in Sources */,

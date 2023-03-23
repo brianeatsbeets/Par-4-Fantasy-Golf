@@ -183,7 +183,7 @@
                                     </barButtonItem>
                                     <barButtonItem title="Make Picks" id="nRR-j2-5FW">
                                         <connections>
-                                            <segue destination="fXs-Nf-Z1i" kind="show" id="KbW-xQ-KlO"/>
+                                            <segue destination="6fB-c1-4RM" kind="presentation" modalPresentationStyle="fullScreen" id="KbW-xQ-KlO"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem title="Delete League" id="pbC-Ly-OLH">
@@ -207,13 +207,13 @@
         <!--Make Picks-->
         <scene sceneID="QBn-oE-bdY">
             <objects>
-                <tableViewController id="fXs-Nf-Z1i" sceneMemberID="viewController">
+                <tableViewController id="fXs-Nf-Z1i" customClass="MakePicksTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="MZI-hM-4Eg">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="7ma-8j-w8r">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PickCell" id="7ma-8j-w8r" customClass="PickTableViewCell" customModule="Par_4_Fantasy_Golf" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="50" width="390" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7ma-8j-w8r" id="tPE-bu-gje">
@@ -228,13 +228,18 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Make Picks" id="9aE-ip-W5T">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="rss-sA-qEC"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="rss-sA-qEC">
+                            <connections>
+                                <segue destination="35M-Jp-Hd6" kind="unwind" unwindAction="unwindFromMakePicksWithSegue:" id="ZZt-T5-IdU"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="jM3-Wu-GKm"/>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Eoo-ZX-fvI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="35M-Jp-Hd6" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="7329" y="-769"/>
+            <point key="canvasLocation" x="8256.9230769230762" y="-769.19431279620846"/>
         </scene>
         <!--Manage Users-->
         <scene sceneID="WCJ-oa-6Hw">
@@ -483,6 +488,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDM-nv-Lxl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5563" y="-1183"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="qFe-V1-aWs">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="6fB-c1-4RM" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="E50-zY-HEY">
+                        <rect key="frame" x="0.0" y="47" width="390" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="fXs-Nf-Z1i" kind="relationship" relationship="rootViewController" destinationCreationSelector="segueToMakePicks:" id="hcu-6b-kCP"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XU5-I9-sFY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7327.6923076923076" y="-769.19431279620846"/>
         </scene>
     </scenes>
     <resources>

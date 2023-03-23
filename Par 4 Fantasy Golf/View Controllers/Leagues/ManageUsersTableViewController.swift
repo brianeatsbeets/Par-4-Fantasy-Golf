@@ -20,7 +20,7 @@ class ManageUsersTableViewController: UITableViewController {
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    fileprivate var league: League
+    var league: League
     
     let leagueUsersRef: DatabaseReference
     var refObservers: [DatabaseHandle] = []
@@ -184,7 +184,7 @@ extension ManageUsersTableViewController {
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> SwipeToDeleteDataSource {
         
-        var dataSource = SwipeToDeleteDataSource(tableView: tableView) { tableView, indexPath, user in
+        let dataSource = SwipeToDeleteDataSource(tableView: tableView) { tableView, indexPath, user in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath)

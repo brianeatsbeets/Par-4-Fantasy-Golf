@@ -5,6 +5,9 @@
 //  Created by Aguirre, Brian P. on 3/3/23.
 //
 
+// TODO: Implement saving picks in unwind segue
+// TODO: Have Make Picks button show an alert when no athletes exist and prevent segue
+
 // MARK: - Imported libraries
 
 import UIKit
@@ -131,6 +134,27 @@ class LeagueDetailTableViewController: UITableViewController {
         return ManageUsersTableViewController(coder: coder, league: league)
     }
     
+    @IBSegueAction func segueToMakePicks(_ coder: NSCoder) -> MakePicksTableViewController? {
+        return MakePicksTableViewController(coder: coder, league: league)
+    }
+    // Handle the incoming new picks data
+    @IBAction func unwindFromMakePicks(segue: UIStoryboardSegue) {
+        
+        // Check that we have new picks data to parse
+        guard segue.identifier == "makePicksUnwind",
+              let sourceViewController = segue.source as? MakePicksTableViewController else { return }
+        
+        let league = sourceViewController.league
+        
+        // Save the picks to Firebase
+        let userPicksRef = leagueRef.child("memberIds").child(Auth.auth().currentUser!.uid).child("picks")
+        userPicksRef.setValue(league.toAnyObject())
+        
+        // Save the league to the league members' data
+//        for user in league.members {
+//            usersRef.child(user.id).child("leagues").child(league.id.uuidString).setValue(true)
+//        }
+    }
 }
 
 // MARK: - Extensions
