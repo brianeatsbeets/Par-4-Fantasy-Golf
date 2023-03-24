@@ -18,6 +18,7 @@ struct User: Hashable {
     
     let id: String
     var email: String
+    let databaseReference: DatabaseReference
     //var username: String
     
     // MARK: - Initializers
@@ -26,6 +27,7 @@ struct User: Hashable {
     init(id: String, email: String) {
         self.id = id
         self.email = email
+        databaseReference = Database.database().reference(withPath: "users/\(id)")
     }
     
     // Init with snapshot data
@@ -37,6 +39,7 @@ struct User: Hashable {
         
         self.id = snapshot.key
         self.email = email
+        databaseReference = Database.database().reference(withPath: "users/\(id)")
     }
     
     // MARK: - Functions

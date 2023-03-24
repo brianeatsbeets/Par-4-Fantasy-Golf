@@ -29,7 +29,7 @@ class ManageUsersTableViewController: UITableViewController {
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        leagueUsersRef = Database.database().reference(withPath: "leagues/" + self.league.id + "/memberIds")
+        leagueUsersRef = league.databaseReference.child("memberIds")
         super.init(coder: coder)
     }
     
@@ -126,12 +126,10 @@ class ManageUsersTableViewController: UITableViewController {
                     
                     // If a matching user was found, add the user to the league and add the league to the user's data
                     let matchedUser = matchingUsers.first!
-                    let leagueMembersRef = Database.database().reference(withPath: "leagues/\(self.league.id)/memberIds")
-                    leagueMembersRef.child(matchedUser.key).setValue(true)
+                    self.leagueUsersRef.child(matchedUser.key).setValue(true)
                     usersRef.child(matchedUser.key).child("leagues").child(self.league.id).setValue(true)
                 }
             }
-            
         }
         
         // Add the alert actions

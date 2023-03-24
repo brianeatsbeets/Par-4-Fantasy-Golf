@@ -89,12 +89,11 @@ class LeaguesTableViewController: UITableViewController {
         else { return }
         
         // Save the league to Firebase
-        let leagueRef = leaguesRef.child(league.id)
-        leagueRef.setValue(league.toAnyObject())
+        league.databaseReference.setValue(league.toAnyObject())
         
         // Save the league to the league members' data
         for user in league.members {
-            usersRef.child(user.id).child("leagues").child(league.id).setValue(true)
+            user.databaseReference.child("leagues").child(league.id).setValue(true)
         }
     }
     

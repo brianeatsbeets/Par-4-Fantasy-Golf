@@ -20,17 +20,13 @@ class ManageAthletesTableViewController: UITableViewController {
     
     lazy var dataSource = createDataSource()
     var league: League
-    
-    let leagueRef: DatabaseReference
     let userPicksRef: DatabaseReference
-    var refObservers: [DatabaseHandle] = []
     
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id)
-        self.userPicksRef = Database.database().reference(withPath: "leagues/" + self.league.id + "/picks/" + Auth.auth().currentUser!.uid)
+        self.userPicksRef = league.databaseReference.child("picks").child(Auth.auth().currentUser!.uid)
         super.init(coder: coder)
     }
     
@@ -77,7 +73,7 @@ class ManageAthletesTableViewController: UITableViewController {
               let sourceViewController = segue.source as? AddEditAthleteTableViewController,
               let newAthlete = sourceViewController.athlete else { return }
         
-        let leagueAthletesRef = leagueRef.child("athletes").child(newAthlete.id)
+        let leagueAthletesRef = league.databaseReference.child("athletes").child(newAthlete.id)
         
         // If we have an athlete with a matching ID, replace it; otherwise, append it
         if let athleteIndex = league.athletes.firstIndex(where: { $0.id == newAthlete.id }) {
@@ -170,8 +166,8 @@ extension ManageAthletesTableViewController {
         }
         
         // Variables that allow the custom data source to access the current league's firebase database reference to delete data
-        dataSource.leagueAthletesRef = leagueRef.child("athletes")
-        dataSource.leaguePicksRef = leagueRef.child("picks")
+        dataSource.leagueAthletesRef = league.databaseReference.child("athletes")
+        dataSource.leaguePicksRef = league.databaseReference.child("picks")
         dataSource.selectedLeague = self.league
         
         return dataSource

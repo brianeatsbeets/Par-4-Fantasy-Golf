@@ -26,14 +26,12 @@ class LeagueDetailTableViewController: UITableViewController {
     lazy var dataSource = createDataSource()
     var league: League
     
-    let leagueRef: DatabaseReference
     var refObservers: [DatabaseHandle] = []
     
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id)
         super.init(coder: coder)
     }
     
@@ -67,7 +65,7 @@ class LeagueDetailTableViewController: UITableViewController {
         super.viewWillDisappear(animated)
         
         // Remove all observers
-        refObservers.forEach(leagueRef.removeObserver(withHandle:))
+        refObservers.forEach(league.databaseReference.removeObserver(withHandle:))
         refObservers = []
     }
     
@@ -77,7 +75,7 @@ class LeagueDetailTableViewController: UITableViewController {
     func createLeagueDataObserver() {
         
         // Observe league data
-        let refHandle = leagueRef.observe(.value) { snapshot in
+        let refHandle = league.databaseReference.observe(.value) { snapshot in
             
             // Fetch updated league
             guard let newLeague = League(snapshot: snapshot) else {
@@ -109,13 +107,12 @@ class LeagueDetailTableViewController: UITableViewController {
             deleteLeagueAlert.dismiss(animated: true)
             
             // Remove the league from each user's leagues
-            let usersRef = Database.database().reference(withPath: "users/")
             for user in self.league.members {
-                usersRef.child(user.id).child("leagues").child(self.league.id).removeValue()
+                user.databaseReference.child("leagues").child(self.league.id).removeValue()
             }
             
             // Remove the league data
-            self.leagueRef.removeValue()
+            self.league.databaseReference.removeValue()
             
             // Return to LeaguesTableViewController
             self.navigationController?.popViewController(animated: true)
@@ -152,7 +149,7 @@ class LeagueDetailTableViewController: UITableViewController {
               let sourceViewController = segue.source as? MakePicksTableViewController else { return }
         
         let pickItems = sourceViewController.pickItems
-        let userPicksRef = leagueRef.child("picks").child(Auth.auth().currentUser!.uid)
+        let userPicksRef = league.databaseReference.child("picks").child(Auth.auth().currentUser!.uid)
         var pickDict = [String: Bool]()
         
         // Convert pickItems array to Firebase-style dictionary

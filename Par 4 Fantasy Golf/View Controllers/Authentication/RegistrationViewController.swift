@@ -55,8 +55,7 @@ class RegistrationViewController: UIViewController {
                 let user = User(id: userId, email: self.emailTextField.text ?? "")
                 
                 // Save the user to Firebase
-                let usersRef = self.ref.child(userId)
-                usersRef.setValue(user.toAnyObject())
+                user.databaseReference.setValue(user.toAnyObject())
                 
                 self.transitionToTabBarController()
             }

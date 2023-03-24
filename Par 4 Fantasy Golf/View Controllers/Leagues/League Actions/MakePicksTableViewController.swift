@@ -22,14 +22,10 @@ class MakePicksTableViewController: UITableViewController {
     var league: League
     var pickItems = [PickItem]()
     
-    let leagueRef: DatabaseReference
-    var refObservers: [DatabaseHandle] = []
-    
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id)
         super.init(coder: coder)
     }
     

@@ -21,6 +21,7 @@ struct League: Hashable {
     var id: String {
         uuid.uuidString
     }
+    let databaseReference: DatabaseReference
     var name: String
     var startDate: Double
     let creator: String
@@ -34,6 +35,7 @@ struct League: Hashable {
     // Standard init
     init(name: String, startDate: Double, members: [User] = []) {
         uuid = UUID()
+        databaseReference = Database.database().reference(withPath: "leagues/\(uuid)")
         self.name = name
         self.startDate = startDate
         
@@ -61,7 +63,8 @@ struct League: Hashable {
               let creator = value["creator"] as? String else { return nil }
         
         // Assign properties that will always have values
-        self.uuid = id
+        uuid = id
+        databaseReference = Database.database().reference(withPath: "leagues/\(uuid.uuidString)")
         self.name = name
         self.startDate = startDate
         self.creator = creator
