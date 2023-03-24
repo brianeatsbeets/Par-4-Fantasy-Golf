@@ -5,7 +5,6 @@
 //  Created by Aguirre, Brian P. on 3/3/23.
 //
 
-// TODO: Implement saving picks in unwind segue
 // TODO: Have Make Picks button show an alert when no athletes exist and prevent segue
 
 // MARK: - Imported libraries
@@ -101,7 +100,7 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // Remove league data and user associations
     @IBAction func deleteLeaguePressed(_ sender: Any) {
-        let deleteLeagueAlert = UIAlertController(title: "Are you sure?", message: "If you delete this league, all of the league data will be permenantly deleted.", preferredStyle: .alert)
+        let deleteLeagueAlert = UIAlertController(title: "Are you sure?", message: "All of the league data will be permenantly deleted.", preferredStyle: .alert)
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         let confirm = UIAlertAction(title: "Yes", style: .destructive) { [unowned deleteLeagueAlert] _ in
@@ -129,13 +128,20 @@ class LeagueDetailTableViewController: UITableViewController {
     }
     
     // MARK: - Navigation
-
+    
+    // Pass league data to ManageUsersTableViewController
     @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
         return ManageUsersTableViewController(coder: coder, league: league)
     }
     
+    // Pass league data to MakePicksTableViewController
     @IBSegueAction func segueToMakePicks(_ coder: NSCoder) -> MakePicksTableViewController? {
         return MakePicksTableViewController(coder: coder, league: league)
+    }
+    
+    // Pass league data to ManageAthletesTableViewController
+    @IBSegueAction func segueToManageAthletes(_ coder: NSCoder) -> ManageAthletesTableViewController? {
+        return ManageAthletesTableViewController(coder: coder, league: league)
     }
     
     // Handle the incoming new picks data
@@ -152,7 +158,7 @@ class LeagueDetailTableViewController: UITableViewController {
         // Convert pickItems array to Firebase-style dictionary
         for pick in pickItems {
             if pick.isSelected {
-                pickDict[pick.athlete] = true
+                pickDict[pick.athlete.id.uuidString] = true
             }
         }
         
@@ -166,10 +172,14 @@ class LeagueDetailTableViewController: UITableViewController {
 // This extention houses table view management functions that utilize the diffable data source API
 extension LeagueDetailTableViewController {
     
+    // MARK: - Section enum
+    
     // This enum declares table view sections
     enum Section: CaseIterable {
         case one
     }
+    
+    // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> UITableViewDiffableDataSource<Section, User> {

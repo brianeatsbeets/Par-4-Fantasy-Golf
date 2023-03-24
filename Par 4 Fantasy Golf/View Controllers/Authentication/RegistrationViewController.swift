@@ -23,12 +23,10 @@ class RegistrationViewController: UIViewController {
     
     // MARK: - Properties
     
-    let ref = Database.database().reference(withPath: "users")
-    
-    // IBOutlets
-    
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
+    
+    let ref = Database.database().reference(withPath: "users")
     
     // MARK: - View life cycle functions
 

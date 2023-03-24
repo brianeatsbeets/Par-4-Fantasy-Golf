@@ -44,7 +44,7 @@ class MakePicksTableViewController: UITableViewController {
         
         pickItems = getPickItems()
         tableView.dataSource = dataSource
-        title = league.name
+        title = "Picks for \(league.name)"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -64,7 +64,7 @@ class MakePicksTableViewController: UITableViewController {
             
             // If so, apply the existing user selections
             for athlete in league.athletes {
-                pickItems.append(PickItem(athlete: athlete, isSelected: userPicks.contains([athlete])))
+                pickItems.append(PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.id.uuidString])))
             }
         } else {
             
@@ -92,7 +92,7 @@ class MakePicksTableViewController: UITableViewController {
 
 // Helper struct to contain selection data
 struct PickItem: Hashable {
-    let athlete: String
+    let athlete: Athlete
     var isSelected: Bool
 }
 
@@ -101,10 +101,14 @@ struct PickItem: Hashable {
 // This extention houses table view management functions that utilize the diffable data source API
 extension MakePicksTableViewController {
     
+    // MARK: - Section enum
+    
     // This enum declares table view sections
     enum Section: CaseIterable {
         case one
     }
+    
+    // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> UITableViewDiffableDataSource<Section, PickItem> {

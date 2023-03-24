@@ -7,7 +7,6 @@
 
 // MARK: - Imported libraries
 
-import Foundation
 import FirebaseAuth
 import FirebaseDatabase
 
@@ -24,7 +23,7 @@ struct League: Hashable {
     let creator: String
     var memberIds: [String]
     var members: [User]
-    var athletes: [String]
+    var athletes: [Athlete]
     var picks: [String: [String]]
     
     // MARK: - Initializers
@@ -44,32 +43,51 @@ struct League: Hashable {
         
         self.memberIds = members.map { $0.id }
         self.members = members
-        self.athletes = [String]()
-        self.picks = [String: [String]]()
+        self.athletes = []
+        self.picks = [:]
     }
     
     // Init with snapshot data
     init?(snapshot: DataSnapshot) {
         
-        // Validate and set the incoming values
+        // Validate the incoming values
         guard let value = snapshot.value as? [String: AnyObject],
               let id = UUID(uuidString: snapshot.key),
               let name = value["name"] as? String,
               let startDate = value["startDate"] as? Double,
-              let creator = value["creator"] as? String,
-              let memberIds = value["memberIds"] as? [String: Bool],
-              let athletes = value["athletes"] as? [String: Bool],
-              let picks = value["picks"] as? [String: [String: Bool]] else { return nil }
+              let creator = value["creator"] as? String else { return nil }
         
+        // Assign properties that will always have values
         self.id = id
         self.name = name
         self.startDate = startDate
         self.creator = creator
-        self.memberIds = memberIds.map { $0.key }
         self.members = []
-        self.athletes = athletes.map { $0.key }
-        self.picks = picks.reduce(into: [String: [String]]()) {
-            $0[$1.key] = $1.value.map { $0.key }
+        
+        // Conditionally assign properties that may or may not have values
+        if let memberIds = value["memberIds"] as? [String: Bool] {
+            self.memberIds = memberIds.map { $0.key }
+        } else {
+            self.memberIds = []
+        }
+        
+        self.athletes = []
+        if let athletes = value["athletes"] as? [String: [String: AnyObject]] {
+            for athlete in athletes {
+                if let athleteFromSnapshot = Athlete(snapshot: snapshot.childSnapshot(forPath: "athletes/\(athlete.key)")) {
+                    self.athletes.append(athleteFromSnapshot)
+                } else {
+                    print("Couldn't init athlete from snapshot")
+                }
+            }
+        }
+        
+        if let picks = value["picks"] as? [String: [String: Bool]] {
+            self.picks = picks.reduce(into: [String: [String]]()) {
+                $0[$1.key] = $1.value.map { $0.key }
+            }
+        } else {
+            self.picks = [:]
         }
     }
     
@@ -85,9 +103,9 @@ struct League: Hashable {
         }
         
         // Convert athletes array to Firebase-style dictionary
-        var athleteDict = [String: Bool]()
+        var athleteDict = [String: Any]()
         for athlete in athletes {
-            athleteDict[athlete] = true
+            athleteDict[athlete.id.uuidString] = athlete.toAnyObject()
         }
         
         // Convert picks dictionary to Firebase-style dictionary

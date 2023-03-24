@@ -20,9 +20,6 @@ class LeagueTableViewCell: UITableViewCell {
 
     // Set up the cell UI elements
     func configure(with league: League) {
-//        nameLabel.text = league.creator
-//        startDateLabel.text = league.startDate.formattedDate()
-        
         var config = defaultContentConfiguration()
         config.text = league.name
         config.secondaryText = "Start date: " + league.startDate.formattedDate()

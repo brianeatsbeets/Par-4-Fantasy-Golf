@@ -21,8 +21,6 @@ class SignInViewController: UIViewController {
     
     // MARK: - Properties
     
-    // IBOutlets
-    
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     

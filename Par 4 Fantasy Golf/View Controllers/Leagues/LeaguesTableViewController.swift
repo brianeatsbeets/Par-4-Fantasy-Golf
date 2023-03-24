@@ -5,7 +5,7 @@
 //  Created by Aguirre, Brian P. on 3/1/23.
 //
 
-// TODO: Figure out why league sometimes updates after returning from league details (maybe related to sorting?)
+// TODO: Figure out why leagues sometimes update after returning from league details (maybe related to sorting?)
 
 // MARK: - Imported libraries
 
@@ -77,6 +77,8 @@ class LeaguesTableViewController: UITableViewController {
         refObservers.append(refHandle)
     }
     
+    // MARK: - Navigation
+    
     // Handle the incoming new league data
     @IBAction func unwindFromCreateLeague(segue: UIStoryboardSegue) {
         
@@ -110,8 +112,6 @@ class LeaguesTableViewController: UITableViewController {
         // If so, pass the tapped post to view/edit
         return LeagueDetailTableViewController(coder: coder, league: league)
     }
-    
-    
 }
 
 // MARK: - Extensions
@@ -119,10 +119,14 @@ class LeaguesTableViewController: UITableViewController {
 // This extention houses table view management functions that utilize the diffable data source API
 extension LeaguesTableViewController {
     
+    // MARK: - Section enum
+    
     // This enum declares table view sections
     enum Section: CaseIterable {
         case one
     }
+    
+    // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> UITableViewDiffableDataSource<Section, League> {

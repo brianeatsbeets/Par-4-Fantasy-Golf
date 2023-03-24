@@ -176,14 +176,19 @@
                         <centerItemGroups>
                             <barButtonItemGroup customizationDisposition="fixed" id="Sb5-6h-Dd8">
                                 <barButtonItems>
+                                    <barButtonItem title="Make Picks" id="nRR-j2-5FW">
+                                        <connections>
+                                            <segue destination="6fB-c1-4RM" kind="presentation" id="KbW-xQ-KlO"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem title="Manage Users" id="PaB-d9-Qmv" userLabel="Manage Users">
                                         <connections>
                                             <segue destination="4W3-j6-8eq" kind="show" destinationCreationSelector="segueToManageUsers:" id="4yg-xd-1Zd"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Make Picks" id="nRR-j2-5FW">
+                                    <barButtonItem title="Manage Athletes" id="Buw-IN-skb" userLabel="Manage Athletes">
                                         <connections>
-                                            <segue destination="6fB-c1-4RM" kind="presentation" modalPresentationStyle="fullScreen" id="KbW-xQ-KlO"/>
+                                            <segue destination="gXU-r8-atz" kind="show" destinationCreationSelector="segueToManageAthletes:" id="4gV-QP-BYg"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem title="Delete League" id="pbC-Ly-OLH">
@@ -209,7 +214,7 @@
             <objects>
                 <tableViewController id="fXs-Nf-Z1i" customClass="MakePicksTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="MZI-hM-4Eg">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="787"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
@@ -279,6 +284,152 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TwC-Kj-3Wl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="7328" y="-97"/>
+        </scene>
+        <!--Manage Athletes-->
+        <scene sceneID="Jjo-ZG-Zab">
+            <objects>
+                <tableViewController title="Manage Athletes" id="gXU-r8-atz" customClass="ManageAthletesTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="zy5-zR-p4G">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AthleteCell" id="JzN-65-whl">
+                                <rect key="frame" x="0.0" y="50" width="390" height="43.666667938232422"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JzN-65-whl" id="KwA-Bv-dXl">
+                                    <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="YhR-Xk-9UW" kind="presentation" identifier="showExistingAthlete" id="blq-Xm-rGH"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="gXU-r8-atz" id="X9R-BX-tDy"/>
+                            <outlet property="delegate" destination="gXU-r8-atz" id="gco-3e-hBS"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Manage Athletes" id="RP8-nf-NaQ">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="G6j-oK-ekF">
+                            <connections>
+                                <segue destination="YhR-Xk-9UW" kind="presentation" identifier="createNewAthlete" id="qAz-oj-d79"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RQp-Tb-xTk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7328" y="578"/>
+        </scene>
+        <!--New Athlete-->
+        <scene sceneID="SeE-jY-4JA">
+            <objects>
+                <tableViewController id="BsD-vQ-KIB" customClass="AddEditAthleteTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="nbM-FJ-4Pa">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="787"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <sections>
+                            <tableViewSection headerTitle="Name" id="Mzv-AL-FSq">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zLp-v0-Qcg">
+                                        <rect key="frame" x="0.0" y="50" width="390" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zLp-v0-Qcg" id="8JJ-J4-Plo">
+                                            <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Rd9-Yl-oWw">
+                                                    <rect key="frame" x="20" y="4" width="350" height="34"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="textEditingChanged:" destination="BsD-vQ-KIB" eventType="editingChanged" id="7g4-ch-D00"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Odds" id="uqF-zT-ivg">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="J0v-LI-Kw2">
+                                        <rect key="frame" x="0.0" y="171.66666793823242" width="390" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="J0v-LI-Kw2" id="4Ql-yV-jbF">
+                                            <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="C27-Hc-6fj">
+                                                    <rect key="frame" x="20" y="5" width="350" height="34"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                    <connections>
+                                                        <action selector="textEditingChanged:" destination="BsD-vQ-KIB" eventType="editingChanged" id="YRl-zO-dgx"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Value" id="T6X-HE-Gc2">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zCT-fp-xZk">
+                                        <rect key="frame" x="0.0" y="293.33333587646484" width="390" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zCT-fp-xZk" id="bPb-54-Twx">
+                                            <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" id="FLf-51-RzC">
+                                                    <rect key="frame" x="20" y="5" width="350" height="34"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                    <connections>
+                                                        <action selector="textEditingChanged:" destination="BsD-vQ-KIB" eventType="editingChanged" id="JqR-hb-x6l"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="BsD-vQ-KIB" id="xt4-94-iJY"/>
+                            <outlet property="delegate" destination="BsD-vQ-KIB" id="WWL-L6-Dg3"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="New Athlete" id="uN4-Do-Ol3">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="1q2-BV-XSs">
+                            <connections>
+                                <segue destination="7kG-3k-hay" kind="unwind" unwindAction="unwindFromAddEditAthleteWithSegue:" id="dIs-1M-4bL"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="JQq-1k-t4d">
+                            <connections>
+                                <segue destination="7kG-3k-hay" kind="unwind" identifier="unwindSaveAthlete" unwindAction="unwindFromAddEditAthleteWithSegue:" id="gWr-OQ-WKu"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="nameTextField" destination="Rd9-Yl-oWw" id="8TY-0V-7ln"/>
+                        <outlet property="oddsTextField" destination="C27-Hc-6fj" id="GrT-Kx-AjO"/>
+                        <outlet property="saveButton" destination="JQq-1k-t4d" id="oKr-50-t2O"/>
+                        <outlet property="valueTextField" destination="FLf-51-RzC" id="ftb-JJ-7Xs"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="u2N-8d-Yfq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="7kG-3k-hay" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="9186.1538461538457" y="577.96208530805688"/>
         </scene>
         <!--Create League-->
         <scene sceneID="S54-ja-mGi">
@@ -499,7 +650,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="6fB-c1-4RM" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="E50-zY-HEY">
-                        <rect key="frame" x="0.0" y="47" width="390" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -511,7 +662,28 @@
             </objects>
             <point key="canvasLocation" x="7327.6923076923076" y="-769.19431279620846"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="2T3-aB-8zq">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="YhR-Xk-9UW" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="uU9-Sf-9IK">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="56"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BsD-vQ-KIB" kind="relationship" relationship="rootViewController" destinationCreationSelector="segueToAddEditAthlete:sender:" id="kck-DY-i9Z"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="G41-zE-RFk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8256.9230769230762" y="577.96208530805688"/>
+        </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="qAz-oj-d79"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

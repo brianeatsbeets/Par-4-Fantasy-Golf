@@ -148,12 +148,18 @@ class ManageUsersTableViewController: UITableViewController {
 // This extention houses table view management functions that utilize the diffable data source API
 extension ManageUsersTableViewController {
     
+    // MARK: - Diffable data source subclass
+    
     // Subclass of UITableViewDiffableDataSource that supports swipe-to-delete
     class SwipeToDeleteDataSource: UITableViewDiffableDataSource<Section, User> {
+        
+        // MARK: - Properties
         
         var leagueUsersRef = DatabaseReference()
         var usersRef = DatabaseReference()
         var selectedLeague: League!
+        
+        // MARK: - Other functions
         
         // Enable swipe-to-delete
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -167,8 +173,10 @@ extension ManageUsersTableViewController {
             }
         }
         
+        // Determine behavior when a row is deleted
         override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-            guard let user = itemIdentifier(for: indexPath) else { return }
+            guard let user = itemIdentifier(for: indexPath),
+                  editingStyle == .delete else { return }
             
             // Remove the user's id from the league's memberIds and remove the league's id from the user's league ids
             leagueUsersRef.child(user.id).removeValue()
@@ -176,10 +184,14 @@ extension ManageUsersTableViewController {
         }
     }
     
+    // MARK: - Section enum
+    
     // This enum declares table view sections
     enum Section: CaseIterable {
         case one
     }
+    
+    // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> SwipeToDeleteDataSource {
@@ -200,7 +212,7 @@ extension ManageUsersTableViewController {
         }
         
         // Variables that allow the custom data source to access the current league's firebase database reference to delete data
-        dataSource.leagueUsersRef = Database.database().reference(withPath: "leagues/" + self.league.id.uuidString + "/memberIds")
+        dataSource.leagueUsersRef = leagueUsersRef
         dataSource.usersRef = Database.database().reference(withPath: "users")
         dataSource.selectedLeague = self.league
         

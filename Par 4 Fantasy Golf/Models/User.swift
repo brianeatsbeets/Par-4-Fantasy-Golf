@@ -7,8 +7,6 @@
 
 // MARK: - Imported libraries
 
-import Foundation
-import FirebaseAuth
 import FirebaseDatabase
 
 // MARK: - Main struct

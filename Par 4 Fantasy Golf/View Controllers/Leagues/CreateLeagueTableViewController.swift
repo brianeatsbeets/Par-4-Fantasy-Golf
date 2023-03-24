@@ -21,8 +21,6 @@ class CreateLeagueTableViewController: UITableViewController {
     
     var league: League?
     
-    // IBOutlets
-    
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var startDatePicker: UIDatePicker!
     
@@ -32,14 +30,12 @@ class CreateLeagueTableViewController: UITableViewController {
         super.viewDidLoad()
     }
     
-    // MARK: - Other functions
-    
     // MARK: - Navigation
     
     // Compile the league data for sending back to the leagues table view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "createLeagueUnwind" {
-            league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, members: [User(id: Auth.auth().currentUser?.uid ?? "unknown uid", email: Auth.auth().currentUser?.email ?? "unknown email")])
-        }
+        guard segue.identifier == "createLeagueUnwind" else { return }
+        
+        league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, members: [User(id: Auth.auth().currentUser?.uid ?? "unknown uid", email: Auth.auth().currentUser?.email ?? "unknown email")])
     }
 }
