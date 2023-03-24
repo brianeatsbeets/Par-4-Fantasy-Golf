@@ -29,8 +29,8 @@ class ManageAthletesTableViewController: UITableViewController {
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id.uuidString)
-        self.userPicksRef = Database.database().reference(withPath: "leagues/" + self.league.id.uuidString + "/picks/" + Auth.auth().currentUser!.uid)
+        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id)
+        self.userPicksRef = Database.database().reference(withPath: "leagues/" + self.league.id + "/picks/" + Auth.auth().currentUser!.uid)
         super.init(coder: coder)
     }
     
@@ -63,7 +63,7 @@ class ManageAthletesTableViewController: UITableViewController {
         if let athleteCell = sender as? UITableViewCell,
            let indexPath = tableView.indexPath(for: athleteCell),
            let athlete = dataSource.itemIdentifier(for: indexPath) {
-            return AddEditAthleteTableViewController(coder: coder, athlete: athlete, athleteRefPath: "leagues/\(league.id.uuidString)/athletes/\(athlete.id.uuidString)")
+            return AddEditAthleteTableViewController(coder: coder, athlete: athlete, athleteRefPath: "leagues/\(league.id)/athletes/\(athlete.id)")
         } else {
             return AddEditAthleteTableViewController(coder: coder, athlete: nil, athleteRefPath: nil)
         }
@@ -77,7 +77,7 @@ class ManageAthletesTableViewController: UITableViewController {
               let sourceViewController = segue.source as? AddEditAthleteTableViewController,
               let newAthlete = sourceViewController.athlete else { return }
         
-        let leagueAthletesRef = leagueRef.child("athletes").child(newAthlete.id.uuidString)
+        let leagueAthletesRef = leagueRef.child("athletes").child(newAthlete.id)
         
         // If we have an athlete with a matching ID, replace it; otherwise, append it
         if let athleteIndex = league.athletes.firstIndex(where: { $0.id == newAthlete.id }) {
@@ -126,13 +126,13 @@ extension ManageAthletesTableViewController {
             if let index = selectedLeague.athletes.firstIndex(where: { $0.id == athlete.id }) {
                 selectedLeague.athletes.remove(at: index)
             }
-            leagueAthletesRef.child(athlete.id.uuidString).removeValue()
+            leagueAthletesRef.child(athlete.id).removeValue()
             
             // Remove the athlete pick from each user's picks in this league, both in the local data source and in firebase
             for userPicks in selectedLeague.picks {
-                if let index = userPicks.value.firstIndex(of: athlete.id.uuidString) {
+                if let index = userPicks.value.firstIndex(of: athlete.id) {
                     selectedLeague.picks[userPicks.key]?.remove(at: index)
-                    leaguePicksRef.child(userPicks.key).child(athlete.id.uuidString).removeValue()
+                    leaguePicksRef.child(userPicks.key).child(athlete.id).removeValue()
                 }
             }
             

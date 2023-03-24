@@ -29,7 +29,7 @@ class ManageUsersTableViewController: UITableViewController {
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        leagueUsersRef = Database.database().reference(withPath: "leagues/" + self.league.id.uuidString + "/memberIds")
+        leagueUsersRef = Database.database().reference(withPath: "leagues/" + self.league.id + "/memberIds")
         super.init(coder: coder)
     }
     
@@ -128,7 +128,7 @@ class ManageUsersTableViewController: UITableViewController {
                     let matchedUser = matchingUsers.first!
                     let leagueMembersRef = Database.database().reference(withPath: "leagues/\(self.league.id)/memberIds")
                     leagueMembersRef.child(matchedUser.key).setValue(true)
-                    usersRef.child(matchedUser.key).child("leagues").child(self.league.id.uuidString).setValue(true)
+                    usersRef.child(matchedUser.key).child("leagues").child(self.league.id).setValue(true)
                 }
             }
             
@@ -180,7 +180,7 @@ extension ManageUsersTableViewController {
             
             // Remove the user's id from the league's memberIds and remove the league's id from the user's league ids
             leagueUsersRef.child(user.id).removeValue()
-            usersRef.child(user.id).child("leagues").child(selectedLeague.id.uuidString).removeValue()
+            usersRef.child(user.id).child("leagues").child(selectedLeague.id).removeValue()
         }
     }
     

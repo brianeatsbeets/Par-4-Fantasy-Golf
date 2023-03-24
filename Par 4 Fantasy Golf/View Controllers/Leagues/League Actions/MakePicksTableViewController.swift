@@ -29,7 +29,7 @@ class MakePicksTableViewController: UITableViewController {
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id.uuidString)
+        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id)
         super.init(coder: coder)
     }
     
@@ -64,7 +64,7 @@ class MakePicksTableViewController: UITableViewController {
             
             // If so, apply the existing user selections
             for athlete in league.athletes {
-                pickItems.append(PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.id.uuidString])))
+                pickItems.append(PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.id])))
             }
         } else {
             

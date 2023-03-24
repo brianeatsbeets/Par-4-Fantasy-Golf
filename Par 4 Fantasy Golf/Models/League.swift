@@ -17,7 +17,10 @@ struct League: Hashable {
     
     // MARK: - Properties
     
-    let id: UUID
+    let uuid: UUID
+    var id: String {
+        uuid.uuidString
+    }
     var name: String
     var startDate: Double
     let creator: String
@@ -30,7 +33,7 @@ struct League: Hashable {
     
     // Standard init
     init(name: String, startDate: Double, members: [User] = []) {
-        id = UUID()
+        uuid = UUID()
         self.name = name
         self.startDate = startDate
         
@@ -58,7 +61,7 @@ struct League: Hashable {
               let creator = value["creator"] as? String else { return nil }
         
         // Assign properties that will always have values
-        self.id = id
+        self.uuid = id
         self.name = name
         self.startDate = startDate
         self.creator = creator
@@ -105,7 +108,7 @@ struct League: Hashable {
         // Convert athletes array to Firebase-style dictionary
         var athleteDict = [String: Any]()
         for athlete in athletes {
-            athleteDict[athlete.id.uuidString] = athlete.toAnyObject()
+            athleteDict[athlete.id] = athlete.toAnyObject()
         }
         
         // Convert picks dictionary to Firebase-style dictionary

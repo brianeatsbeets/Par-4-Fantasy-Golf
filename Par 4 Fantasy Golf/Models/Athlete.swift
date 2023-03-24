@@ -16,7 +16,10 @@ struct Athlete: Hashable {
     
     // MARK: - Properties
     
-    let id: UUID
+    let uuid: UUID
+    var id: String {
+        uuid.uuidString
+    }
     var name: String
     var odds: Int
     var value: Int
@@ -25,7 +28,7 @@ struct Athlete: Hashable {
     
     // Standard init
     init(id: UUID = UUID(), name: String, odds: Int, value: Int) {
-        self.id = id
+        self.uuid = id
         self.name = name
         self.odds = odds
         self.value = value
@@ -41,7 +44,7 @@ struct Athlete: Hashable {
               let odds = value["odds"] as? Int,
               let value = value["value"] as? Int else { return nil }
         
-        self.id = id
+        self.uuid = id
         self.name = name
         self.odds = odds
         self.value = value

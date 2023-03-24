@@ -33,7 +33,7 @@ class LeagueDetailTableViewController: UITableViewController {
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id.uuidString)
+        self.leagueRef = Database.database().reference(withPath: "leagues/" + league.id)
         super.init(coder: coder)
     }
     
@@ -111,7 +111,7 @@ class LeagueDetailTableViewController: UITableViewController {
             // Remove the league from each user's leagues
             let usersRef = Database.database().reference(withPath: "users/")
             for user in self.league.members {
-                usersRef.child(user.id).child("leagues").child(self.league.id.uuidString).removeValue()
+                usersRef.child(user.id).child("leagues").child(self.league.id).removeValue()
             }
             
             // Remove the league data
@@ -158,7 +158,7 @@ class LeagueDetailTableViewController: UITableViewController {
         // Convert pickItems array to Firebase-style dictionary
         for pick in pickItems {
             if pick.isSelected {
-                pickDict[pick.athlete.id.uuidString] = true
+                pickDict[pick.athlete.id] = true
             }
         }
         
