@@ -18,9 +18,13 @@ class MakePicksTableViewController: UITableViewController {
     
     // MARK: - Properties
     
+    @IBOutlet var budgetLabel: UILabel!
+    @IBOutlet var spentLabel: UILabel!
+    
     lazy var dataSource = createDataSource()
     var league: League
     var pickItems = [PickItem]()
+    var totalSpent = 0
     
     // MARK: - Initializers
     
@@ -41,6 +45,8 @@ class MakePicksTableViewController: UITableViewController {
         pickItems = getPickItems()
         tableView.dataSource = dataSource
         title = "Picks for \(league.name)"
+        budgetLabel.text = "Budget: $\(league.budget)"
+        spentLabel.text = "Total Spent: $\(totalSpent)"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,7 +66,11 @@ class MakePicksTableViewController: UITableViewController {
             
             // If so, apply the existing user selections
             for athlete in league.athletes {
-                pickItems.append(PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.id])))
+                let pickItem = PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.id]))
+                if pickItem.isSelected {
+                    totalSpent += pickItem.athlete.value
+                }
+                pickItems.append(pickItem)
             }
         } else {
             
@@ -73,14 +83,32 @@ class MakePicksTableViewController: UITableViewController {
         return pickItems
     }
     
-    // Update the data source when a cell is tapped
+    // Update the data source when a cell is selected
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let dataSourcePick = dataSource.itemIdentifier(for: indexPath),
               let index = pickItems.firstIndex(of: dataSourcePick) else { return }
         
-        tableView.deselectRow(at: indexPath, animated: false)
-        pickItems[index].isSelected.toggle()
-        updateTableView(animated: false)
+        let remainingBudget = league.budget - totalSpent
+        
+        // Helper function to reduce code duplication
+        let updatePicksTable = { [self] in
+            pickItems[index].isSelected.toggle()
+            spentLabel.text = "Total Spent: $\(totalSpent)"
+            updateTableView(animated: true)
+        }
+        
+        // Check if the pick was already selected
+        if pickItems[index].isSelected {
+            totalSpent -= pickItems[index].athlete.value
+            updatePicksTable()
+            
+        // If not, make sure we have adequate funds to make the pick
+        } else if pickItems[index].athlete.value <= remainingBudget {
+            totalSpent += pickItems[index].athlete.value
+            updatePicksTable()
+        } else {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
     }
 }
 
@@ -109,11 +137,11 @@ extension MakePicksTableViewController {
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> UITableViewDiffableDataSource<Section, PickItem> {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, selection in
+        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, pickItem in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "PickCell", for: indexPath) as! PickTableViewCell
-            cell.configure(with: selection)
+            cell.configure(with: pickItem)
 
             return cell
         }

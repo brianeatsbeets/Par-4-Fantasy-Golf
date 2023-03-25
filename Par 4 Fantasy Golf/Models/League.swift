@@ -29,11 +29,12 @@ struct League: Hashable {
     var members: [User]
     var athletes: [Athlete]
     var picks: [String: [String]]
+    let budget: Int
     
     // MARK: - Initializers
     
     // Standard init
-    init(name: String, startDate: Double, members: [User] = []) {
+    init(name: String, startDate: Double, members: [User] = [], budget: Int) {
         uuid = UUID()
         databaseReference = Database.database().reference(withPath: "leagues/\(uuid)")
         self.name = name
@@ -50,6 +51,7 @@ struct League: Hashable {
         self.members = members
         self.athletes = []
         self.picks = [:]
+        self.budget = budget
     }
     
     // Init with snapshot data
@@ -60,7 +62,8 @@ struct League: Hashable {
               let id = UUID(uuidString: snapshot.key),
               let name = value["name"] as? String,
               let startDate = value["startDate"] as? Double,
-              let creator = value["creator"] as? String else { return nil }
+              let creator = value["creator"] as? String,
+            let budget = value["budget"] as? Int else { return nil }
         
         // Assign properties that will always have values
         uuid = id
@@ -69,6 +72,7 @@ struct League: Hashable {
         self.startDate = startDate
         self.creator = creator
         self.members = []
+        self.budget = budget
         
         // Conditionally assign properties that may or may not have values
         if let memberIds = value["memberIds"] as? [String: Bool] {
@@ -130,7 +134,8 @@ struct League: Hashable {
             "creator": creator,
             "memberIds": memberDict,
             "athletes": athleteDict,
-            "picks": pickDict
+            "picks": pickDict,
+            "budget": budget
         ]
     }
     

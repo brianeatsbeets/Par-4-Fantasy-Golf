@@ -23,6 +23,7 @@ class CreateLeagueTableViewController: UITableViewController {
     
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var startDatePicker: UIDatePicker!
+    @IBOutlet var budgetTextField: UITextField!
     
     // MARK: - View life cycle functions
     
@@ -36,6 +37,6 @@ class CreateLeagueTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard segue.identifier == "createLeagueUnwind" else { return }
         
-        league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, members: [User(id: Auth.auth().currentUser?.uid ?? "unknown uid", email: Auth.auth().currentUser?.email ?? "unknown email")])
+        league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, members: [User(id: Auth.auth().currentUser?.uid ?? "unknown uid", email: Auth.auth().currentUser?.email ?? "unknown email")], budget: Int(budgetTextField.text ?? "") ?? 20)
     }
 }
