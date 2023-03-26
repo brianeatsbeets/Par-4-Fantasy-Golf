@@ -19,9 +19,24 @@ class LeagueStandingTableViewCell: UITableViewCell {
     // MARK: - Functions
     
     // Set up the cell UI elements
-    func configure(with user: User) {
+    func configure(with standing: LeagueStanding) {
         var config = defaultContentConfiguration()
-        config.text = user.email
+        config.text = "\(standing.user.email): \(standing.formattedScore)"
+        
+        // Format the top athletes listing
+        let topAthletesFormatted = {
+            var text = "Picks: "
+            for athlete in standing.topAthletes {
+                text.append(athlete.name + ": " + athlete.formattedScore)
+                if athlete != standing.topAthletes.last {
+                    text.append(" | ")
+                }
+            }
+            
+            return text
+        }()
+        
+        config.secondaryText = topAthletesFormatted
         contentConfiguration = config
     }
 

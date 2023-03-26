@@ -103,6 +103,12 @@ struct League: Hashable {
     
     // MARK: - Functions
     
+    // TODO: See if we can get this to work
+//    // Populate league members with User objects constructed from league memberIds
+//    mutating func populateMembers() async {
+//        members = await User.fetchMultipleUsers(from: memberIds)
+//    }
+    
     // Convert the league to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
         

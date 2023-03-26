@@ -31,6 +31,8 @@
 		E1C4B11929A560E300F0DF67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1C4B11729A560E300F0DF67 /* LaunchScreen.storyboard */; };
 		E1C4B12629A6C1DD00F0DF67 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B12529A6C1DD00F0DF67 /* SignInViewController.swift */; };
 		E1C4B12829A6C89C00F0DF67 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B12729A6C89C00F0DF67 /* AccountViewController.swift */; };
+		E1E0179C29CFD14600A5A546 /* LeagueStanding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0179B29CFD14600A5A546 /* LeagueStanding.swift */; };
+		E1E0179E29CFD17A00A5A546 /* PickItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0179D29CFD17A00A5A546 /* PickItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +60,8 @@
 		E1C4B11A29A560E300F0DF67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E1C4B12529A6C1DD00F0DF67 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		E1C4B12729A6C89C00F0DF67 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
+		E1E0179B29CFD14600A5A546 /* LeagueStanding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueStanding.swift; sourceTree = "<group>"; };
+		E1E0179D29CFD17A00A5A546 /* PickItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +83,8 @@
 				E138DE5E29AE89E400BBE47F /* League.swift */,
 				E1AB1C3929B29F9E002A354B /* User.swift */,
 				E19E3EAB29CD33F2008A7D2E /* Athlete.swift */,
+				E1E0179B29CFD14600A5A546 /* LeagueStanding.swift */,
+				E1E0179D29CFD17A00A5A546 /* PickItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -269,9 +275,11 @@
 				E16C1E7529C3970E003F037B /* ManageUsersTableViewController.swift in Sources */,
 				E1AB1C3429B12A19002A354B /* LeagueTableViewCell.swift in Sources */,
 				E19E3EA629CC75AB008A7D2E /* MakePicksTableViewController.swift in Sources */,
+				E1E0179E29CFD17A00A5A546 /* PickItem.swift in Sources */,
 				E1C4B12829A6C89C00F0DF67 /* AccountViewController.swift in Sources */,
 				E19E3EA829CC897D008A7D2E /* PickTableViewCell.swift in Sources */,
 				E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */,
+				E1E0179C29CFD14600A5A546 /* LeagueStanding.swift in Sources */,
 				E138DE5F29AE89E400BBE47F /* League.swift in Sources */,
 				E1AB1C3A29B29F9E002A354B /* User.swift in Sources */,
 				E19E3EAA29CD33DC008A7D2E /* ManageAthletesTableViewController.swift in Sources */,

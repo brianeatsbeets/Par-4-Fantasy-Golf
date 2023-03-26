@@ -112,14 +112,6 @@ class MakePicksTableViewController: UITableViewController {
     }
 }
 
-// MARK: - Other models
-
-// Helper struct to contain selection data
-struct PickItem: Hashable {
-    let athlete: Athlete
-    var isSelected: Bool
-}
-
 // MARK: - Extensions
 
 // This extention houses table view management functions that utilize the diffable data source API

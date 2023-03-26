@@ -6,6 +6,7 @@
 //
 
 // TODO: Have Make Picks button show an alert when no athletes exist and prevent segue
+// TODO: Prevent all rows from reloading when saving updated picks
 
 // MARK: - Imported libraries
 
@@ -25,8 +26,7 @@ class LeagueDetailTableViewController: UITableViewController {
     
     lazy var dataSource = createDataSource()
     var league: League
-    
-    var refObservers: [DatabaseHandle] = []
+    var standings = [LeagueStanding]()
     
     // MARK: - Initializers
     
@@ -44,7 +44,6 @@ class LeagueDetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = dataSource
         title = league.name
         
         // If the current user is not the league owner, hide administrative actions
@@ -52,48 +51,61 @@ class LeagueDetailTableViewController: UITableViewController {
             leagueActionBarButtonItemGroup.isHidden = true
             navigationItem.rightBarButtonItem = makePicksButton
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
-        // Create league data observer
-        createLeagueDataObserver()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        tableView.dataSource = dataSource
         
-        // Remove all observers
-        refObservers.forEach(league.databaseReference.removeObserver(withHandle:))
-        refObservers = []
+        // Populate league members and standings
+        Task {
+            league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
+            await calculateLeagueStandings()
+            updateTableView()
+        }
     }
     
     // MARK: - Other functions
     
-    // Create the reference observer for league data
-    func createLeagueDataObserver() {
+    // Fetch the most recent league data
+    // TODO: Use observeSingleEvent instead?
+    func fetchUpdatedLeagueData() async {
+        do {
+            let snapshot = try await league.databaseReference.getData()
+            if let newLeague = League(snapshot: snapshot) {
+                league = newLeague
+                league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
+                await self.calculateLeagueStandings()
+            } else {
+                print("Error creating league")
+            }
+        } catch {
+            print("Error caught")
+        }
+    }
+    
+    // Calculate the league standings
+    // TODO: Figure out if it would be more efficient to have league.picks be [User: [Athlete]] vs. [String: [String]] (probably would be)
+    func calculateLeagueStandings() async {
+        print("Calculating league standings for \(league.members.count) members...")
         
-        // Observe league data
-        let refHandle = league.databaseReference.observe(.value) { snapshot in
+        var newStandings = [LeagueStanding]()
+        
+        for user in league.members {
+            guard let userPicks = league.picks[user.id] else { continue }
             
-            // Fetch updated league
-            guard let newLeague = League(snapshot: snapshot) else {
-                print("Error fetching league detail data")
-                return
+            let athletes = await Athlete.fetchMultipleAthletes(from: userPicks, leagueId: league.id)
+            
+            var topAthletes = [Athlete]()
+            
+            if !athletes.isEmpty {
+                let sortedAthletes = athletes.sorted(by: <)
+                let athleteCount = sortedAthletes.count >= 4 ? 3 : sortedAthletes.count - 1
+                topAthletes = Array(sortedAthletes[0...athleteCount])
             }
             
-            self.league = newLeague
-            self.title = newLeague.name
-            
-            // Fetch users via task and update the table view when finished
-            Task {
-                self.league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
-                self.updateTableView()
-            }
+            let userStanding = LeagueStanding(leagueId: league.id, user: user, topAthletes: topAthletes)
+            newStandings.append(userStanding)
         }
         
-        refObservers.append(refHandle)
+        standings = newStandings.sorted(by: <)
     }
     
     // Remove league data and user associations
@@ -161,6 +173,12 @@ class LeagueDetailTableViewController: UITableViewController {
         
         // Save the picks to Firebase
         userPicksRef.setValue(pickDict)
+        
+        // Fetch the most recent league data and refresh the table view
+        Task {
+            await fetchUpdatedLeagueData()
+            updateTableView()
+        }
     }
 }
 
@@ -179,13 +197,13 @@ extension LeagueDetailTableViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, User> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, LeagueStanding> {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, user in
+        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, standing in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! LeagueStandingTableViewCell
-            cell.configure(with: user)
+            cell.configure(with: standing)
 
             return cell
         }
@@ -193,9 +211,9 @@ extension LeagueDetailTableViewController {
     
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, User>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, LeagueStanding>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(league.members)
+        snapshot.appendItems(standings)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
