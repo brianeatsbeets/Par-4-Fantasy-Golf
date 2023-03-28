@@ -33,6 +33,7 @@
 		E1C4B12829A6C89C00F0DF67 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B12729A6C89C00F0DF67 /* AccountViewController.swift */; };
 		E1E0179C29CFD14600A5A546 /* LeagueStanding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0179B29CFD14600A5A546 /* LeagueStanding.swift */; };
 		E1E0179E29CFD17A00A5A546 /* PickItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0179D29CFD17A00A5A546 /* PickItem.swift */; };
+		E1E824B329D26EEA0094903D /* DenormalizedLeague.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E824B229D26EEA0094903D /* DenormalizedLeague.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		E1C4B12729A6C89C00F0DF67 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		E1E0179B29CFD14600A5A546 /* LeagueStanding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueStanding.swift; sourceTree = "<group>"; };
 		E1E0179D29CFD17A00A5A546 /* PickItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickItem.swift; sourceTree = "<group>"; };
+		E1E824B229D26EEA0094903D /* DenormalizedLeague.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DenormalizedLeague.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 				E19E3EAB29CD33F2008A7D2E /* Athlete.swift */,
 				E1E0179B29CFD14600A5A546 /* LeagueStanding.swift */,
 				E1E0179D29CFD17A00A5A546 /* PickItem.swift */,
+				E1E824B229D26EEA0094903D /* DenormalizedLeague.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 				E138DE5F29AE89E400BBE47F /* League.swift in Sources */,
 				E1AB1C3A29B29F9E002A354B /* User.swift in Sources */,
 				E19E3EAA29CD33DC008A7D2E /* ManageAthletesTableViewController.swift in Sources */,
+				E1E824B329D26EEA0094903D /* DenormalizedLeague.swift in Sources */,
 				E1AB1C3829B28B8E002A354B /* LeagueStandingTableViewCell.swift in Sources */,
 				E19E3EAC29CD33F2008A7D2E /* Athlete.swift in Sources */,
 				E1C4B12629A6C1DD00F0DF67 /* SignInViewController.swift in Sources */,

@@ -21,12 +21,8 @@ class LeaguesTableViewController: UITableViewController {
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    var leagues = [League]()
-    
-    let leaguesRef = Database.database().reference(withPath: "leagues")
-    let usersRef = Database.database().reference(withPath: "users")
-    let currentUserLeaguesRef = Database.database().reference(withPath: "users/\(Auth.auth().currentUser?.uid ?? "")/leagues")
-    var refObservers: [DatabaseHandle] = []
+    var leagues = [DenormalizedLeague]()
+    let leagueIdsRef = Database.database().reference(withPath: "leagueIds")
     
     // MARK: - View life cycle functions
     
@@ -39,42 +35,36 @@ class LeaguesTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        createCurrentUserLeaguesDataObserver()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // Remove all observers
-        refObservers.forEach(currentUserLeaguesRef.removeObserver(withHandle:))
-        refObservers = []
+        // Fetch initial league data and update the table view
+        fetchDenormalizedLeagueData() {
+            self.updateTableView()
+        }
     }
     
     // MARK: - Other functions
     
-    // Create the reference observer for league data
-    func createCurrentUserLeaguesDataObserver() {
+    // Fetch league data from the leagueIds tree and store it
+    func fetchDenormalizedLeagueData(completion: @escaping () -> Void) {
         
-        // Observe league data
-        let refHandle = currentUserLeaguesRef.observe(.value) { snapshot in
+        // Fetch the data
+        leagueIdsRef.observeSingleEvent(of: .value) { snapshot in
             
-            // Fetch updated leagues
-            guard let userLeaguesIdsDict = snapshot.value as? [String: Bool] else {
-                print("Error fetching league users")
-                return
+            // Remove all existing league data
+            self.leagues.removeAll()
+            
+            // Verify that the received data produces valid DenormalizedLeagues, and if it does, append them
+            for childSnapshot in snapshot.children {
+                guard let childSnapshot = childSnapshot as? DataSnapshot,
+                      let league = DenormalizedLeague(snapshot: childSnapshot) else {
+                    print("Failed to create denormalized league")
+                    continue
+                }
+                
+                self.leagues.append(league)
             }
             
-            // Get array from disctionary
-            let userLeaguesIds = userLeaguesIdsDict.map { $0.key }
-            
-            // Fetch users via task and update the table view when finished
-            Task {
-                self.leagues = await League.fetchMultipleLeagues(from: userLeaguesIds)
-                self.updateTableView()
-            }
+            completion()
         }
-        
-        refObservers.append(refHandle)
     }
     
     // MARK: - Navigation
@@ -88,8 +78,12 @@ class LeaguesTableViewController: UITableViewController {
               let league = sourceViewController.league
         else { return }
         
-        // Save the league to Firebase
+        // Save the league to the leagues tree in Firebase
         league.databaseReference.setValue(league.toAnyObject())
+        
+        // Save the league to the leagueIds tree in Firebase
+        let denormalizedLeague = DenormalizedLeague(id: league.id, name: league.name, startDate: league.startDate)
+        leagueIdsRef.child(league.id).setValue(denormalizedLeague.toAnyObject())
         
         // Save the league to the league members' data
         for user in league.members {
@@ -103,13 +97,10 @@ class LeaguesTableViewController: UITableViewController {
         // Check to see if a cell was tapped
         guard let cell = sender as? UITableViewCell,
               let indexPath = tableView.indexPath(for: cell),
-              let league = dataSource.itemIdentifier(for: indexPath)
-        else {
-            return nil
-        }
+              let denormalizedLeague = dataSource.itemIdentifier(for: indexPath) else { return nil }
         
-        // If so, pass the tapped post to view/edit
-        return LeagueDetailTableViewController(coder: coder, league: league)
+        // If so, pass the tapped league data
+        return LeagueDetailTableViewController(coder: coder, denormalizedLeague: denormalizedLeague)
     }
 }
 
@@ -128,21 +119,21 @@ extension LeaguesTableViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, League> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, DenormalizedLeague> {
         
         return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, league in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueCell", for: indexPath) as! LeagueTableViewCell
             cell.configure(with: league)
-
+            
             return cell
         }
     }
     
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, League>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, DenormalizedLeague>()
         snapshot.appendSections(Section.allCases)
         snapshot.appendItems(leagues)
         dataSource.apply(snapshot, animatingDifferences: animated)
