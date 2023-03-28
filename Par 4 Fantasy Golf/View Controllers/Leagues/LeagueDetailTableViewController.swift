@@ -94,7 +94,7 @@ class LeagueDetailTableViewController: UITableViewController {
             guard let userPicks = league.picks[user.id] else { continue }
             
             // Fetch the picked athletes
-            let athletes = await Athlete.fetchMultipleAthletes(from: userPicks, leagueId: league.id)
+            let athletes = league.athletes.filter { userPicks.contains([$0.id]) }
             
             var topAthletes = [Athlete]()
             
