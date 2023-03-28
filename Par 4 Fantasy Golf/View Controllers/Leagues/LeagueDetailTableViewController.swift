@@ -67,6 +67,9 @@ class LeagueDetailTableViewController: UITableViewController {
     // Fetch the most recent league data
     // TODO: Use observeSingleEvent instead?
     func fetchUpdatedLeagueData() async {
+        
+        print("Fetching updated league data")
+        
         do {
             let snapshot = try await league.databaseReference.getData()
             if let newLeague = League(snapshot: snapshot) {
@@ -83,7 +86,9 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // Calculate the league standings
     // TODO: Figure out if it would be more efficient to have league.picks be [User: [Athlete]] vs. [String: [String]] (probably would be)
+    // TODO: Sort by name if tournament hasn't started yet
     func calculateLeagueStandings() async {
+        print("Calculating league standings")
         
         var newStandings = [LeagueStanding]()
         
@@ -91,16 +96,22 @@ class LeagueDetailTableViewController: UITableViewController {
         for user in league.members {
             
             // Make sure the user has picked at least one athlete
-            guard let userPicks = league.picks[user.id] else { continue }
+            guard let userPicks = league.pickIds[user.id] else { continue }
+//            guard let userPicks = league.pickItems[user.id] else { continue }
             
             // Fetch the picked athletes
             let athletes = league.athletes.filter { userPicks.contains([$0.id]) }
+//            let athletes = league.athletes.filter { athlete in
+//                userPicks.contains { pickItem in
+//                    pickItem.athlete == athlete
+//                }
+//            }
             
             var topAthletes = [Athlete]()
             
             // Sort and copy the top athletes to a new array
             if !athletes.isEmpty {
-                let sortedAthletes = athletes.sorted(by: <)
+                let sortedAthletes = athletes.sorted { $0.score < $1.score }
                 let athleteCount = sortedAthletes.count >= 4 ? 3 : sortedAthletes.count - 1
                 topAthletes = Array(sortedAthletes[0...athleteCount])
             }
@@ -160,6 +171,7 @@ class LeagueDetailTableViewController: UITableViewController {
     }
     
     // Handle the incoming new picks data
+    // TODO: Optimize to only write/delete necessary pick data
     @IBAction func unwindFromMakePicks(segue: UIStoryboardSegue) {
         
         // Check that we have new picks data to parse
@@ -167,8 +179,10 @@ class LeagueDetailTableViewController: UITableViewController {
               let sourceViewController = segue.source as? MakePicksTableViewController else { return }
         
         let pickItems = sourceViewController.pickItems
-        let userPicksRef = league.databaseReference.child("picks").child(Auth.auth().currentUser!.uid)
+        let userPicksRef = league.databaseReference.child("pickIds").child(Auth.auth().currentUser!.uid)
         var pickDict = [String: Bool]()
+        
+//        league.pickItems[Auth.auth().currentUser!.uid] = pickItems
         
         // Convert pickItems array to Firebase-style dictionary
         for pick in pickItems {
@@ -183,6 +197,7 @@ class LeagueDetailTableViewController: UITableViewController {
         // Fetch the most recent league data and refresh the table view
         Task {
             await fetchUpdatedLeagueData()
+            //await calculateLeagueStandings()
             updateTableView()
         }
     }

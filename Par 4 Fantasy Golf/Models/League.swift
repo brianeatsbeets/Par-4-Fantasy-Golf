@@ -28,7 +28,8 @@ struct League: Hashable {
     var memberIds: [String]
     var members: [User]
     var athletes: [Athlete]
-    var picks: [String: [String]]
+    var pickIds: [String: [String]]
+    //var pickItems: [String: [PickItem]]
     let budget: Int
     
     // MARK: - Initializers
@@ -50,7 +51,8 @@ struct League: Hashable {
         self.memberIds = members.map { $0.id }
         self.members = members
         self.athletes = []
-        self.picks = [:]
+        self.pickIds = [:]
+        //self.pickItems = [:]
         self.budget = budget
     }
     
@@ -72,6 +74,7 @@ struct League: Hashable {
         self.startDate = startDate
         self.creator = creator
         self.members = []
+        self.pickIds = [:]
         self.budget = budget
         
         // Conditionally assign properties that may or may not have values
@@ -92,13 +95,31 @@ struct League: Hashable {
             }
         }
         
-        if let picks = value["picks"] as? [String: [String: Bool]] {
-            self.picks = picks.reduce(into: [String: [String]]()) {
+        if let pickIds = value["pickIds"] as? [String: [String: Bool]] {
+            self.pickIds = pickIds.reduce(into: [String: [String]]()) {
                 $0[$1.key] = $1.value.map { $0.key }
             }
-        } else {
-            self.picks = [:]
         }
+            
+//            // Iterate through each pick
+//            for pickId in pickIds {
+//
+//                // Add a pick item with the user's id as the key
+//                pickItems[pickId.key] = pickId.value.map({ pickItem in
+//
+//                    // Make sure we can get an athlete from the athlete id
+//                    guard let athlete = self.athletes.first(where: { athlete in
+//                        athlete.id == pickItem.key
+//                    }) else { return }
+//
+//                    // Create the pick item with the athlete and isSelected values
+//                    PickItem(athlete: athlete, isSelected: pickItem.value)
+//                })
+//            }
+//
+//        } else {
+//            self.pickItems = [:]
+//        }
     }
     
     // MARK: - Functions
@@ -126,10 +147,12 @@ struct League: Hashable {
         
         // Convert picks dictionary to Firebase-style dictionary
         var pickDict = [String: [String: Bool]]()
-        for member in picks {
+        for member in pickIds {
+//        for member in pickItems {
             var memberPicks = [String: Bool]()
             for pick in member.value {
                 memberPicks[pick] = true
+//                memberPicks[pick.athlete.id] = true
             }
             pickDict[member.key] = memberPicks
         }
@@ -140,7 +163,7 @@ struct League: Hashable {
             "creator": creator,
             "memberIds": memberDict,
             "athletes": athleteDict,
-            "picks": pickDict,
+            "pickIds": pickDict,
             "budget": budget
         ]
     }

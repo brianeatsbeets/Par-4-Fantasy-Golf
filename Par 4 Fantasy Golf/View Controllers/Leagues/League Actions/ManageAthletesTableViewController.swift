@@ -125,9 +125,14 @@ extension ManageAthletesTableViewController {
             leagueAthletesRef.child(athlete.id).removeValue()
             
             // Remove the athlete pick from each user's picks in this league, both in the local data source and in firebase
-            for userPicks in selectedLeague.picks {
+            for userPicks in selectedLeague.pickIds {
+//                for userPicks in selectedLeague.pickItems {
+//                    if let index = userPicks.value.firstIndex(where: { pickItem in
+//                        pickItem.athlete.id == athlete.id
+//                    }) {
+//                        selectedLeague.pickItems[userPicks.key]?.remove(at: index)
                 if let index = userPicks.value.firstIndex(of: athlete.id) {
-                    selectedLeague.picks[userPicks.key]?.remove(at: index)
+                    selectedLeague.pickIds[userPicks.key]?.remove(at: index)
                     leaguePicksRef.child(userPicks.key).child(athlete.id).removeValue()
                 }
             }

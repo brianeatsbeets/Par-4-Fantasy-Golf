@@ -32,7 +32,7 @@ struct User: Hashable {
     
     // Init with snapshot data
     init?(snapshot: DataSnapshot) {
-        
+        print("User created")
         // Validate and set the incoming values
         guard let value = snapshot.value as? [String: AnyObject],
               let email = value["email"] as? String else { return nil }

@@ -48,20 +48,24 @@ struct Athlete: Hashable {
     
     // Init with snapshot data
     init?(snapshot: DataSnapshot) {
-        
+        print("Athlete created")
         // Validate and set the incoming values
         guard let snapshotValue = snapshot.value as? [String: AnyObject],
               let id = UUID(uuidString: snapshot.key),
               let name = snapshotValue["name"] as? String,
               let odds = snapshotValue["odds"] as? Int,
-              let value = snapshotValue["value"] as? Int,
-              let score = snapshotValue["score"] as? Int else { return nil }
+              let value = snapshotValue["value"] as? Int else { return nil }
 
         self.uuid = id
         self.name = name
         self.odds = odds
         self.value = value
-        self.score = score
+        
+        if let score = snapshotValue["score"] as? Int {
+            self.score = score
+        } else {
+            self.score = 0
+        }
     }
     
     // MARK: - Functions
@@ -127,14 +131,5 @@ struct Athlete: Hashable {
             // Return the athletes // sorted in ascending order
             return athletes //.sorted { $0.email < $1.email }
         }
-    }
-}
-
-// MARK: - Extensions
-
-// This extension conforms to the Comparable protocol
-extension Athlete: Comparable {
-    static func < (lhs: Athlete, rhs: Athlete) -> Bool {
-        lhs.score < rhs.score
     }
 }
