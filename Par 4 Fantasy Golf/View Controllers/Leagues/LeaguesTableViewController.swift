@@ -91,16 +91,21 @@ class LeaguesTableViewController: UITableViewController {
         }
     }
     
-    // Prepare league data to send to LeagueDetailViewController
-    @IBSegueAction func segueToLeagueDetails(_ coder: NSCoder, sender: Any?) -> LeagueDetailTableViewController? {
+    // Segue to LeagueDetailViewController with full league data
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        // Check to see if a cell was tapped
-        guard let cell = sender as? UITableViewCell,
-              let indexPath = tableView.indexPath(for: cell),
-              let denormalizedLeague = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        
-        // If so, pass the tapped league data
-        return LeagueDetailTableViewController(coder: coder, denormalizedLeague: denormalizedLeague)
+        // Fetch the league data from the tapped league's id
+        Task {
+            guard let denormalizedLeague = dataSource.itemIdentifier(for: indexPath),
+                  let league = await League.fetchSingleLeague(from: denormalizedLeague.id),
+                  let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetails", creator: { coder in
+                      LeagueDetailTableViewController(coder: coder, league: league)
+                  }) else { return }
+            
+            // Deselect the row and push the league details view controller while passing the full league data
+            tableView.deselectRow(at: indexPath, animated: true)
+            navigationController?.pushViewController(destinationViewController, animated: true)
+        }
     }
 }
 

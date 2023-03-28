@@ -5,10 +5,8 @@
 //  Created by Aguirre, Brian P. on 3/3/23.
 //
 
-// TODO: Figure out best practice for either asynchronously passing league data from league ID or asynchronously initializing LeagueDetailTVC without using an optional and guarding at the beginning of every function
 // TODO: Have Make Picks button show an alert when no athletes exist and prevent segue
 // TODO: Prevent all rows from reloading when saving updated picks
-
 
 // MARK: - Imported libraries
 
@@ -27,14 +25,13 @@ class LeagueDetailTableViewController: UITableViewController {
     @IBOutlet var leagueActionBarButtonItemGroup: UIBarButtonItemGroup!
     
     lazy var dataSource = createDataSource()
-    let denormalizedLeague: DenormalizedLeague
-    var league: League?
+    var league: League
     var standings = [LeagueStanding]()
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, denormalizedLeague: DenormalizedLeague) {
-        self.denormalizedLeague = denormalizedLeague
+    init?(coder: NSCoder, league: League) {
+        self.league = league
         super.init(coder: coder)
     }
     
@@ -47,26 +44,6 @@ class LeagueDetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = dataSource
-        
-        // Initialize the view and data
-        Task {
-            await fetchInitialLeagueData()
-        }
-    }
-    
-    // MARK: - Other functions
-    
-    // Fetch the initial league data and update the UI
-    // TODO: Find a better function name and/or combine with fetchUpdatedLeagueData
-    func fetchInitialLeagueData() async {
-        
-        // Create league object from league id
-        guard var league = await League.fetchSingleLeague(from: denormalizedLeague.id) else {
-            print("Failed to fetch league from denormalized league id")
-            return
-        }
-        
         title = league.name
         
         // If the current user is not the league owner, hide administrative actions
@@ -75,27 +52,26 @@ class LeagueDetailTableViewController: UITableViewController {
             navigationItem.rightBarButtonItem = makePicksButton
         }
         
+        tableView.dataSource = dataSource
+        
         // Populate league members and standings
         Task {
-            league.members = await User.fetchMultipleUsers(from: league.memberIds)
-            self.league = league
+            league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
             await calculateLeagueStandings()
             updateTableView()
         }
     }
     
+    // MARK: - Other functions
+    
     // Fetch the most recent league data
     // TODO: Use observeSingleEvent instead?
     func fetchUpdatedLeagueData() async {
-        
-        guard var league = self.league else { return }
-        
         do {
             let snapshot = try await league.databaseReference.getData()
             if let newLeague = League(snapshot: snapshot) {
                 league = newLeague
-                league.members = await User.fetchMultipleUsers(from: league.memberIds)
-                self.league = league
+                league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
                 await self.calculateLeagueStandings()
             } else {
                 print("Error creating league")
@@ -109,35 +85,37 @@ class LeagueDetailTableViewController: UITableViewController {
     // TODO: Figure out if it would be more efficient to have league.picks be [User: [Athlete]] vs. [String: [String]] (probably would be)
     func calculateLeagueStandings() async {
         
-        guard let league = self.league else { return }
-        
         var newStandings = [LeagueStanding]()
         
+        // Create a league standing object for each user
         for user in league.members {
+            
+            // Make sure the user has picked at least one athlete
             guard let userPicks = league.picks[user.id] else { continue }
             
+            // Fetch the picked athletes
             let athletes = await Athlete.fetchMultipleAthletes(from: userPicks, leagueId: league.id)
             
             var topAthletes = [Athlete]()
             
+            // Sort and copy the top athletes to a new array
             if !athletes.isEmpty {
                 let sortedAthletes = athletes.sorted(by: <)
                 let athleteCount = sortedAthletes.count >= 4 ? 3 : sortedAthletes.count - 1
                 topAthletes = Array(sortedAthletes[0...athleteCount])
             }
             
+            // Create and append a new league standing to the temporary container
             let userStanding = LeagueStanding(leagueId: league.id, user: user, topAthletes: topAthletes)
             newStandings.append(userStanding)
         }
         
+        // Save the new league standings
         standings = newStandings.sorted(by: <)
     }
     
     // Remove league data and user associations
     @IBAction func deleteLeaguePressed(_ sender: Any) {
-        
-        guard let league = self.league else { return }
-        
         let deleteLeagueAlert = UIAlertController(title: "Are you sure?", message: "All of the league data will be permenantly deleted.", preferredStyle: .alert)
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
@@ -147,13 +125,12 @@ class LeagueDetailTableViewController: UITableViewController {
             deleteLeagueAlert.dismiss(animated: true)
             
             // Remove the league from each user's leagues
-            for user in league.members {
-                user.databaseReference.child("leagues").child(league.id).removeValue()
+            for user in self.league.members {
+                user.databaseReference.child("leagues").child(self.league.id).removeValue()
             }
             
-            // Remove the league data from the leagues and leagueIds trees
-            league.databaseReference.removeValue()
-            Database.database().reference(withPath: "leagueIds").child(league.id).removeValue()
+            // Remove the league data
+            self.league.databaseReference.removeValue()
             
             // Return to LeaguesTableViewController
             self.navigationController?.popViewController(animated: true)
@@ -169,26 +146,21 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // Pass league data to ManageUsersTableViewController
     @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
-        guard let league = self.league else { return nil }
         return ManageUsersTableViewController(coder: coder, league: league)
     }
     
     // Pass league data to MakePicksTableViewController
     @IBSegueAction func segueToMakePicks(_ coder: NSCoder) -> MakePicksTableViewController? {
-        guard let league = self.league else { return nil }
         return MakePicksTableViewController(coder: coder, league: league)
     }
     
     // Pass league data to ManageAthletesTableViewController
     @IBSegueAction func segueToManageAthletes(_ coder: NSCoder) -> ManageAthletesTableViewController? {
-        guard let league = self.league else { return nil }
         return ManageAthletesTableViewController(coder: coder, league: league)
     }
     
     // Handle the incoming new picks data
     @IBAction func unwindFromMakePicks(segue: UIStoryboardSegue) {
-        
-        guard let league = self.league else { return }
         
         // Check that we have new picks data to parse
         guard segue.identifier == "makePicksUnwind",
@@ -251,5 +223,4 @@ extension LeagueDetailTableViewController {
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
-
 
