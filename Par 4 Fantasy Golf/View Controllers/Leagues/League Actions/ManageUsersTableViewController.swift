@@ -5,8 +5,6 @@
 //  Created by Aguirre, Brian P. on 3/16/23.
 //
 
-// TODO: Add support for swipe-to-delete
-
 // MARK: - Imported libraries
 
 import UIKit
@@ -71,45 +69,7 @@ class ManageUsersTableViewController: UITableViewController {
             // Dismiss the current alert
             addUserAlert.dismiss(animated: true)
             
-            // Fetch the users list
-            // TODO: This would be more efficient if email was the ID for a user instead of a UUID from firebase
-            // TODO: Use a query instead of downloading everything and sorting through
-            let usersRef = Database.database().reference(withPath: "users")
-            usersRef.observeSingleEvent(of: .value) { snapshot in
-                guard let usersList = snapshot.value as? [String:[String: AnyObject]] else {
-                    print("Error getting users list")
-                    return
-                }
-                
-                // Check for a user with a matching email address
-                let matchingUsers = usersList.filter { $0.value["email"] as? String == email }
-                
-                if matchingUsers.isEmpty {
-                    
-                    // If no matching user was not found, alert the user
-                    let userNotFoundAlert = UIAlertController(title: "User Not Found", message: "No user was found with the provided email address.", preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .default)
-                    userNotFoundAlert.addAction(ok)
-                    self.present(userNotFoundAlert, animated: true)
-                } else {
-                    
-                    // If a matching user was found:
-                    let matchedUser = matchingUsers.first!
-                    
-                    // Add the user and user ID to the local league
-                    Task {
-                        guard let newUser = await User.fetchSingleUser(from: matchedUser.key) else { return }
-                        self.league.members.append(newUser)
-                        self.delegate?.addUser(user: newUser)
-                        self.updateTableView()
-                    }
-                    self.league.memberIds.append(matchedUser.key)
-                    
-                    // Add the user's ID to the league and add the league's ID to the user in Firebase
-                    self.leagueUsersRef.child(matchedUser.key).setValue(true)
-                    usersRef.child(matchedUser.key).child("leagues").child(self.league.id).setValue(true)
-                }
-            }
+            self.searchForUser(with: email)
         }
         
         // Add the alert actions
@@ -118,6 +78,40 @@ class ManageUsersTableViewController: UITableViewController {
         
         // Present the alert
         present(addUserAlert, animated: true)
+    }
+    
+    // Display an alert that allows the user to add a new user to the league
+    func searchForUser(with email: String?) {
+        
+        // Query for a matching user
+        let usersRef = Database.database().reference(withPath: "users")
+        usersRef.queryOrdered(byChild: "email").queryEqual(toValue: email).observeSingleEvent(of: .value) { snapshot in
+            
+            // Check if we have a result
+            if snapshot.exists() {
+                
+                // Create a new user from the query result
+                guard let childSnapshot = snapshot.children.nextObject() as? DataSnapshot,
+                      let newUser = User(snapshot: childSnapshot) else { return }
+                
+                // Add the user to the local data source and update the table view
+                self.league.members.append(newUser)
+                self.league.memberIds.append(newUser.id)
+                self.delegate?.addUser(user: newUser)
+                self.updateTableView()
+                
+                // Add the user's ID to the league and add the league's ID to the user in Firebase
+                self.leagueUsersRef.child(newUser.id).setValue(true)
+                usersRef.child(newUser.id).child("leagues").child(self.league.id).setValue(true)
+            } else {
+                
+                // If no matching user was not found, alert the user
+                let userNotFoundAlert = UIAlertController(title: "User Not Found", message: "No user was found with the provided email address.", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default)
+                userNotFoundAlert.addAction(ok)
+                self.present(userNotFoundAlert, animated: true)
+            }
+        }
     }
 }
 
