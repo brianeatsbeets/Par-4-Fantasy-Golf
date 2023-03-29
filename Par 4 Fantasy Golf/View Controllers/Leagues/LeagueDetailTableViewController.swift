@@ -6,8 +6,7 @@
 //
 
 // TODO: Have Make Picks button show an alert when no athletes exist and prevent segue
-// TODO: If we are on or after the league start date, disable or add an alert to Make Picks button and prevent segue
-// TODO: Prevent all rows from reloading when saving updated picks
+// TODO: Tap on a user to see their picked athletes and their stats
 
 // MARK: - Imported libraries
 
@@ -86,6 +85,7 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // Calculate the league standings
     // TODO: Sort by name if tournament hasn't started yet
+    // TODO: Use 5th top athlete as a tie-breaker
     func calculateLeagueStandings() {
         print("Calculating league standings")
         
@@ -196,6 +196,17 @@ class LeagueDetailTableViewController: UITableViewController {
         guard let manageAthletesViewController = ManageAthletesTableViewController(coder: coder, league: league) else { return nil }
         manageAthletesViewController.delegate = self
         return manageAthletesViewController
+    }
+    
+    // Pass league data to LeagueUserDetailTableViewController
+    @IBSegueAction func segueToUserDetail(_ coder: NSCoder, sender: Any?) -> LeagueUserDetailTableViewController? {
+        
+        // Get the league
+        guard let leagueStandingCell = sender as? UITableViewCell,
+              let indexPath = tableView.indexPath(for: leagueStandingCell),
+              let leagueStanding = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        
+        return LeagueUserDetailTableViewController(coder: coder, userId: leagueStanding.user.id, league: league)
     }
     
     // Handle the incoming new picks data
