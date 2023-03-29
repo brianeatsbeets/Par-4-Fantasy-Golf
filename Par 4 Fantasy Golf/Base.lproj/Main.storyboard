@@ -445,6 +445,29 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection headerTitle="Score" id="xrO-Qu-ZBT">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="JT2-IZ-Jbd">
+                                        <rect key="frame" x="0.0" y="415.00000381469727" width="390" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JT2-IZ-Jbd" id="UiE-Yk-bZq">
+                                            <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" id="j3y-i0-N3r">
+                                                    <rect key="frame" x="20" y="5" width="350" height="34"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                    <connections>
+                                                        <action selector="textEditingChanged:" destination="BsD-vQ-KIB" eventType="editingChanged" id="daM-BY-69B"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="BsD-vQ-KIB" id="xt4-94-iJY"/>
@@ -467,6 +490,7 @@
                         <outlet property="nameTextField" destination="Rd9-Yl-oWw" id="8TY-0V-7ln"/>
                         <outlet property="oddsTextField" destination="C27-Hc-6fj" id="GrT-Kx-AjO"/>
                         <outlet property="saveButton" destination="JQq-1k-t4d" id="oKr-50-t2O"/>
+                        <outlet property="scoreTextField" destination="j3y-i0-N3r" id="faq-ic-GWk"/>
                         <outlet property="valueTextField" destination="FLf-51-RzC" id="ftb-JJ-7Xs"/>
                     </connections>
                 </tableViewController>

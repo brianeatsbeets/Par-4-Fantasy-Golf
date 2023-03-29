@@ -38,12 +38,12 @@ struct Athlete: Hashable {
     // MARK: - Initializers
     
     // Standard init
-    init(id: UUID = UUID(), name: String, odds: Int, value: Int) {
+    init(id: UUID = UUID(), name: String, odds: Int, value: Int, score: Int = 0) {
         self.uuid = id
         self.name = name
         self.odds = odds
         self.value = value
-        score = 0
+        self.score = score
     }
     
     // Init with snapshot data

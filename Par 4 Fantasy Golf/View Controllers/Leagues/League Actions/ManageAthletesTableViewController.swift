@@ -173,7 +173,7 @@ extension ManageAthletesTableViewController {
             
             var config = cell.defaultContentConfiguration()
             config.text = athlete.name
-            config.secondaryText = "Value: \(athlete.value) | Odds: \(athlete.odds)"
+            config.secondaryText = "Value: \(athlete.value) | Odds: \(athlete.odds) | Score: \(athlete.score)"
             cell.contentConfiguration = config
 
             return cell

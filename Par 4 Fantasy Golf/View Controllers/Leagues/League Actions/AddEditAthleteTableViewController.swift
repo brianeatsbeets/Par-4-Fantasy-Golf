@@ -20,6 +20,7 @@ class AddEditAthleteTableViewController: UITableViewController {
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var valueTextField: UITextField!
     @IBOutlet var oddsTextField: UITextField!
+    @IBOutlet var scoreTextField: UITextField!
     @IBOutlet var saveButton: UIBarButtonItem!
     
     var athlete: Athlete?
@@ -47,6 +48,7 @@ class AddEditAthleteTableViewController: UITableViewController {
             nameTextField.text = athlete.name
             valueTextField.text = athlete.value.description
             oddsTextField.text = athlete.odds.description
+            scoreTextField.text = athlete.score.description
             title = "Edit Athlete"
         } else {
             title = "New Athlete"
@@ -61,7 +63,8 @@ class AddEditAthleteTableViewController: UITableViewController {
         let nameText = nameTextField.text ?? ""
         let valueText = valueTextField.text ?? ""
         let oddsText = oddsTextField.text ?? ""
-        saveButton.isEnabled = !nameText.isEmpty && !valueText.isEmpty && !oddsText.isEmpty && (Int(valueText) != nil) && (Int(oddsText) != nil)
+        let scoreText = scoreTextField.text ?? ""
+        saveButton.isEnabled = !nameText.isEmpty && !valueText.isEmpty && !oddsText.isEmpty && !scoreText.isEmpty && (Int(valueText) != nil) && (Int(oddsText) != nil) && (Int(scoreText) != nil)
     }
     
     // Detect when text field editing state has changed
@@ -78,14 +81,16 @@ class AddEditAthleteTableViewController: UITableViewController {
         let name = nameTextField.text ?? ""
         let odds = Int(oddsTextField.text ?? "") ?? 0
         let value = Int(valueTextField.text ?? "") ?? 0
+        let score = Int(scoreTextField.text ?? "") ?? 0
         
         // Create new athlete object or update values to existing athlete
         if athlete != nil {
             athlete!.name = name
             athlete!.odds = odds
             athlete!.value = value
+            athlete!.score = score
         } else {
-            athlete = Athlete(name: name, odds: odds, value: value)
+            athlete = Athlete(name: name, odds: odds, value: value, score: score)
         }
     }
 }
