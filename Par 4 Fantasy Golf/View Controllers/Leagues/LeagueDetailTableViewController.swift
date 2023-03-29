@@ -83,10 +83,11 @@ class LeagueDetailTableViewController: UITableViewController {
         print("Calculating league standings")
         
         var newStandings = [LeagueStanding]()
-        var topAthletes = [Athlete]()
         
         // Create a league standing object for each user
         for user in league.members {
+            
+            var topAthletes = [Athlete]()
             
             // If user has picked at least one athlete, calculate the top athletes
             if let userPicks = league.pickIds[user.id] {
@@ -184,11 +185,9 @@ class LeagueDetailTableViewController: UITableViewController {
         let pickArray = pickDict.map { $0.key }
         league.pickIds[currentFirebaseUser.uid] = pickArray
         
-        // Fetch the most recent league data and refresh the table view
-        Task {
-            calculateLeagueStandings()
-            updateTableView()
-        }
+        // Update the league standings and refresh the table view
+        calculateLeagueStandings()
+        updateTableView()
     }
 }
 
