@@ -6,6 +6,7 @@
 //
 
 // TODO: Have Make Picks button show an alert when no athletes exist and prevent segue
+// TODO: If we are on or after the league start date, disable or add an alert to Make Picks button and prevent segue
 // TODO: Prevent all rows from reloading when saving updated picks
 
 // MARK: - Imported libraries
@@ -228,7 +229,7 @@ extension LeagueDetailTableViewController {
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! LeagueStandingTableViewCell
-            cell.configure(with: standing)
+            cell.configure(with: standing, at: indexPath.row)
 
             return cell
         }

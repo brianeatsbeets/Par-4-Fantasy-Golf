@@ -19,9 +19,16 @@ class LeagueStandingTableViewCell: UITableViewCell {
     // MARK: - Functions
     
     // Set up the cell UI elements
-    func configure(with standing: LeagueStanding) {
+    func configure(with standing: LeagueStanding, at row: Int) {
+        
+        // Create an ordinal number string from the provided row
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .ordinal
+        let nSNumberPlace = NSNumber(value: row+1)
+        let ordinalPlace = formatter.string(from: nSNumberPlace)!
+        
         var config = defaultContentConfiguration()
-        config.text = "\(standing.user.email): \(standing.formattedScore)"
+        config.text = "\(ordinalPlace): \(standing.user.email): \(standing.formattedScore)"
         
         // Format the top athletes listing
         let topAthletesFormatted = {
