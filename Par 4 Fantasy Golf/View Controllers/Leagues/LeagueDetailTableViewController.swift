@@ -28,6 +28,7 @@ class LeagueDetailTableViewController: UITableViewController {
     lazy var dataSource = createDataSource()
     var league: League
     var standings = [LeagueStanding]()
+    let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
     
     // MARK: - Initializers
@@ -50,7 +51,7 @@ class LeagueDetailTableViewController: UITableViewController {
         title = league.name
         
         // If the current user is not the league owner, hide administrative actions
-        if league.creator != Auth.auth().currentUser!.email {
+        if league.creator != currentFirebaseUser.email {
             leagueActionBarButtonItemGroup.isHidden = true
             navigationItem.rightBarButtonItem = makePicksButton
         }
@@ -75,24 +76,6 @@ class LeagueDetailTableViewController: UITableViewController {
     }
     
     // MARK: - Other functions
-    
-    // Fetch the most recent league data
-    // TODO: Use observeSingleEvent instead?
-    func fetchUpdatedLeagueData() async {
-        
-        do {
-            let snapshot = try await league.databaseReference.getData()
-            if let newLeague = League(snapshot: snapshot) {
-                league = newLeague
-                league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
-                self.calculateLeagueStandings()
-            } else {
-                print("Error creating league")
-            }
-        } catch {
-            print("Error fetching league data")
-        }
-    }
     
     // Calculate the league standings
     // TODO: Sort by name if tournament hasn't started yet
@@ -184,12 +167,10 @@ class LeagueDetailTableViewController: UITableViewController {
         // Check that we have new picks data to parse
         guard segue.identifier == "makePicksUnwind",
               let sourceViewController = segue.source as? MakePicksTableViewController else { return }
-        
         let pickItems = sourceViewController.pickItems
-        let userPicksRef = league.databaseReference.child("pickIds").child(Auth.auth().currentUser!.uid)
-        var pickDict = [String: Bool]()
         
         // Convert pickItems array to Firebase-style dictionary
+        var pickDict = [String: Bool]()
         for pick in pickItems {
             if pick.isSelected {
                 pickDict[pick.athlete.id] = true
@@ -197,12 +178,15 @@ class LeagueDetailTableViewController: UITableViewController {
         }
         
         // Save the picks to Firebase
-        userPicksRef.setValue(pickDict)
+        league.databaseReference.child("pickIds").child(currentFirebaseUser.uid).setValue(pickDict)
+        
+        // Save the picks to the local data source
+        let pickArray = pickDict.map { $0.key }
+        league.pickIds[currentFirebaseUser.uid] = pickArray
         
         // Fetch the most recent league data and refresh the table view
         Task {
-            await fetchUpdatedLeagueData()
-            //await calculateLeagueStandings()
+            calculateLeagueStandings()
             updateTableView()
         }
     }
