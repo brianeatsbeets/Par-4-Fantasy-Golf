@@ -11,6 +11,8 @@ import UIKit
 import FirebaseAuth
 import FirebaseDatabase
 
+// MARK: - Protocols
+
 // This protocol allows conformers to be notified of updates to the athletes managed by this view controller
 protocol ManageAthletesDelegate: AnyObject {
     func addAthlete(athlete: Athlete)
@@ -27,8 +29,8 @@ class ManageAthletesTableViewController: UITableViewController {
     
     lazy var dataSource = createDataSource()
     var league: League
-    let userPicksRef: DatabaseReference
     weak var delegate: ManageAthletesDelegate?
+    let userPicksRef: DatabaseReference
     
     // MARK: - Initializers
     
@@ -48,7 +50,7 @@ class ManageAthletesTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
-        updateTableView(animated: false)
+        updateTableView()
     }
     
     // MARK: - Other functions

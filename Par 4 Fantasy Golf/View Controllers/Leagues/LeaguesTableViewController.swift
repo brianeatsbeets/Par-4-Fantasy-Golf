@@ -44,6 +44,7 @@ class LeaguesTableViewController: UITableViewController {
     // MARK: - Other functions
     
     // Fetch league data from the leagueIds tree and store it
+    // TODO: Only display leagues of which we are a member
     func fetchDenormalizedLeagueData(completion: @escaping () -> Void) {
         
         // Fetch the data

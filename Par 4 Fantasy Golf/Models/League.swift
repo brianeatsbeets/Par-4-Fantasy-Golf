@@ -5,6 +5,8 @@
 //  Created by Aguirre, Brian P. on 2/28/23.
 //
 
+// TODO: Create utility functions for adding/removing/updating members, athletes, etc. to clean up code in view controllers
+
 // MARK: - Imported libraries
 
 import FirebaseAuth

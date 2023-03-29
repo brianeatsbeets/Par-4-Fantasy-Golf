@@ -12,6 +12,14 @@
 import UIKit
 import FirebaseDatabase
 
+// MARK: - Protocols
+
+// This protocol allows conformers to be notified of updates to the athletes managed by this view controller
+protocol ManageUsersDelegate: AnyObject {
+    func addUser(user: User)
+    func removeUser(user: User)
+}
+
 // MARK: - Main class
 
 // This class/view controller allows for management of the selected league's members
@@ -21,9 +29,8 @@ class ManageUsersTableViewController: UITableViewController {
     
     lazy var dataSource = createDataSource()
     var league: League
-    
+    weak var delegate: ManageUsersDelegate?
     let leagueUsersRef: DatabaseReference
-    var refObservers: [DatabaseHandle] = []
     
     // MARK: - Initializers
     
@@ -43,49 +50,10 @@ class ManageUsersTableViewController: UITableViewController {
         super.viewDidLoad()
 
         tableView.dataSource = dataSource
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Create league data observer
-        createLeagueUsersObserver()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // Remove all observers
-        refObservers.forEach(leagueUsersRef.removeObserver(withHandle:))
-        refObservers = []
+        updateTableView()
     }
     
     // MARK: - Other functions
-    
-    // Create the reference observer for league users
-    func createLeagueUsersObserver() {
-        
-        // Observe league users
-        let refHandle = leagueUsersRef.observe(.value) { snapshot in
-            
-            // Fetch updated league users
-            guard let leagueUserIdsDict = snapshot.value as? [String: Bool] else {
-                print("Error fetching league users")
-                return
-            }
-            
-            // Get array from disctionary
-            let leagueUserIds = leagueUserIdsDict.map { $0.key }
-            
-            // Fetch users via task and update the table view when finished
-            Task {
-                self.league.members = await User.fetchMultipleUsers(from: leagueUserIds)
-                self.updateTableView()
-            }
-        }
-        
-        refObservers.append(refHandle)
-    }
     
     // Display an alert that allows the user to add a new user to the league
     @IBAction func addButtonPressed(_ sender: Any) {
@@ -105,6 +73,7 @@ class ManageUsersTableViewController: UITableViewController {
             
             // Fetch the users list
             // TODO: This would be more efficient if email was the ID for a user instead of a UUID from firebase
+            // TODO: Use a query instead of downloading everything and sorting through
             let usersRef = Database.database().reference(withPath: "users")
             usersRef.observeSingleEvent(of: .value) { snapshot in
                 guard let usersList = snapshot.value as? [String:[String: AnyObject]] else {
@@ -124,8 +93,19 @@ class ManageUsersTableViewController: UITableViewController {
                     self.present(userNotFoundAlert, animated: true)
                 } else {
                     
-                    // If a matching user was found, add the user to the league and add the league to the user's data
+                    // If a matching user was found:
                     let matchedUser = matchingUsers.first!
+                    
+                    // Add the user and user ID to the local league
+                    Task {
+                        guard let newUser = await User.fetchSingleUser(from: matchedUser.key) else { return }
+                        self.league.members.append(newUser)
+                        self.delegate?.addUser(user: newUser)
+                        self.updateTableView()
+                    }
+                    self.league.memberIds.append(matchedUser.key)
+                    
+                    // Add the user's ID to the league and add the league's ID to the user in Firebase
                     self.leagueUsersRef.child(matchedUser.key).setValue(true)
                     usersRef.child(matchedUser.key).child("leagues").child(self.league.id).setValue(true)
                 }
@@ -156,6 +136,7 @@ extension ManageUsersTableViewController {
         var leagueUsersRef = DatabaseReference()
         var usersRef = DatabaseReference()
         var selectedLeague: League!
+        var delegate: ManageUsersDelegate?
         
         // MARK: - Other functions
         
@@ -176,9 +157,27 @@ extension ManageUsersTableViewController {
             guard let user = itemIdentifier(for: indexPath),
                   editingStyle == .delete else { return }
             
+            // Remove the user from the league's members in the local data source
+            if let membersIndex = selectedLeague.members.firstIndex(where: { $0.id == user.id }),
+               let memberIdsIndex = selectedLeague.memberIds.firstIndex(where: { $0 == user.id }) {
+                selectedLeague.members.remove(at: membersIndex)
+                selectedLeague.memberIds.remove(at: memberIdsIndex)
+                delegate?.removeUser(user: user)
+            }
+            
+            // Remove the user's picks from the local data source and Firebase
+            selectedLeague.pickIds.removeValue(forKey: user.id)
+            selectedLeague.databaseReference.child("pickIds").child(user.id).removeValue()
+            
             // Remove the user's id from the league's memberIds and remove the league's id from the user's league ids
             leagueUsersRef.child(user.id).removeValue()
             usersRef.child(user.id).child("leagues").child(selectedLeague.id).removeValue()
+            
+            // Update the data source
+            var snapshot = NSDiffableDataSourceSnapshot<Section, User>()
+            snapshot.appendSections(Section.allCases)
+            snapshot.appendItems(selectedLeague.members)
+            apply(snapshot, animatingDifferences: true)
         }
     }
     
@@ -212,7 +211,8 @@ extension ManageUsersTableViewController {
         // Variables that allow the custom data source to access the current league's firebase database reference to delete data
         dataSource.leagueUsersRef = leagueUsersRef
         dataSource.usersRef = Database.database().reference(withPath: "users")
-        dataSource.selectedLeague = self.league
+        dataSource.selectedLeague = league
+        dataSource.delegate = delegate
         
         return dataSource
     }

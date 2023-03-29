@@ -25,12 +25,17 @@ class LeagueStandingTableViewCell: UITableViewCell {
         
         // Format the top athletes listing
         let topAthletesFormatted = {
-            var text = "Picks: "
-            for athlete in standing.topAthletes {
-                text.append(athlete.name + ": " + athlete.formattedScore)
-                if athlete != standing.topAthletes.last {
-                    text.append(" | ")
+            var text = "Top picks: "
+            
+            if !standing.topAthletes.isEmpty {
+                for athlete in standing.topAthletes {
+                    text.append(athlete.name + ": " + athlete.formattedScore)
+                    if athlete != standing.topAthletes.last {
+                        text.append(" | ")
+                    }
                 }
+            } else {
+                text = "No picks made"
             }
             
             return text

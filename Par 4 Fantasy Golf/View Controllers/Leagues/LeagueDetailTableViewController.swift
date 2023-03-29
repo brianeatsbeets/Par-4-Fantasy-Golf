@@ -64,9 +64,6 @@ class LeagueDetailTableViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        print("viewDidAppear")
-        print("Athlete count: \(league.athletes.count)")
-        
         // If this is the first time displaying this view controller, viewDidLoad will handle updating the table view
         if firstLoad {
             firstLoad = false
@@ -82,8 +79,6 @@ class LeagueDetailTableViewController: UITableViewController {
     // TODO: Use observeSingleEvent instead?
     func fetchUpdatedLeagueData() async {
         
-        print("Fetching updated league data")
-        
         do {
             let snapshot = try await league.databaseReference.getData()
             if let newLeague = League(snapshot: snapshot) {
@@ -94,7 +89,7 @@ class LeagueDetailTableViewController: UITableViewController {
                 print("Error creating league")
             }
         } catch {
-            print("Error caught")
+            print("Error fetching league data")
         }
     }
     
@@ -104,23 +99,23 @@ class LeagueDetailTableViewController: UITableViewController {
         print("Calculating league standings")
         
         var newStandings = [LeagueStanding]()
+        var topAthletes = [Athlete]()
         
         // Create a league standing object for each user
         for user in league.members {
             
-            // Make sure the user has picked at least one athlete
-            guard let userPicks = league.pickIds[user.id] else { continue }
-            
-            // Fetch the picked athletes
-            let athletes = league.athletes.filter { userPicks.contains([$0.id]) }
-            
-            var topAthletes = [Athlete]()
-            
-            // Sort and copy the top athletes to a new array
-            if !athletes.isEmpty {
-                let sortedAthletes = athletes.sorted { $0.score < $1.score }
-                let athleteCount = sortedAthletes.count >= 4 ? 3 : sortedAthletes.count - 1
-                topAthletes = Array(sortedAthletes[0...athleteCount])
+            // If user has picked at least one athlete, calculate the top athletes
+            if let userPicks = league.pickIds[user.id] {
+                
+                // Fetch the picked athletes
+                let athletes = league.athletes.filter { userPicks.contains([$0.id]) }
+                
+                // Sort and copy the top athletes to a new array
+                if !athletes.isEmpty {
+                    let sortedAthletes = athletes.sorted { $0.score < $1.score }
+                    let athleteCount = sortedAthletes.count >= 4 ? 3 : sortedAthletes.count - 1
+                    topAthletes = Array(sortedAthletes[0...athleteCount])
+                }
             }
             
             // Create and append a new league standing to the temporary container
@@ -164,7 +159,9 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // Pass league data to ManageUsersTableViewController
     @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
-        return ManageUsersTableViewController(coder: coder, league: league)
+        guard let manageUsersViewController = ManageUsersTableViewController(coder: coder, league: league) else { return nil }
+        manageUsersViewController.delegate = self
+        return manageUsersViewController
     }
     
     // Pass league data to MakePicksTableViewController
@@ -212,29 +209,6 @@ class LeagueDetailTableViewController: UITableViewController {
 
 // MARK: - Extensions
 
-// This extention conforms to the ManageAthletesDelegate protocol
-extension LeagueDetailTableViewController: ManageAthletesDelegate {
-    
-    // Add a new athlete
-    func addAthlete(athlete: Athlete) {
-        league.athletes.append(athlete)
-        print("Added athlete: \(athlete)")
-    }
-    
-    // Remove an existing athlete
-    func removeAthlete(athlete: Athlete) {
-        league.athletes.removeAll { $0.id == athlete.id }
-        print("Removed athlete: \(athlete)")
-    }
-    
-    // Update an existing athlete
-    func updateAthlete(athlete: Athlete) {
-        guard let index = (league.athletes.firstIndex { $0.id == athlete.id }) else { return }
-        league.athletes[index] = athlete
-        print("Updated athlete: \(athlete)")
-    }
-}
-
 // This extention houses table view management functions that utilize the diffable data source API
 extension LeagueDetailTableViewController {
     
@@ -269,3 +243,40 @@ extension LeagueDetailTableViewController {
     }
 }
 
+// This extention conforms to the ManageAthletesDelegate protocol
+extension LeagueDetailTableViewController: ManageAthletesDelegate {
+    
+    // Add a new athlete
+    func addAthlete(athlete: Athlete) {
+        league.athletes.append(athlete)
+    }
+    
+    // Remove an existing athlete
+    func removeAthlete(athlete: Athlete) {
+        league.athletes.removeAll { $0.id == athlete.id }
+    }
+    
+    // Update an existing athlete
+    func updateAthlete(athlete: Athlete) {
+        guard let index = (league.athletes.firstIndex { $0.id == athlete.id }) else { return }
+        league.athletes[index] = athlete
+    }
+}
+
+// This extention conforms to the ManageUsersDelegate protocol
+extension LeagueDetailTableViewController: ManageUsersDelegate {
+    
+    // Add a new user
+    func addUser(user: User) {
+        league.members.append(user)
+        league.memberIds.append(user.id)
+    }
+    
+    // Remove an existing user
+    func removeUser(user: User) {
+        league.members.removeAll { $0.id == user.id }
+        league.memberIds.removeAll { $0 == user.id }
+    }
+    
+    
+}
