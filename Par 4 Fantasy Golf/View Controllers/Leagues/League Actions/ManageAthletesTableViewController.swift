@@ -11,6 +11,13 @@ import UIKit
 import FirebaseAuth
 import FirebaseDatabase
 
+// This protocol allows conformers to be notified of updates to the athletes managed by this view controller
+protocol ManageAthletesDelegate: AnyObject {
+    func addAthlete(athlete: Athlete)
+    func removeAthlete(athlete: Athlete)
+    func updateAthlete(athlete: Athlete)
+}
+
 // MARK: - Main class
 
 // This class/view controller allows the user to manage athletes for a given league
@@ -21,12 +28,13 @@ class ManageAthletesTableViewController: UITableViewController {
     lazy var dataSource = createDataSource()
     var league: League
     let userPicksRef: DatabaseReference
+    weak var delegate: ManageAthletesDelegate?
     
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
         self.league = league
-        self.userPicksRef = league.databaseReference.child("picks").child(Auth.auth().currentUser!.uid)
+        self.userPicksRef = league.databaseReference.child("pickIds").child(Auth.auth().currentUser!.uid)
         super.init(coder: coder)
     }
     
@@ -78,8 +86,10 @@ class ManageAthletesTableViewController: UITableViewController {
         // If we have an athlete with a matching ID, replace it; otherwise, append it
         if let athleteIndex = league.athletes.firstIndex(where: { $0.id == newAthlete.id }) {
             league.athletes[athleteIndex] = newAthlete
+            delegate?.updateAthlete(athlete: newAthlete)
         } else {
             league.athletes.append(newAthlete)
+            delegate?.addAthlete(athlete: newAthlete)
         }
         
         // Save the athlete to Firebase
@@ -105,6 +115,7 @@ extension ManageAthletesTableViewController {
         var leagueAthletesRef = DatabaseReference()
         var leaguePicksRef = DatabaseReference()
         var selectedLeague: League!
+        weak var delegate: ManageAthletesDelegate?
         
         // MARK: - Other functions
         
@@ -121,16 +132,12 @@ extension ManageAthletesTableViewController {
             // Remove the athlete from the league's athletes, both in the local data source and in firebase
             if let index = selectedLeague.athletes.firstIndex(where: { $0.id == athlete.id }) {
                 selectedLeague.athletes.remove(at: index)
+                delegate?.removeAthlete(athlete: athlete)
             }
             leagueAthletesRef.child(athlete.id).removeValue()
             
             // Remove the athlete pick from each user's picks in this league, both in the local data source and in firebase
             for userPicks in selectedLeague.pickIds {
-//                for userPicks in selectedLeague.pickItems {
-//                    if let index = userPicks.value.firstIndex(where: { pickItem in
-//                        pickItem.athlete.id == athlete.id
-//                    }) {
-//                        selectedLeague.pickItems[userPicks.key]?.remove(at: index)
                 if let index = userPicks.value.firstIndex(of: athlete.id) {
                     selectedLeague.pickIds[userPicks.key]?.remove(at: index)
                     leaguePicksRef.child(userPicks.key).child(athlete.id).removeValue()
@@ -172,8 +179,9 @@ extension ManageAthletesTableViewController {
         
         // Variables that allow the custom data source to access the current league's firebase database reference to delete data
         dataSource.leagueAthletesRef = league.databaseReference.child("athletes")
-        dataSource.leaguePicksRef = league.databaseReference.child("picks")
-        dataSource.selectedLeague = self.league
+        dataSource.leaguePicksRef = league.databaseReference.child("pickIds")
+        dataSource.selectedLeague = league
+        dataSource.delegate = delegate
         
         return dataSource
     }

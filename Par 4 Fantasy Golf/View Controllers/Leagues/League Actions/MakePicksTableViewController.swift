@@ -62,15 +62,10 @@ class MakePicksTableViewController: UITableViewController {
         
         // Check if we have existing picks
         if let userPicks = league.pickIds[Auth.auth().currentUser!.uid] {
-//            if let userPicks = league.pickItems[Auth.auth().currentUser!.uid] {
             
             // If so, apply the existing user selections
             for athlete in league.athletes {
                 let pickItem = PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.id]))
-//                // Create a pick item with athlete: provided athlete and isSelected: whether or not a pick exists with the provided athlete
-//                let pickItem = PickItem(athlete: athlete, isSelected: userPicks.contains(where: { pickItem in
-//                    pickItem.athlete.id == athlete.id
-//                }))
                 if pickItem.isSelected {
                     totalSpent += pickItem.athlete.value
                 }

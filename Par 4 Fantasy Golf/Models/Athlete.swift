@@ -75,7 +75,8 @@ struct Athlete: Hashable {
         return [
             "name": name,
             "odds": odds,
-            "value": value
+            "value": value,
+            "score": score
         ]
     }
     

@@ -27,6 +27,7 @@ class LeagueDetailTableViewController: UITableViewController {
     lazy var dataSource = createDataSource()
     var league: League
     var standings = [LeagueStanding]()
+    var firstLoad = true
     
     // MARK: - Initializers
     
@@ -44,6 +45,7 @@ class LeagueDetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.dataSource = dataSource
         title = league.name
         
         // If the current user is not the league owner, hide administrative actions
@@ -52,12 +54,24 @@ class LeagueDetailTableViewController: UITableViewController {
             navigationItem.rightBarButtonItem = makePicksButton
         }
         
-        tableView.dataSource = dataSource
-        
-        // Populate league members and standings
         Task {
             league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
-            await calculateLeagueStandings()
+            calculateLeagueStandings()
+            updateTableView()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        print("viewDidAppear")
+        print("Athlete count: \(league.athletes.count)")
+        
+        // If this is the first time displaying this view controller, viewDidLoad will handle updating the table view
+        if firstLoad {
+            firstLoad = false
+        } else {
+            calculateLeagueStandings()
             updateTableView()
         }
     }
@@ -75,7 +89,7 @@ class LeagueDetailTableViewController: UITableViewController {
             if let newLeague = League(snapshot: snapshot) {
                 league = newLeague
                 league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
-                await self.calculateLeagueStandings()
+                self.calculateLeagueStandings()
             } else {
                 print("Error creating league")
             }
@@ -85,9 +99,8 @@ class LeagueDetailTableViewController: UITableViewController {
     }
     
     // Calculate the league standings
-    // TODO: Figure out if it would be more efficient to have league.picks be [User: [Athlete]] vs. [String: [String]] (probably would be)
     // TODO: Sort by name if tournament hasn't started yet
-    func calculateLeagueStandings() async {
+    func calculateLeagueStandings() {
         print("Calculating league standings")
         
         var newStandings = [LeagueStanding]()
@@ -97,15 +110,9 @@ class LeagueDetailTableViewController: UITableViewController {
             
             // Make sure the user has picked at least one athlete
             guard let userPicks = league.pickIds[user.id] else { continue }
-//            guard let userPicks = league.pickItems[user.id] else { continue }
             
             // Fetch the picked athletes
             let athletes = league.athletes.filter { userPicks.contains([$0.id]) }
-//            let athletes = league.athletes.filter { athlete in
-//                userPicks.contains { pickItem in
-//                    pickItem.athlete == athlete
-//                }
-//            }
             
             var topAthletes = [Athlete]()
             
@@ -167,7 +174,9 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // Pass league data to ManageAthletesTableViewController
     @IBSegueAction func segueToManageAthletes(_ coder: NSCoder) -> ManageAthletesTableViewController? {
-        return ManageAthletesTableViewController(coder: coder, league: league)
+        guard let manageAthletesViewController = ManageAthletesTableViewController(coder: coder, league: league) else { return nil }
+        manageAthletesViewController.delegate = self
+        return manageAthletesViewController
     }
     
     // Handle the incoming new picks data
@@ -181,8 +190,6 @@ class LeagueDetailTableViewController: UITableViewController {
         let pickItems = sourceViewController.pickItems
         let userPicksRef = league.databaseReference.child("pickIds").child(Auth.auth().currentUser!.uid)
         var pickDict = [String: Bool]()
-        
-//        league.pickItems[Auth.auth().currentUser!.uid] = pickItems
         
         // Convert pickItems array to Firebase-style dictionary
         for pick in pickItems {
@@ -204,6 +211,29 @@ class LeagueDetailTableViewController: UITableViewController {
 }
 
 // MARK: - Extensions
+
+// This extention conforms to the ManageAthletesDelegate protocol
+extension LeagueDetailTableViewController: ManageAthletesDelegate {
+    
+    // Add a new athlete
+    func addAthlete(athlete: Athlete) {
+        league.athletes.append(athlete)
+        print("Added athlete: \(athlete)")
+    }
+    
+    // Remove an existing athlete
+    func removeAthlete(athlete: Athlete) {
+        league.athletes.removeAll { $0.id == athlete.id }
+        print("Removed athlete: \(athlete)")
+    }
+    
+    // Update an existing athlete
+    func updateAthlete(athlete: Athlete) {
+        guard let index = (league.athletes.firstIndex { $0.id == athlete.id }) else { return }
+        league.athletes[index] = athlete
+        print("Updated athlete: \(athlete)")
+    }
+}
 
 // This extention houses table view management functions that utilize the diffable data source API
 extension LeagueDetailTableViewController {
