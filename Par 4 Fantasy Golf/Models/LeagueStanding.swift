@@ -13,6 +13,7 @@ struct LeagueStanding: Hashable {
     // MARK: - Properties
     
     let leagueId: String
+    var place = ""
     let user: User
     var topAthletes: [Athlete]
     var score: Int

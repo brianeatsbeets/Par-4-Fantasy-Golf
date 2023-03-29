@@ -108,8 +108,30 @@ class LeagueDetailTableViewController: UITableViewController {
             newStandings.append(userStanding)
         }
         
-        // Save the new league standings
-        standings = newStandings.sorted(by: <)
+        // Sort the standings
+        newStandings = newStandings.sorted(by: <)
+        
+        //  Format and assign placements
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .ordinal
+        newStandings.indices.forEach { newStandings[$0].place = formatter.string(for: $0+1)! }
+        
+        // Account for ties
+        var i = 0
+        while i < newStandings.count-1 {
+            if newStandings[i].score == newStandings[i+1].score {
+                
+                // Don't add a 'T' if the place already has one
+                if !newStandings[i].place.hasPrefix("T") {
+                    newStandings[i].place = "T" + newStandings[i].place
+                }
+                newStandings[i+1].place = newStandings[i].place
+            }
+            i += 1
+        }
+        
+        // Save the standings
+        standings = newStandings
     }
     
     // Remove league data and user associations
@@ -212,7 +234,7 @@ extension LeagueDetailTableViewController {
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! LeagueStandingTableViewCell
-            cell.configure(with: standing, at: indexPath.row)
+            cell.configure(with: standing)
 
             return cell
         }
