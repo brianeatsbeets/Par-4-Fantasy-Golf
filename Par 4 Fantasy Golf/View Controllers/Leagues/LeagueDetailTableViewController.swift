@@ -24,6 +24,7 @@ class LeagueDetailTableViewController: UITableViewController {
     
     @IBOutlet var makePicksButton: UIBarButtonItem!
     @IBOutlet var leagueActionBarButtonItemGroup: UIBarButtonItemGroup!
+    @IBOutlet var tournamentStartedSwitch: UISwitch!
     
     lazy var dataSource = createDataSource()
     var league: League
@@ -49,6 +50,12 @@ class LeagueDetailTableViewController: UITableViewController {
         
         tableView.dataSource = dataSource
         title = league.name
+        
+        // Enable/disable make picks button based on tournament status
+        tournamentStartedSwitch.isOn = league.tournamentHasStarted
+        if tournamentStartedSwitch.isOn {
+            makePicksButton.isEnabled = false
+        }
         
         // If the current user is not the league owner, hide administrative actions
         if league.creator != currentFirebaseUser.email {
@@ -149,8 +156,9 @@ class LeagueDetailTableViewController: UITableViewController {
                 user.databaseReference.child("leagues").child(self.league.id).removeValue()
             }
             
-            // Remove the league data
+            // Remove the league data from the leagues and leagueIds trees
             self.league.databaseReference.removeValue()
+            Database.database().reference().child("leagueIds").child(self.league.id).removeValue()
             
             // Return to LeaguesTableViewController
             self.navigationController?.popViewController(animated: true)
@@ -160,6 +168,13 @@ class LeagueDetailTableViewController: UITableViewController {
         deleteLeagueAlert.addAction(confirm)
         
         present(deleteLeagueAlert, animated: true)
+    }
+    
+    // Temporary physical switch to set if tournament has started
+    @IBAction func tournamentStartedSwitchToggled() {
+        makePicksButton.isEnabled.toggle()
+        league.tournamentHasStarted.toggle()
+        league.databaseReference.child("tournamentHasStarted").setValue(league.tournamentHasStarted)
     }
     
     // MARK: - Navigation

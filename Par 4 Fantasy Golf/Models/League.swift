@@ -32,6 +32,7 @@ struct League: Hashable {
     var athletes: [Athlete]
     var pickIds: [String: [String]]
     let budget: Int
+    var tournamentHasStarted = false
     
     // MARK: - Initializers
     
@@ -65,7 +66,8 @@ struct League: Hashable {
               let name = value["name"] as? String,
               let startDate = value["startDate"] as? Double,
               let creator = value["creator"] as? String,
-            let budget = value["budget"] as? Int else { return nil }
+              let budget = value["budget"] as? Int,
+              let tournamentHasStarted = value["tournamentHasStarted"] as? Bool else { return nil }
         
         // Assign properties that will always have values
         uuid = id
@@ -76,6 +78,7 @@ struct League: Hashable {
         self.members = []
         self.pickIds = [:]
         self.budget = budget
+        self.tournamentHasStarted = tournamentHasStarted
         
         // Conditionally assign properties that may or may not have values
         if let memberIds = value["memberIds"] as? [String: Bool] {
@@ -142,7 +145,8 @@ struct League: Hashable {
             "memberIds": memberDict,
             "athletes": athleteDict,
             "pickIds": pickDict,
-            "budget": budget
+            "budget": budget,
+            "tournamentHasStarted": tournamentHasStarted
         ]
     }
     
