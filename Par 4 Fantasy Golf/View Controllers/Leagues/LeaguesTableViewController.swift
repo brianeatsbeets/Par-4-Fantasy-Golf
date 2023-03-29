@@ -20,9 +20,12 @@ class LeaguesTableViewController: UITableViewController {
     
     // MARK: - Properties
     
+    @IBOutlet var leaguesDisplaySwitch: UISwitch!
+    
     lazy var dataSource = createDataSource()
-    var leagues = [DenormalizedLeague]()
+    var denormalizedLeagues = [DenormalizedLeague]()
     let leagueIdsRef = Database.database().reference(withPath: "leagueIds")
+    let userLeaguesRef = Database.database().reference(withPath: "users/\(Auth.auth().currentUser!.uid)/leagues")
     
     // MARK: - View life cycle functions
     
@@ -47,24 +50,52 @@ class LeaguesTableViewController: UITableViewController {
     // TODO: Only display leagues of which we are a member
     func fetchDenormalizedLeagueData(completion: @escaping () -> Void) {
         
-        // Fetch the data
-        leagueIdsRef.observeSingleEvent(of: .value) { snapshot in
+        // Only display joined leagues
+        if !leaguesDisplaySwitch.isOn {
             
             // Remove all existing league data
-            self.leagues.removeAll()
+            self.denormalizedLeagues.removeAll()
             
-            // Verify that the received data produces valid DenormalizedLeagues, and if it does, append them
-            for childSnapshot in snapshot.children {
-                guard let childSnapshot = childSnapshot as? DataSnapshot,
-                      let league = DenormalizedLeague(snapshot: childSnapshot) else {
-                    print("Failed to create denormalized league")
-                    continue
+            // Fetch user league Ids
+            userLeaguesRef.observeSingleEvent(of: .value) { snapshot in
+                guard let userLeagueIdValues = snapshot.value as? [String: Bool] else { print("Boo"); return }
+                let userLeagueIds = userLeagueIdValues.map { $0.key }
+                
+                // Fetch denormalized leagues from user league Ids
+                Task {
+                    self.denormalizedLeagues = await DenormalizedLeague.fetchMultipleLeagues(from: userLeagueIds)
+                    self.denormalizedLeagues = self.denormalizedLeagues.sorted(by: { $0.startDate > $1.startDate})
+                    completion()
+                }
+            }
+        } else { // Display all leagues
+            
+            // Remove all existing league data
+            self.denormalizedLeagues.removeAll()
+            
+            // Fetch the data
+            leagueIdsRef.observeSingleEvent(of: .value) { snapshot in
+                
+                // Verify that the received data produces valid DenormalizedLeagues, and if it does, append them
+                for childSnapshot in snapshot.children {
+                    guard let childSnapshot = childSnapshot as? DataSnapshot,
+                          let league = DenormalizedLeague(snapshot: childSnapshot) else {
+                        print("Failed to create denormalized league")
+                        continue
+                    }
+                    
+                    self.denormalizedLeagues.append(league)
                 }
                 
-                self.leagues.append(league)
+                self.denormalizedLeagues = self.denormalizedLeagues.sorted(by: { $0.startDate > $1.startDate})
+                completion()
             }
-            
-            completion()
+        }
+    }
+    
+    @IBAction func leaguesDisplaySwitchToggled() {
+        fetchDenormalizedLeagueData {
+            self.updateTableView()
         }
     }
     
@@ -141,7 +172,7 @@ extension LeaguesTableViewController {
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, DenormalizedLeague>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(leagues)
+        snapshot.appendItems(denormalizedLeagues)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
