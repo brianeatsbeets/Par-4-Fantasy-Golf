@@ -198,15 +198,36 @@ class LeagueDetailTableViewController: UITableViewController {
         return manageAthletesViewController
     }
     
-    // Pass league data to LeagueUserDetailTableViewController
-    @IBSegueAction func segueToUserDetail(_ coder: NSCoder, sender: Any?) -> LeagueUserDetailTableViewController? {
+    // Segue to LeagueUserDetailViewController
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        // Get the league
-        guard let leagueStandingCell = sender as? UITableViewCell,
-              let indexPath = tableView.indexPath(for: leagueStandingCell),
-              let leagueStanding = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        tableView.deselectRow(at: indexPath, animated: true)
         
-        return LeagueUserDetailTableViewController(coder: coder, userId: leagueStanding.user.id, league: league)
+        // Make sure we have picks for the selected user
+        guard let leagueStanding = dataSource.itemIdentifier(for: indexPath),
+              let userPicks = league.pickIds[leagueStanding.user.id] else { print("No picks for this user"); return }
+        
+        var selectedUserPicks = [Athlete]()
+        
+        // Grab the athlete object for each athlete Id
+        for athleteId in userPicks {
+            if let athlete = league.athletes.first(where: { $0.id == athleteId }) {
+                selectedUserPicks.append(athlete)
+            } else {
+                print("Error finding athlete from pick: No matching athlete ID found")
+            }
+        }
+        
+        // Sort the picked athletes
+        selectedUserPicks = selectedUserPicks.sorted(by: { $0.score < $1.score })
+        
+        // Verify we can instantiate an instance of LeagueUserDetailTableViewController
+        guard let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueUserDetail", creator: { coder in
+            LeagueUserDetailTableViewController(coder: coder, selectedUserEmail: leagueStanding.user.email, selectedUserPicks: selectedUserPicks)
+        }) else { return }
+        
+        // Push the new view controller
+        navigationController?.pushViewController(destinationViewController, animated: true)
     }
     
     // Handle the incoming new picks data

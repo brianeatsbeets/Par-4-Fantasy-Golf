@@ -19,14 +19,14 @@ class LeagueUserDetailTableViewController: UITableViewController {
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    var league: League
-    var userId: String
+    let selectedUserEmail: String
+    var selectedUserPicks: [Athlete]
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, userId: String, league: League) {
-        self.league = league
-        self.userId = userId
+    init?(coder: NSCoder, selectedUserEmail: String, selectedUserPicks: [Athlete]) {
+        self.selectedUserEmail = selectedUserEmail
+        self.selectedUserPicks = selectedUserPicks
         super.init(coder: coder)
     }
     
@@ -39,6 +39,7 @@ class LeagueUserDetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        title = "Picks for \(selectedUserEmail)"
         tableView.dataSource = dataSource
         updateTableView()
     }
@@ -59,12 +60,12 @@ extension LeagueUserDetailTableViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, LeagueUserDetail> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, Athlete> {
         
         return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, athlete in
             
             // Configure the cell
-            let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueUserCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PickedAthleteCell", for: indexPath)
             
             var config = cell.defaultContentConfiguration()
             config.text = athlete.name
@@ -73,15 +74,13 @@ extension LeagueUserDetailTableViewController {
 
             return cell
         }
-        
-        return dataSource
     }
     
     // Apply a snapshot with updated athlete data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, LeagueUserDetail>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Athlete>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(league.athletes)
+        snapshot.appendItems(selectedUserPicks)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
