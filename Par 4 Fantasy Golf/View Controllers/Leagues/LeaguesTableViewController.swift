@@ -64,6 +64,7 @@ class LeaguesTableViewController: UITableViewController {
                 // Fetch denormalized leagues from user league Ids
                 Task {
                     self.denormalizedLeagues = await DenormalizedLeague.fetchMultipleLeagues(from: userLeagueIds)
+                    //self.denormalizedLeagues = await DenormalizedLeague.fetchMultipleObjects(from: userLeagueIds)
                     self.denormalizedLeagues = self.denormalizedLeagues.sorted(by: { $0.startDate > $1.startDate})
                     completion()
                 }

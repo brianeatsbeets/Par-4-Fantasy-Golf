@@ -11,6 +11,7 @@
 		E138DE5F29AE89E400BBE47F /* League.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138DE5E29AE89E400BBE47F /* League.swift */; };
 		E138DE6129AE940000BBE47F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E138DE6029AE940000BBE47F /* GoogleService-Info.plist */; };
 		E149793229D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793129D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift */; };
+		E149793429D5BCE700ADEE60 /* ObjectFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793329D5BCE700ADEE60 /* ObjectFetcher.swift */; };
 		E16C1E7529C3970E003F037B /* ManageUsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C1E7429C3970E003F037B /* ManageUsersTableViewController.swift */; };
 		E19E3EA629CC75AB008A7D2E /* MakePicksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */; };
 		E19E3EA829CC897D008A7D2E /* PickTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E3EA729CC897D008A7D2E /* PickTableViewCell.swift */; };
@@ -42,6 +43,7 @@
 		E138DE5E29AE89E400BBE47F /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
 		E138DE6029AE940000BBE47F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E149793129D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueUserDetailTableViewController.swift; sourceTree = "<group>"; };
+		E149793329D5BCE700ADEE60 /* ObjectFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectFetcher.swift; sourceTree = "<group>"; };
 		E16C1E7429C3970E003F037B /* ManageUsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageUsersTableViewController.swift; sourceTree = "<group>"; };
 		E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePicksTableViewController.swift; sourceTree = "<group>"; };
 		E19E3EA729CC897D008A7D2E /* PickTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickTableViewCell.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 				E1E0179B29CFD14600A5A546 /* LeagueStanding.swift */,
 				E1E0179D29CFD17A00A5A546 /* PickItem.swift */,
 				E1E824B229D26EEA0094903D /* DenormalizedLeague.swift */,
+				E149793329D5BCE700ADEE60 /* ObjectFetcher.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				E1AB1C3429B12A19002A354B /* LeagueTableViewCell.swift in Sources */,
 				E149793229D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift in Sources */,
 				E19E3EA629CC75AB008A7D2E /* MakePicksTableViewController.swift in Sources */,
+				E149793429D5BCE700ADEE60 /* ObjectFetcher.swift in Sources */,
 				E1E0179E29CFD17A00A5A546 /* PickItem.swift in Sources */,
 				E1C4B12829A6C89C00F0DF67 /* AccountViewController.swift in Sources */,
 				E19E3EA829CC897D008A7D2E /* PickTableViewCell.swift in Sources */,

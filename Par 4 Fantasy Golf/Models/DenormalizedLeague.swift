@@ -51,7 +51,7 @@ struct DenormalizedLeague: Hashable {
     
     // Helper function to fetch a league object from a league id
     static func fetchSingleLeague(from id: String) async -> DenormalizedLeague? {
-            
+        
         // Set league database reference
         let leagueRef = Database.database().reference(withPath: "leagueIds/" + id)
         
