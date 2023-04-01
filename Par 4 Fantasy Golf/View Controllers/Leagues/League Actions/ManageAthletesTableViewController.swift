@@ -94,6 +94,8 @@ class ManageAthletesTableViewController: UITableViewController {
             delegate?.addAthlete(athlete: newAthlete)
         }
         
+        league.athletes = league.athletes.sorted(by: { $0.name < $1.name })
+        
         // Save the athlete to Firebase
         leagueAthletesRef.setValue(newAthlete.toAnyObject())
         

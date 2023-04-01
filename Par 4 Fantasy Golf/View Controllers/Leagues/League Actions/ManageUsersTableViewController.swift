@@ -94,10 +94,13 @@ class ManageUsersTableViewController: UITableViewController {
                 guard let childSnapshot = snapshot.children.nextObject() as? DataSnapshot,
                       let newUser = User(snapshot: childSnapshot) else { return }
                 
-                // Add the user to the local data source and update the table view
+                // Add the user to the local data source
                 self.league.members.append(newUser)
                 self.league.memberIds.append(newUser.id)
                 self.delegate?.addUser(user: newUser)
+                
+                // Sort the members and update the table view
+                self.league.members = self.league.members.sorted(by: { $0.email < $1.email })
                 self.updateTableView()
                 
                 // Add the user's ID to the league and add the league's ID to the user in Firebase

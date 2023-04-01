@@ -146,7 +146,7 @@ class LeagueDetailTableViewController: UITableViewController {
         let deleteLeagueAlert = UIAlertController(title: "Are you sure?", message: "All of the league data will be permenantly deleted.", preferredStyle: .alert)
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let confirm = UIAlertAction(title: "Yes", style: .destructive) { [unowned deleteLeagueAlert] _ in
+        let confirm = UIAlertAction(title: "Delete League", style: .destructive) { [unowned deleteLeagueAlert] _ in
             
             // Dismiss the current alert
             deleteLeagueAlert.dismiss(animated: true)

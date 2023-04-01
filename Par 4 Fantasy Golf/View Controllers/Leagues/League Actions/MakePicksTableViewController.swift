@@ -79,6 +79,9 @@ class MakePicksTableViewController: UITableViewController {
             }
         }
         
+        // Sort picks by odds
+        pickItems = pickItems.sorted(by: { $0.athlete.odds < $1.athlete.odds })
+        
         return pickItems
     }
     

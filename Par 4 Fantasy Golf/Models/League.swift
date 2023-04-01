@@ -96,6 +96,9 @@ struct League: Hashable {
                     print("Couldn't init athlete from snapshot")
                 }
             }
+            
+            // Sort athletes
+            self.athletes = self.athletes.sorted(by: { $0.name < $1.name })
         }
         
         if let pickIds = value["pickIds"] as? [String: [String: Bool]] {

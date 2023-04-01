@@ -24,5 +24,9 @@ class PickTableViewCell: UITableViewCell {
         config.text = "\(pickItem.athlete.name) - $\(pickItem.athlete.value)"
         config.secondaryText = "Odds: \(pickItem.athlete.odds) | Selected: \(pickItem.isSelected.description)"
         contentConfiguration = config
+        
+        if pickItem.isSelected {
+            backgroundColor = UIColor(red: 202/255, green: 1, blue: 196/255, alpha: 1)
+        }
     }
 }
