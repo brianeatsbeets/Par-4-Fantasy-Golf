@@ -6,6 +6,7 @@
 //
 
 // TODO: Validate input fields
+// TODO: Aggregate fields/values before creating league in prepare(for segue:sender:)
 
 // MARK: - Imported libraries
 
@@ -25,6 +26,7 @@ class CreateLeagueTableViewController: UITableViewController {
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var startDatePicker: UIDatePicker!
     @IBOutlet var budgetTextField: UITextField!
+    @IBOutlet var pullDataFromApiSwitch: UISwitch!
     
     // MARK: - View life cycle functions
     
@@ -38,6 +40,6 @@ class CreateLeagueTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard segue.identifier == "createLeagueUnwind" else { return }
         
-        league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, members: [User(id: currentFirebaseUser.uid, email: currentFirebaseUser.email!)], budget: Int(budgetTextField.text ?? "") ?? 20)
+        league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, members: [User(id: currentFirebaseUser.uid, email: currentFirebaseUser.email!)], budget: Int(budgetTextField.text ?? "") ?? 20, isUsingApi: pullDataFromApiSwitch.isOn)
     }
 }

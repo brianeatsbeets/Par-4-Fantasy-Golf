@@ -48,7 +48,12 @@ class LeagueDetailTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
-        title = league.name
+        
+        if league.isUsingApi {
+            title = league.name + "(API)"
+        } else {
+            title = league.name
+        }
         
         // Enable/disable make picks button based on tournament status
         tournamentStartedSwitch.isOn = league.tournamentHasStarted

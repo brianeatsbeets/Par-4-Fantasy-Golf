@@ -28,16 +28,17 @@ struct League: Hashable {
     var startDate: Double
     let creator: String
     var memberIds: [String]
-    var members: [User]
-    var athletes: [Athlete]
-    var pickIds: [String: [String]]
+    var members = [User]()
+    var athletes = [Athlete]()
+    var pickIds = [String: [String]]()
     let budget: Int
     var tournamentHasStarted = false
+    var isUsingApi = false
     
     // MARK: - Initializers
     
     // Standard init
-    init(name: String, startDate: Double, members: [User] = [], budget: Int) {
+    init(name: String, startDate: Double, members: [User] = [], budget: Int, isUsingApi: Bool) {
         uuid = UUID()
         databaseReference = Database.database().reference(withPath: "leagues/\(uuid)")
         self.name = name
@@ -52,9 +53,8 @@ struct League: Hashable {
         
         self.memberIds = members.map { $0.id }
         self.members = members
-        self.athletes = []
-        self.pickIds = [:]
         self.budget = budget
+        self.isUsingApi = isUsingApi
     }
     
     // Init with snapshot data
@@ -67,7 +67,8 @@ struct League: Hashable {
               let startDate = value["startDate"] as? Double,
               let creator = value["creator"] as? String,
               let budget = value["budget"] as? Int,
-              let tournamentHasStarted = value["tournamentHasStarted"] as? Bool else { return nil }
+              let tournamentHasStarted = value["tournamentHasStarted"] as? Bool,
+              let isUsingApi = value["isUsingApi"] as? Bool else { return nil }
         
         // Assign properties that will always have values
         uuid = id
@@ -75,10 +76,9 @@ struct League: Hashable {
         self.name = name
         self.startDate = startDate
         self.creator = creator
-        self.members = []
-        self.pickIds = [:]
         self.budget = budget
         self.tournamentHasStarted = tournamentHasStarted
+        self.isUsingApi = isUsingApi
         
         // Conditionally assign properties that may or may not have values
         if let memberIds = value["memberIds"] as? [String: Bool] {
@@ -149,7 +149,8 @@ struct League: Hashable {
             "athletes": athleteDict,
             "pickIds": pickDict,
             "budget": budget,
-            "tournamentHasStarted": tournamentHasStarted
+            "tournamentHasStarted": tournamentHasStarted,
+            "isUsingApi": isUsingApi
         ]
     }
     

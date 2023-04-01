@@ -5,7 +5,7 @@
 //  Created by Aguirre, Brian P. on 3/1/23.
 //
 
-// TODO: Figure out why leagues sometimes update after returning from league details (maybe related to sorting?)
+// TODO: Figure out why leagues sometimes update after returning from league details (maybe related to sorting?) - is this still an issue?
 
 // MARK: - Imported libraries
 
@@ -124,6 +124,11 @@ class LeaguesTableViewController: UITableViewController {
         // Save the league to the league members' data
         for user in league.members {
             user.databaseReference.child("leagues").child(league.id).setValue(true)
+        }
+        
+        // Fetch league data and update the table view
+        fetchDenormalizedLeagueData() {
+            self.updateTableView()
         }
     }
     
