@@ -49,8 +49,9 @@ class LeagueDetailTableViewController: UITableViewController {
         
         tableView.dataSource = dataSource
         
+        // Testing only - set visual indicator if a league is fetching data from the ESPN API
         if league.isUsingApi {
-            title = league.name + "(API)"
+            title = league.name + " (API)"
         } else {
             title = league.name
         }
@@ -68,9 +69,13 @@ class LeagueDetailTableViewController: UITableViewController {
         }
         
         Task {
-            league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
-            calculateLeagueStandings()
-            updateTableView()
+            if league.isUsingApi {
+                await fetchEspnData()
+            } else {
+                league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
+                calculateLeagueStandings()
+                updateTableView()
+            }
         }
     }
     
@@ -87,6 +92,64 @@ class LeagueDetailTableViewController: UITableViewController {
     }
     
     // MARK: - Other functions
+    
+    // Fetch ESPN Data
+    func fetchEspnData() async {
+        // Construct URL
+        let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?dates=20230406")!
+        
+        do {
+            // Request data from the URL
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            // Make sure we have a valid HTTP response
+            if let httpResponse = response as? HTTPURLResponse,
+               httpResponse.statusCode == 200,
+               let apiResponse = try? JSONDecoder().decode(ServerResponse.self, from: data) {
+                //let dictionaryResponse = try? jsonDecoder.decode(Scoreboard.self, from: data) {
+                //print("Calendar: \(apiResponse.activeLeagues[0].calendar)")
+                print("Event name: \(apiResponse.activeEvents[0].name)")
+                print("Event id: \(apiResponse.activeEvents[0].id)")
+                print("Event start date: \(apiResponse.activeEvents[0].startDate)")
+                print("Event start date (pretty print): \(apiResponse.activeEvents[0].startDate.prettyDate())")
+                print("Event end date: \(apiResponse.activeEvents[0].endDate)")
+                print("Event status: \(apiResponse.activeEvents[0].competitions[0].status.statusDetails.statusDescription)")
+                
+                if let competitors = apiResponse.activeEvents[0].competitions[0].competitors {
+                    
+                    //print("Event competitors: \(competitors)")
+                    for competitor in competitors {
+                        
+                        var playerInfo = "\(competitor.nameContainer.name): \(competitor.overallScore)"
+                        
+                        // Check if competitor has played less rounds than the first place competitor
+                        if competitor.roundScores.count < competitors[0].roundScores.count {
+                            playerInfo += " (PLAYER CUT)"
+                        }
+                        
+                        print(playerInfo)
+                        
+                        //                        print("Competitor name: \(competitor.nameContainer.name)")
+                        //                        print("Competitor ID: \(competitor.id)")
+                        //                        print("Competitor overall score: \(competitor.overallScore)")
+                        //                        for (index, round) in competitor.roundScores.enumerated() {
+                        //                            print("Competitor round \(index+1) score: \(round.value)")
+                        //                        }
+                        //                        if competitor.roundScores.count < 3 {
+                        //                            print("PLAYER CUT")
+                        //                        }
+                        //                        print("------------------------------------------------------------")
+                    }
+                } else {
+                    print("No competitors")
+                }
+            } else {
+                print("HTTP request error: \(response.description)")
+            }
+        } catch {
+            print("Caught error from URLSession.shared.data function")
+        }
+    }
     
     // Calculate the league standings
     // TODO: Sort by name if tournament hasn't started yet

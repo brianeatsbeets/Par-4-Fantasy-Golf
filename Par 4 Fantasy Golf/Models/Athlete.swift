@@ -12,7 +12,7 @@ import FirebaseDatabase
 // MARK: - Main struct
 
 // This model represents an athlete
-struct Athlete: Hashable {
+struct Athlete: Hashable, Codable {
     
     // MARK: - Properties
     
@@ -20,6 +20,7 @@ struct Athlete: Hashable {
     var id: String {
         uuid.uuidString
     }
+    //var espnId: String?
     var name: String
     var odds: Int
     var value: Int
