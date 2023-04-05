@@ -1,5 +1,5 @@
 //
-//  LeagueStanding.swift
+//  TournamentStanding.swift
 //  Par 4 Fantasy Golf
 //
 //  Created by Aguirre, Brian P. on 3/25/23.
@@ -7,12 +7,12 @@
 
 // MARK: - Main struct
 
-// Helper struct to contain individual user standing data for a given league
-struct LeagueStanding: Hashable {
+// Helper struct to contain individual user standing data for a given tournament
+struct TournamentStanding: Hashable {
     
     // MARK: - Properties
     
-    let leagueId: String
+    let tournamentId: String
     var place = ""
     let user: User
     var topAthletes: [Athlete]
@@ -30,8 +30,8 @@ struct LeagueStanding: Hashable {
     
     // MARK: - Initializers
     
-    init(leagueId: String, user: User, topAthletes: [Athlete]) {
-        self.leagueId = leagueId
+    init(tournamentId: String, user: User, topAthletes: [Athlete]) {
+        self.tournamentId = tournamentId
         self.user = user
         self.topAthletes = topAthletes
         score = topAthletes.reduce(0) { $0 + $1.score }
@@ -41,8 +41,8 @@ struct LeagueStanding: Hashable {
 // MARK: - Extensions
 
 // This extension conforms to the Comparable protocol
-extension LeagueStanding: Comparable {
-    static func < (lhs: LeagueStanding, rhs: LeagueStanding) -> Bool {
+extension TournamentStanding: Comparable {
+    static func < (lhs: TournamentStanding, rhs: TournamentStanding) -> Bool {
         lhs.score < rhs.score
     }
 }

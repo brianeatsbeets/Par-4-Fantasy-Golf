@@ -82,10 +82,10 @@ struct Athlete: Hashable, Codable {
     }
     
     // Helper function to fetch a user object from a user id
-    static func fetchSingleAthlete(from id: String, leagueId: String) async -> Athlete? {
+    static func fetchSingleAthlete(from id: String, tournamentId: String) async -> Athlete? {
             
         // Set athlete database reference
-        let athleteRef = Database.database().reference(withPath: "leagues/" + leagueId + "/athletes/" + id)
+        let athleteRef = Database.database().reference(withPath: "tournaments/" + tournamentId + "/athletes/" + id)
         
         // Attempt to create a athlete from a snapshot
         do {
@@ -103,7 +103,7 @@ struct Athlete: Hashable, Codable {
     }
     
     // Helper function to fetch multiple athlete objects from an array of athlete ids
-    static func fetchMultipleAthletes(from ids: [String], leagueId: String) async -> [Athlete] {
+    static func fetchMultipleAthletes(from ids: [String], tournamentId: String) async -> [Athlete] {
         
         // Use a task group to make sure that all athlete fetch requests return a response before we return the athlete array to the caller
         return await withTaskGroup(of: Athlete?.self, returning: [Athlete].self) { group in
@@ -117,7 +117,7 @@ struct Athlete: Hashable, Codable {
                 group.addTask {
                     
                     // Fetch athlete from ID
-                    await Athlete.fetchSingleAthlete(from: id, leagueId: leagueId)
+                    await Athlete.fetchSingleAthlete(from: id, tournamentId: tournamentId)
                 }
                 
                 // Wait for each athlete request to receive a response

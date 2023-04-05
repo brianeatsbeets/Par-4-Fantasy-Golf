@@ -27,7 +27,7 @@ class LeagueDetailTableViewController: UITableViewController {
     
     lazy var dataSource = createDataSource()
     var league: League
-    var standings = [LeagueStanding]()
+    var standings = [TournamentStanding]()
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
     
@@ -157,7 +157,7 @@ class LeagueDetailTableViewController: UITableViewController {
     func calculateLeagueStandings() {
         print("Calculating league standings")
         
-        var newStandings = [LeagueStanding]()
+        var newStandings = [TournamentStanding]()
         
         // Create a league standing object for each user
         for user in league.members {
@@ -179,7 +179,7 @@ class LeagueDetailTableViewController: UITableViewController {
             }
             
             // Create and append a new league standing to the temporary container
-            let userStanding = LeagueStanding(leagueId: league.id, user: user, topAthletes: topAthletes)
+            let userStanding = TournamentStanding(leagueId: league.id, user: user, topAthletes: topAthletes)
             newStandings.append(userStanding)
         }
         
@@ -343,12 +343,12 @@ extension LeagueDetailTableViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, LeagueStanding> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, TournamentStanding> {
         
         return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, standing in
             
             // Configure the cell
-            let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! LeagueStandingTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! TournamentStandingTableViewCell
             cell.configure(with: standing)
 
             return cell
@@ -357,7 +357,7 @@ extension LeagueDetailTableViewController {
     
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, LeagueStanding>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, TournamentStanding>()
         snapshot.appendSections(Section.allCases)
         snapshot.appendItems(standings)
         dataSource.apply(snapshot, animatingDifferences: animated)

@@ -1,5 +1,5 @@
 //
-//  LeagueStandingTableViewCell.swift
+//  TournamentStandingTableViewCell.swift
 //  Par 4 Fantasy Golf
 //
 //  Created by Aguirre, Brian P. on 3/3/23.
@@ -11,15 +11,15 @@ import UIKit
 
 // MARK: - Main class
 
-// This class/table view cell presents a league standing cell
-class LeagueStandingTableViewCell: UITableViewCell {
+// This class/table view cell presents a tournament standing cell
+class TournamentStandingTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     
     // MARK: - Functions
     
     // Set up the cell UI elements
-    func configure(with standing: LeagueStanding) {
+    func configure(with standing: TournamentStanding) {
         
         var config = defaultContentConfiguration()
         config.text = "\(standing.place): \(standing.user.email): \(standing.formattedScore)"

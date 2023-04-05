@@ -22,7 +22,7 @@ class LeagueTableViewCell: UITableViewCell {
     func configure(with league: DenormalizedLeague) {
         var config = defaultContentConfiguration()
         config.text = league.name
-        config.secondaryText = "Start date: " + league.startDate.formattedDate()
+        //config.secondaryText = "Start date: " + league.startDate.formattedDate()
         contentConfiguration = config
     }
 

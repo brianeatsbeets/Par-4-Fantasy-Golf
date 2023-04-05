@@ -16,14 +16,14 @@ struct DenormalizedLeague: Hashable {
     
     let id: String
     var name: String
-    var startDate: Double
+    //var startDate: Double
     
     // MARK: - Initializers
     
-    init(id: String, name: String, startDate: Double) {
+    init(id: String, name: String) {
         self.id = id
         self.name = name
-        self.startDate = startDate
+        //self.startDate = startDate
     }
     
     // Init with snapshot data
@@ -31,12 +31,13 @@ struct DenormalizedLeague: Hashable {
         
         // Validate and set the incoming values
         guard let snapshotValue = snapshot.value as? [String: AnyObject],
-              let name = snapshotValue["name"] as? String,
-              let startDate = snapshotValue["startDate"] as? Double else { return nil }
+              let name = snapshotValue["name"] as? String
+              //let startDate = snapshotValue["startDate"] as? Double
+              else { return nil }
 
         self.id = snapshot.key
         self.name = name
-        self.startDate = startDate
+        //self.startDate = startDate
     }
     
     // MARK: - Functions
@@ -44,8 +45,8 @@ struct DenormalizedLeague: Hashable {
     // Convert the DenormalizedLeague to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
         return [
-            "name": name,
-            "startDate": startDate
+            "name": name
+            //"startDate": startDate
         ]
     }
     
@@ -99,7 +100,7 @@ struct DenormalizedLeague: Hashable {
             }
             
             // Return the leagues sorted in descending order
-            return denormalizedLeagues.sorted { $0.startDate > $1.startDate }
+            return denormalizedLeagues.sorted { $0.name > $1.name }
         }
     }
 }
