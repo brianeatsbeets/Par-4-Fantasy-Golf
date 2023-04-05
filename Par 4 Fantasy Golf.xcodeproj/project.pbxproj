@@ -10,7 +10,7 @@
 		E138DE5C29AE88D300BBE47F /* CreateLeagueTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138DE5B29AE88D300BBE47F /* CreateLeagueTableViewController.swift */; };
 		E138DE5F29AE89E400BBE47F /* League.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138DE5E29AE89E400BBE47F /* League.swift */; };
 		E138DE6129AE940000BBE47F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E138DE6029AE940000BBE47F /* GoogleService-Info.plist */; };
-		E149793229D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793129D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift */; };
+		E149793229D4DAFC00ADEE60 /* TournamentUserDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793129D4DAFC00ADEE60 /* TournamentUserDetailTableViewController.swift */; };
 		E149793429D5BCE700ADEE60 /* ObjectFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793329D5BCE700ADEE60 /* ObjectFetcher.swift */; };
 		E149793629D861AB00ADEE60 /* Scoreboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793529D861AB00ADEE60 /* Scoreboard.swift */; };
 		E149793829D86E8C00ADEE60 /* ServerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793729D86E8C00ADEE60 /* ServerResponse.swift */; };
@@ -26,7 +26,7 @@
 		E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C2E29AFE537002A354B /* RegistrationViewController.swift */; };
 		E1AB1C3129AFFD61002A354B /* LeaguesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C3029AFFD61002A354B /* LeaguesTableViewController.swift */; };
 		E1AB1C3429B12A19002A354B /* LeagueTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C3329B12A19002A354B /* LeagueTableViewCell.swift */; };
-		E1AB1C3629B2828B002A354B /* LeagueDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C3529B2828B002A354B /* LeagueDetailTableViewController.swift */; };
+		E1AB1C3629B2828B002A354B /* TournamentDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C3529B2828B002A354B /* TournamentDetailTableViewController.swift */; };
 		E1AB1C3829B28B8E002A354B /* TournamentStandingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C3729B28B8E002A354B /* TournamentStandingTableViewCell.swift */; };
 		E1AB1C3A29B29F9E002A354B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AB1C3929B29F9E002A354B /* User.swift */; };
 		E1C4B10D29A560DF00F0DF67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B10C29A560DF00F0DF67 /* AppDelegate.swift */; };
@@ -45,7 +45,7 @@
 		E138DE5B29AE88D300BBE47F /* CreateLeagueTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateLeagueTableViewController.swift; sourceTree = "<group>"; };
 		E138DE5E29AE89E400BBE47F /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
 		E138DE6029AE940000BBE47F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		E149793129D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueUserDetailTableViewController.swift; sourceTree = "<group>"; };
+		E149793129D4DAFC00ADEE60 /* TournamentUserDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentUserDetailTableViewController.swift; sourceTree = "<group>"; };
 		E149793329D5BCE700ADEE60 /* ObjectFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectFetcher.swift; sourceTree = "<group>"; };
 		E149793529D861AB00ADEE60 /* Scoreboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoreboard.swift; sourceTree = "<group>"; };
 		E149793729D86E8C00ADEE60 /* ServerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerResponse.swift; sourceTree = "<group>"; };
@@ -59,7 +59,7 @@
 		E1AB1C2E29AFE537002A354B /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		E1AB1C3029AFFD61002A354B /* LeaguesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaguesTableViewController.swift; sourceTree = "<group>"; };
 		E1AB1C3329B12A19002A354B /* LeagueTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueTableViewCell.swift; sourceTree = "<group>"; };
-		E1AB1C3529B2828B002A354B /* LeagueDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueDetailTableViewController.swift; sourceTree = "<group>"; };
+		E1AB1C3529B2828B002A354B /* TournamentDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentDetailTableViewController.swift; sourceTree = "<group>"; };
 		E1AB1C3729B28B8E002A354B /* TournamentStandingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentStandingTableViewCell.swift; sourceTree = "<group>"; };
 		E1AB1C3929B29F9E002A354B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E1C4B10929A560DF00F0DF67 /* Par 4 Fantasy Golf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Par 4 Fantasy Golf.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,9 +109,9 @@
 		E19E3EAF29CD41A6008A7D2E /* League Actions */ = {
 			isa = PBXGroup;
 			children = (
+				E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */,
 				E16C1E7429C3970E003F037B /* ManageUsersTableViewController.swift */,
 				E19E3EA929CD33DC008A7D2E /* ManageAthletesTableViewController.swift */,
-				E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */,
 				E19E3EAD29CD419B008A7D2E /* AddEditAthleteTableViewController.swift */,
 			);
 			path = "League Actions";
@@ -200,8 +200,8 @@
 			children = (
 				E138DE5B29AE88D300BBE47F /* CreateLeagueTableViewController.swift */,
 				E1AB1C3029AFFD61002A354B /* LeaguesTableViewController.swift */,
-				E1AB1C3529B2828B002A354B /* LeagueDetailTableViewController.swift */,
-				E149793129D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift */,
+				E1AB1C3529B2828B002A354B /* TournamentDetailTableViewController.swift */,
+				E149793129D4DAFC00ADEE60 /* TournamentUserDetailTableViewController.swift */,
 				E19E3EAF29CD41A6008A7D2E /* League Actions */,
 			);
 			path = Leagues;
@@ -293,7 +293,7 @@
 				E1C4B10F29A560DF00F0DF67 /* SceneDelegate.swift in Sources */,
 				E16C1E7529C3970E003F037B /* ManageUsersTableViewController.swift in Sources */,
 				E1AB1C3429B12A19002A354B /* LeagueTableViewCell.swift in Sources */,
-				E149793229D4DAFC00ADEE60 /* LeagueUserDetailTableViewController.swift in Sources */,
+				E149793229D4DAFC00ADEE60 /* TournamentUserDetailTableViewController.swift in Sources */,
 				E19E3EA629CC75AB008A7D2E /* MakePicksTableViewController.swift in Sources */,
 				E149793429D5BCE700ADEE60 /* ObjectFetcher.swift in Sources */,
 				E149793829D86E8C00ADEE60 /* ServerResponse.swift in Sources */,
@@ -310,7 +310,7 @@
 				E1AB1C3829B28B8E002A354B /* TournamentStandingTableViewCell.swift in Sources */,
 				E19E3EAC29CD33F2008A7D2E /* Athlete.swift in Sources */,
 				E1C4B12629A6C1DD00F0DF67 /* SignInViewController.swift in Sources */,
-				E1AB1C3629B2828B002A354B /* LeagueDetailTableViewController.swift in Sources */,
+				E1AB1C3629B2828B002A354B /* TournamentDetailTableViewController.swift in Sources */,
 				E19E3EAE29CD419B008A7D2E /* AddEditAthleteTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

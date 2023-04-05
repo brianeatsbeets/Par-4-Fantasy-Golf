@@ -1,5 +1,5 @@
 //
-//  LeagueUserDetailTableViewController.swift
+//  TournamentUserDetailTableViewController.swift
 //  Par 4 Fantasy Golf
 //
 //  Created by Aguirre, Brian P. on 3/29/23.
@@ -13,8 +13,8 @@ import FirebaseDatabase
 
 // MARK: - Main class
 
-// This class/view controller allows the user to manage athletes for a given league
-class LeagueUserDetailTableViewController: UITableViewController {
+// This class/view controller allows the user to manage athletes for a given tournament
+class TournamentUserDetailTableViewController: UITableViewController {
     
     // MARK: - Properties
     
@@ -48,7 +48,7 @@ class LeagueUserDetailTableViewController: UITableViewController {
 // MARK: - Extensions
 
 // This extention houses table view management functions that utilize the diffable data source API
-extension LeagueUserDetailTableViewController {
+extension TournamentUserDetailTableViewController {
     
     // MARK: - Section enum
     

@@ -24,9 +24,6 @@ class CreateLeagueTableViewController: UITableViewController {
     let currentFirebaseUser = Auth.auth().currentUser!
     
     @IBOutlet var nameTextField: UITextField!
-    @IBOutlet var startDatePicker: UIDatePicker!
-    @IBOutlet var budgetTextField: UITextField!
-    @IBOutlet var pullDataFromApiSwitch: UISwitch!
     
     // MARK: - View life cycle functions
     
@@ -39,7 +36,6 @@ class CreateLeagueTableViewController: UITableViewController {
     // Compile the league data for sending back to the leagues table view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard segue.identifier == "createLeagueUnwind" else { return }
-        
-        league = League(name: nameTextField.text ?? "", startDate: startDatePicker.date.timeIntervalSince1970, members: [User(id: currentFirebaseUser.uid, email: currentFirebaseUser.email!)], budget: Int(budgetTextField.text ?? "") ?? 20, isUsingApi: pullDataFromApiSwitch.isOn)
+        league = League(name: nameTextField.text ?? "")
     }
 }

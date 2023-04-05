@@ -22,21 +22,21 @@ protocol ManageAthletesDelegate: AnyObject {
 
 // MARK: - Main class
 
-// This class/view controller allows the user to manage athletes for a given league
+// This class/view controller allows the user to manage athletes for a given tournament
 class ManageAthletesTableViewController: UITableViewController {
     
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    var league: League
+    var tournament: Tournament
     weak var delegate: ManageAthletesDelegate?
     let userPicksRef: DatabaseReference
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, league: League) {
-        self.league = league
-        self.userPicksRef = league.databaseReference.child("pickIds").child(Auth.auth().currentUser!.uid)
+    init?(coder: NSCoder, tournament: Tournament) {
+        self.tournament = tournament
+        self.userPicksRef = tournament.databaseReference.child("pickIds").child(Auth.auth().currentUser!.uid)
         super.init(coder: coder)
     }
     
@@ -62,14 +62,14 @@ class ManageAthletesTableViewController: UITableViewController {
     
     // MARK: - Navigation
     
-    // Pass league data to ManageAthletesTableViewController
+    // Pass tournament data to ManageAthletesTableViewController
     @IBSegueAction func segueToAddEditAthlete(_ coder: NSCoder, sender: Any?) -> AddEditAthleteTableViewController? {
         
         // Check if we're creating a new athlete or editing an existing one
         if let athleteCell = sender as? UITableViewCell,
            let indexPath = tableView.indexPath(for: athleteCell),
            let athlete = dataSource.itemIdentifier(for: indexPath) {
-            return AddEditAthleteTableViewController(coder: coder, athlete: athlete, athleteRefPath: "leagues/\(league.id)/athletes/\(athlete.id)")
+            return AddEditAthleteTableViewController(coder: coder, athlete: athlete, athleteRefPath: "tournaments/\(tournament.id)/athletes/\(athlete.id)")
         } else {
             return AddEditAthleteTableViewController(coder: coder, athlete: nil, athleteRefPath: nil)
         }
@@ -83,21 +83,21 @@ class ManageAthletesTableViewController: UITableViewController {
               let sourceViewController = segue.source as? AddEditAthleteTableViewController,
               let newAthlete = sourceViewController.athlete else { return }
         
-        let leagueAthletesRef = league.databaseReference.child("athletes").child(newAthlete.id)
+        let tournamentAthletesRef = tournament.databaseReference.child("athletes").child(newAthlete.id)
         
         // If we have an athlete with a matching ID, replace it; otherwise, append it
-        if let athleteIndex = league.athletes.firstIndex(where: { $0.id == newAthlete.id }) {
-            league.athletes[athleteIndex] = newAthlete
+        if let athleteIndex = tournament.athletes.firstIndex(where: { $0.id == newAthlete.id }) {
+            tournament.athletes[athleteIndex] = newAthlete
             delegate?.updateAthlete(athlete: newAthlete)
         } else {
-            league.athletes.append(newAthlete)
+            tournament.athletes.append(newAthlete)
             delegate?.addAthlete(athlete: newAthlete)
         }
         
-        league.athletes = league.athletes.sorted(by: { $0.name < $1.name })
+        tournament.athletes = tournament.athletes.sorted(by: { $0.name < $1.name })
         
         // Save the athlete to Firebase
-        leagueAthletesRef.setValue(newAthlete.toAnyObject())
+        tournamentAthletesRef.setValue(newAthlete.toAnyObject())
         
         // Update the table view
         updateTableView()
@@ -116,9 +116,9 @@ extension ManageAthletesTableViewController {
         
         // MARK: - Properties
         
-        var leagueAthletesRef = DatabaseReference()
-        var leaguePicksRef = DatabaseReference()
-        var selectedLeague: League!
+        var tournamentAthletesRef = DatabaseReference()
+        var tournamentPicksRef = DatabaseReference()
+        var selectedTournament: Tournament!
         weak var delegate: ManageAthletesDelegate?
         
         // MARK: - Other functions
@@ -133,25 +133,25 @@ extension ManageAthletesTableViewController {
             guard let athlete = itemIdentifier(for: indexPath),
                   editingStyle == .delete else { return }
             
-            // Remove the athlete from the league's athletes, both in the local data source and in firebase
-            if let index = selectedLeague.athletes.firstIndex(where: { $0.id == athlete.id }) {
-                selectedLeague.athletes.remove(at: index)
+            // Remove the athlete from the tournament's athletes, both in the local data source and in firebase
+            if let index = selectedTournament.athletes.firstIndex(where: { $0.id == athlete.id }) {
+                selectedTournament.athletes.remove(at: index)
                 delegate?.removeAthlete(athlete: athlete)
             }
-            leagueAthletesRef.child(athlete.id).removeValue()
+            tournamentAthletesRef.child(athlete.id).removeValue()
             
-            // Remove the athlete pick from each user's picks in this league, both in the local data source and in firebase
-            for userPicks in selectedLeague.pickIds {
+            // Remove the athlete pick from each user's picks in this tournament, both in the local data source and in firebase
+            for userPicks in selectedTournament.pickIds {
                 if let index = userPicks.value.firstIndex(of: athlete.id) {
-                    selectedLeague.pickIds[userPicks.key]?.remove(at: index)
-                    leaguePicksRef.child(userPicks.key).child(athlete.id).removeValue()
+                    selectedTournament.pickIds[userPicks.key]?.remove(at: index)
+                    tournamentPicksRef.child(userPicks.key).child(athlete.id).removeValue()
                 }
             }
             
             // Update the data source
             var snapshot = NSDiffableDataSourceSnapshot<Section, Athlete>()
             snapshot.appendSections(Section.allCases)
-            snapshot.appendItems(selectedLeague.athletes)
+            snapshot.appendItems(selectedTournament.athletes)
             apply(snapshot, animatingDifferences: true)
         }
     }
@@ -181,10 +181,10 @@ extension ManageAthletesTableViewController {
             return cell
         }
         
-        // Variables that allow the custom data source to access the current league's firebase database reference to delete data
-        dataSource.leagueAthletesRef = league.databaseReference.child("athletes")
-        dataSource.leaguePicksRef = league.databaseReference.child("pickIds")
-        dataSource.selectedLeague = league
+        // Variables that allow the custom data source to access the current tournament's firebase database reference to delete data
+        dataSource.tournamentAthletesRef = tournament.databaseReference.child("athletes")
+        dataSource.tournamentPicksRef = tournament.databaseReference.child("pickIds")
+        dataSource.selectedTournament = tournament
         dataSource.delegate = delegate
         
         return dataSource
@@ -194,7 +194,7 @@ extension ManageAthletesTableViewController {
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Athlete>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(league.athletes)
+        snapshot.appendItems(tournament.athletes)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }

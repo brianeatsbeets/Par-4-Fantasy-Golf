@@ -177,10 +177,10 @@
             </objects>
             <point key="canvasLocation" x="4664.6153846153848" y="-417.29857819905209"/>
         </scene>
-        <!--League Detail-->
+        <!--Tournament Detail-->
         <scene sceneID="8EG-Ea-ZIu">
             <objects>
-                <tableViewController storyboardIdentifier="LeagueDetails" title="League Detail" id="nTR-1R-Y3k" customClass="LeagueDetailTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="TournamentDetails" title="Tournament Detail" id="nTR-1R-Y3k" customClass="TournamentDetailTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="ZSz-eK-pFA">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -221,7 +221,7 @@
                             <outlet property="delegate" destination="nTR-1R-Y3k" id="3pv-gZ-kh3"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="League Title" id="Wel-qU-daC">
+                    <navigationItem key="navigationItem" title="Tournament Title" id="Wel-qU-daC">
                         <centerItemGroups>
                             <barButtonItemGroup customizationDisposition="fixed" id="Sb5-6h-Dd8">
                                 <barButtonItems>
@@ -250,8 +250,8 @@
                         </centerItemGroups>
                     </navigationItem>
                     <connections>
-                        <outlet property="leagueActionBarButtonItemGroup" destination="Sb5-6h-Dd8" id="jhT-rp-Ed2"/>
                         <outlet property="makePicksButton" destination="nRR-j2-5FW" id="9Ns-8w-CZJ"/>
+                        <outlet property="tournamentActionBarButtonItemGroup" destination="Sb5-6h-Dd8" id="jhT-rp-Ed2"/>
                         <outlet property="tournamentStartedSwitch" destination="fZb-le-Of3" id="CdB-M6-JTn"/>
                     </connections>
                 </tableViewController>
@@ -398,10 +398,10 @@
             </objects>
             <point key="canvasLocation" x="7328" y="578"/>
         </scene>
-        <!--League User Detail Table View Controller-->
+        <!--Tournament User Detail Table View Controller-->
         <scene sceneID="yf9-ka-KBY">
             <objects>
-                <tableViewController storyboardIdentifier="LeagueUserDetail" id="FRb-uZ-AZT" customClass="LeagueUserDetailTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="TournamentUserDetail" id="FRb-uZ-AZT" customClass="TournamentUserDetailTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="xbh-aN-YOj">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -588,69 +588,6 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Start Date" id="us0-OK-A2Q">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="44" id="RM7-dx-O7H">
-                                        <rect key="frame" x="0.0" y="171.66666793823242" width="390" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RM7-dx-O7H" id="6j8-hM-hiL">
-                                            <rect key="frame" x="0.0" y="0.0" width="390" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <datePicker contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" translatesAutoresizingMaskIntoConstraints="NO" id="WJ3-gj-cRB">
-                                                    <rect key="frame" x="0.0" y="0.0" width="390" height="44"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                </datePicker>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection headerTitle="Budget" id="LMe-J4-zSg">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="44" id="U0m-Nh-xh3">
-                                        <rect key="frame" x="0.0" y="293.66666793823242" width="390" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="U0m-Nh-xh3" id="MEq-5g-799">
-                                            <rect key="frame" x="0.0" y="0.0" width="390" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="71h-2R-rl2">
-                                                    <rect key="frame" x="20" y="5" width="350" height="34"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                                                </textField>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection id="Vko-Wg-hmO">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="44" id="1oo-6Y-y1y">
-                                        <rect key="frame" x="0.0" y="415.66666793823242" width="390" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="1oo-6Y-y1y" id="n2G-bF-ffb">
-                                            <rect key="frame" x="0.0" y="0.0" width="390" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Pull data from API?" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SsV-wA-ohT">
-                                                    <rect key="frame" x="20" y="11" width="166" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="5Ge-Md-Cra">
-                                                    <rect key="frame" x="276" y="6" width="49" height="31"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                </switch>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="mL8-7X-6yZ" id="3rH-hn-qV6"/>
@@ -672,10 +609,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="budgetTextField" destination="71h-2R-rl2" id="d4V-OB-n8f"/>
                         <outlet property="nameTextField" destination="Ngi-Ue-kdf" id="D5y-30-h3K"/>
-                        <outlet property="pullDataFromApiSwitch" destination="5Ge-Md-Cra" id="6pv-D9-UMZ"/>
-                        <outlet property="startDatePicker" destination="WJ3-gj-cRB" id="C53-df-D34"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TMG-Ml-bV5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

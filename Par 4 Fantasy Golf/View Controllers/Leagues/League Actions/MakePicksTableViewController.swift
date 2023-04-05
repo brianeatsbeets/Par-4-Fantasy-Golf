@@ -12,7 +12,7 @@ import FirebaseAuth
 
 // MARK: - Main class
 
-// This class/view controller allows the user to select their picks for a given league
+// This class/view controller allows the user to select their picks for a given tournament
 class MakePicksTableViewController: UITableViewController {
     
     // MARK: - Properties
@@ -21,14 +21,14 @@ class MakePicksTableViewController: UITableViewController {
     @IBOutlet var spentLabel: UILabel!
     
     lazy var dataSource = createDataSource()
-    var league: League
+    var tournament: Tournament
     var pickItems = [PickItem]()
     var totalSpent = 0
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, league: League) {
-        self.league = league
+    init?(coder: NSCoder, tournament: Tournament) {
+        self.tournament = tournament
         super.init(coder: coder)
     }
     
@@ -43,8 +43,8 @@ class MakePicksTableViewController: UITableViewController {
         
         pickItems = getPickItems()
         tableView.dataSource = dataSource
-        title = "Picks for \(league.name)"
-        budgetLabel.text = "Budget: $\(league.budget)"
+        title = "Picks for \(tournament.name)"
+        budgetLabel.text = "Budget: $\(tournament.budget)"
         spentLabel.text = "Total Spent: $\(totalSpent)"
     }
     
@@ -61,10 +61,10 @@ class MakePicksTableViewController: UITableViewController {
         var pickItems = [PickItem]()
         
         // Check if we have existing picks
-        if let userPicks = league.pickIds[Auth.auth().currentUser!.uid] {
+        if let userPicks = tournament.pickIds[Auth.auth().currentUser!.uid] {
             
             // If so, apply the existing user selections
-            for athlete in league.athletes {
+            for athlete in tournament.athletes {
                 let pickItem = PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.id]))
                 if pickItem.isSelected {
                     totalSpent += pickItem.athlete.value
@@ -74,7 +74,7 @@ class MakePicksTableViewController: UITableViewController {
         } else {
             
             // If not, mark all selections as false
-            for athlete in league.athletes {
+            for athlete in tournament.athletes {
                 pickItems.append(PickItem(athlete: athlete, isSelected: false))
             }
         }
@@ -90,7 +90,7 @@ class MakePicksTableViewController: UITableViewController {
         guard let dataSourcePick = dataSource.itemIdentifier(for: indexPath),
               let index = pickItems.firstIndex(of: dataSourcePick) else { return }
         
-        let remainingBudget = league.budget - totalSpent
+        let remainingBudget = tournament.budget - totalSpent
         
         // Helper function to reduce code duplication
         let updatePicksTable = { [self] in
