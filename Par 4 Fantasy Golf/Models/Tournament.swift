@@ -23,7 +23,8 @@ struct Tournament: Hashable {
     }
     let databaseReference: DatabaseReference
     var name: String
-    var startDate: Double
+    var startDate: String
+    var endDate: String
     let creator: String
     var memberIds: [String]
     var members = [User]()
@@ -36,11 +37,12 @@ struct Tournament: Hashable {
     // MARK: - Initializers
     
     // Standard init
-    init(name: String, startDate: Double, members: [User] = [], budget: Int, isUsingApi: Bool) {
+    init(name: String, startDate: String, endDate: String, members: [User] = [], budget: Int, isUsingApi: Bool = false) {
         uuid = UUID()
         databaseReference = Database.database().reference(withPath: "tournaments/\(uuid)")
         self.name = name
         self.startDate = startDate
+        self.endDate = endDate
         
         // Set the current user as the creator when creating a new tournament
         if let user = Auth.auth().currentUser {
@@ -62,7 +64,8 @@ struct Tournament: Hashable {
         guard let value = snapshot.value as? [String: AnyObject],
               let id = UUID(uuidString: snapshot.key),
               let name = value["name"] as? String,
-              let startDate = value["startDate"] as? Double,
+              let startDate = value["startDate"] as? String,
+              let endDate = value["endDate"] as? String,
               let creator = value["creator"] as? String,
               let budget = value["budget"] as? Int,
               let tournamentHasStarted = value["tournamentHasStarted"] as? Bool,
@@ -73,6 +76,7 @@ struct Tournament: Hashable {
         databaseReference = Database.database().reference(withPath: "tournaments/\(uuid.uuidString)")
         self.name = name
         self.startDate = startDate
+        self.endDate = endDate
         self.creator = creator
         self.budget = budget
         self.tournamentHasStarted = tournamentHasStarted
@@ -142,6 +146,7 @@ struct Tournament: Hashable {
         return [
             "name": name,
             "startDate": startDate,
+            "endDate": endDate,
             "creator": creator,
             "memberIds": memberDict,
             "athletes": athleteDict,

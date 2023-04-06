@@ -58,7 +58,7 @@ struct ProfessionalLeague: Codable {
 }
 
 // This is an individual event on the schedule
-struct CalendarEvent: Codable {
+struct CalendarEvent: Codable, Hashable, Equatable {
     let name: String // Event name
     let startDate: String // Event start date
     let endDate: String // Event end date
@@ -74,7 +74,7 @@ struct CalendarEvent: Codable {
 
 // This is a container for the event URL
 // TODO: Extract event ID from URL - actually, do we need to do this? Depends on how we fetch/collect data for past tournaments
-struct CalendarEventUrl: Codable {
+struct CalendarEventUrl: Codable, Hashable, Equatable {
     let url: String
 
     enum CodingKeys: String, CodingKey {

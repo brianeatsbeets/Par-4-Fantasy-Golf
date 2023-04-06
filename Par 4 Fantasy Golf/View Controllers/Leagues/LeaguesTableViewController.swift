@@ -139,7 +139,7 @@ class LeaguesTableViewController: UITableViewController {
         Task {
             guard let denormalizedLeague = dataSource.itemIdentifier(for: indexPath),
                   let league = await League.fetchSingleLeague(from: denormalizedLeague.id),
-                  let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetails", creator: { coder in
+                  let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
                       LeagueDetailTableViewController(coder: coder, league: league)
                   }) else { return }
             

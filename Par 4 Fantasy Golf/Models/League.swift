@@ -30,6 +30,7 @@ struct League: Hashable {
     var memberIds: [String]
     var members = [User]()
     var tournamentIds: [String]
+    var tournaments = [Tournament]()
     //var athletes = [Athlete]()
     //var pickIds = [String: [String]]()
     //let budget: Int
@@ -39,21 +40,13 @@ struct League: Hashable {
     // MARK: - Initializers
     
     // Standard init
-    init(name: String, members: [User] = []) {
+    init(name: String, creator: String) {
         uuid = UUID()
         databaseReference = Database.database().reference(withPath: "leagues/\(uuid)")
         self.name = name
         //self.startDate = startDate
-        
-        // Set the current user as the creator when creating a new league
-        if let user = Auth.auth().currentUser {
-            creator = user.email!
-        } else {
-            creator = "unknown user"
-        }
-        
-        self.memberIds = members.map { $0.id }
-        self.members = members
+        self.creator = creator
+        self.memberIds = [creator]
         self.tournamentIds = []
         //self.budget = budget
         //self.isUsingApi = isUsingApi

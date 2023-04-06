@@ -164,7 +164,7 @@ extension ManageUsersTableViewController {
             
             // Remove the user's picks from the local data source and Firebase
             // TODO: Remove user picks from each tournament in the league
-            selectedLeague.pickIds.removeValue(forKey: user.id)
+            //selectedLeague.pickIds.removeValue(forKey: user.id)
             selectedLeague.databaseReference.child("pickIds").child(user.id).removeValue()
             
             // Remove the user's id from the league's memberIds and remove the league's id from the user's league ids
