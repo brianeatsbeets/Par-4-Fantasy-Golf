@@ -9,7 +9,6 @@
 
 // MARK: - Imported libraries
 
-import FirebaseAuth
 import FirebaseDatabase
 
 // MARK: - Main struct
@@ -25,17 +24,11 @@ struct League: Hashable {
     }
     let databaseReference: DatabaseReference
     var name: String
-    //var startDate: Double
     let creator: String
     var memberIds: [String]
     var members = [User]()
     var tournamentIds: [String]
     var tournaments = [Tournament]()
-    //var athletes = [Athlete]()
-    //var pickIds = [String: [String]]()
-    //let budget: Int
-    //var tournamentHasStarted = false
-    //var isUsingApi = false
     
     // MARK: - Initializers
     
@@ -44,12 +37,9 @@ struct League: Hashable {
         uuid = UUID()
         databaseReference = Database.database().reference(withPath: "leagues/\(uuid)")
         self.name = name
-        //self.startDate = startDate
         self.creator = creator
         self.memberIds = [creator]
         self.tournamentIds = []
-        //self.budget = budget
-        //self.isUsingApi = isUsingApi
     }
     
     // Init with snapshot data
@@ -59,22 +49,13 @@ struct League: Hashable {
         guard let value = snapshot.value as? [String: AnyObject],
               let id = UUID(uuidString: snapshot.key),
               let name = value["name"] as? String,
-              //let startDate = value["startDate"] as? Double,
-              let creator = value["creator"] as? String
-              //let budget = value["budget"] as? Int,
-              //let tournamentHasStarted = value["tournamentHasStarted"] as? Bool,
-              //let isUsingApi = value["isUsingApi"] as? Bool
-              else { return nil }
+              let creator = value["creator"] as? String else { return nil }
         
         // Assign properties that will always have values
         uuid = id
         databaseReference = Database.database().reference(withPath: "leagues/\(uuid.uuidString)")
         self.name = name
-        //self.startDate = startDate
         self.creator = creator
-        //self.budget = budget
-        //self.tournamentHasStarted = tournamentHasStarted
-        //self.isUsingApi = isUsingApi
         
         // Conditionally assign properties that may or may not have values
         if let memberIds = value["memberIds"] as? [String: Bool] {
@@ -88,26 +69,6 @@ struct League: Hashable {
         } else {
             self.tournamentIds = []
         }
-        
-//        self.athletes = []
-//        if let athletes = value["athletes"] as? [String: [String: AnyObject]] {
-//            for athlete in athletes {
-//                if let athleteFromSnapshot = Athlete(snapshot: snapshot.childSnapshot(forPath: "athletes/\(athlete.key)")) {
-//                    self.athletes.append(athleteFromSnapshot)
-//                } else {
-//                    print("Couldn't init athlete from snapshot")
-//                }
-//            }
-//
-//            // Sort athletes
-//            self.athletes = self.athletes.sorted(by: { $0.name < $1.name })
-//        }
-//
-//        if let pickIds = value["pickIds"] as? [String: [String: Bool]] {
-//            self.pickIds = pickIds.reduce(into: [String: [String]]()) {
-//                $0[$1.key] = $1.value.map { $0.key }
-//            }
-//        }
     }
     
     // MARK: - Functions
@@ -133,33 +94,11 @@ struct League: Hashable {
             tourneyDict[id] = true
         }
         
-//        // Convert athletes array to Firebase-style dictionary
-//        var athleteDict = [String: Any]()
-//        for athlete in athletes {
-//            athleteDict[athlete.id] = athlete.toAnyObject()
-//        }
-//
-//        // Convert picks dictionary to Firebase-style dictionary
-//        var pickDict = [String: [String: Bool]]()
-//        for member in pickIds {
-//            var memberPicks = [String: Bool]()
-//            for pick in member.value {
-//                memberPicks[pick] = true
-//            }
-//            pickDict[member.key] = memberPicks
-//        }
-        
         return [
             "name": name,
-            //"startDate": startDate,
             "creator": creator,
             "memberIds": memberDict,
             "tournamenIds": tourneyDict
-            //"athletes": athleteDict,
-            //"pickIds": pickDict
-            //"budget": budget,
-            //"tournamentHasStarted": tournamentHasStarted,
-            //"isUsingApi": isUsingApi
         ]
     }
     
@@ -213,7 +152,6 @@ struct League: Hashable {
             }
             
             // Return the leagues sorted in descending order
-            //return leagues.sorted { $0.startDate > $1.startDate }
             return leagues.sorted { $0.name > $1.name }
         }
     }

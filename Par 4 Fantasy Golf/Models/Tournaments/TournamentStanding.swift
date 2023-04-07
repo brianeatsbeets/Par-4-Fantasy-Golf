@@ -7,7 +7,7 @@
 
 // MARK: - Main struct
 
-// Helper struct to contain individual user standing data for a given tournament
+// This model represents a tournament standing, which contains individual user standing data for a given tournament
 struct TournamentStanding: Hashable {
     
     // MARK: - Properties

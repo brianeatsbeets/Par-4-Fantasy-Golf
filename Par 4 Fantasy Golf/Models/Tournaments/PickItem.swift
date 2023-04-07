@@ -7,7 +7,7 @@
 
 // MARK: - Main struct
 
-// Helper struct to contain athlete selection data
+// This model represents a pick item, which contains an athlete and whether or not they were selected as a pick for a given user
 struct PickItem: Hashable {
     
     // MARK: - Properties

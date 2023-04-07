@@ -20,7 +20,6 @@ struct Athlete: Hashable, Codable {
     var id: String {
         uuid.uuidString
     }
-    //var espnId: String?
     var name: String
     var odds: Int
     var value: Int
@@ -130,8 +129,8 @@ struct Athlete: Hashable, Codable {
                 }
             }
             
-            // Return the athletes // sorted in ascending order
-            return athletes //.sorted { $0.email < $1.email }
+            // Return the athletes
+            return athletes
         }
     }
 }

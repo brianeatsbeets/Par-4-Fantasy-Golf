@@ -11,10 +11,8 @@ import UIKit
 
 // MARK: - Main class
 
-// This class/table view cell presents a selectable league cell
+// This class/table view cell presents a league cell
 class LeagueTableViewCell: UITableViewCell {
-    
-    // MARK: - Properties
     
     // MARK: - Functions
 
@@ -22,7 +20,6 @@ class LeagueTableViewCell: UITableViewCell {
     func configure(with league: DenormalizedLeague) {
         var config = defaultContentConfiguration()
         config.text = league.name
-        //config.secondaryText = "Start date: " + league.startDate.formattedDate()
         contentConfiguration = config
     }
 

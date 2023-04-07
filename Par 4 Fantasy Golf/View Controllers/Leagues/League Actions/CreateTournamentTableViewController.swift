@@ -5,6 +5,9 @@
 //  Created by Aguirre, Brian P. on 4/6/23.
 //
 
+// TODO: Hide events that already have a tournament created
+// TODO: Create an additional table view controller to allow the user to select a budget (have this one be the secondary view controller)
+
 // MARK: - Imported libraries
 
 import UIKit
@@ -13,7 +16,7 @@ import FirebaseDatabase
 
 // MARK: - Main class
 
-// This class/view controller allows the user to manage athletes for a given tournament
+// This class/view controller allows the user to create a new tournament
 class CreateTournamentTableViewController: UITableViewController {
     
     // MARK: - Properties
@@ -50,6 +53,11 @@ class CreateTournamentTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedEvent = dataSource.itemIdentifier(for: indexPath)
         performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
+    }
+    
+    // Dismiss the view controller when the cancel button is tapped
+    @IBAction func cancelButtonPressed(_ sender: Any) {
+        dismiss(animated: true)
     }
 }
 

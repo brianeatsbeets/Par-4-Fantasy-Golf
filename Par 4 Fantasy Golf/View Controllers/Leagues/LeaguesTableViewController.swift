@@ -47,7 +47,6 @@ class LeaguesTableViewController: UITableViewController {
     // MARK: - Other functions
     
     // Fetch league data from the leagueIds tree and store it
-    // TODO: Only display leagues of which we are a member
     func fetchDenormalizedLeagueData(completion: @escaping () -> Void) {
         
         // Only display joined leagues
@@ -64,7 +63,6 @@ class LeaguesTableViewController: UITableViewController {
                 // Fetch denormalized leagues from user league Ids
                 Task {
                     self.denormalizedLeagues = await DenormalizedLeague.fetchMultipleLeagues(from: userLeagueIds)
-                    //self.denormalizedLeagues = await DenormalizedLeague.fetchMultipleObjects(from: userLeagueIds)
                     
                     // Sort leagues
                     self.denormalizedLeagues = self.denormalizedLeagues.sorted(by: { $0.name > $1.name})
@@ -97,6 +95,7 @@ class LeaguesTableViewController: UITableViewController {
         }
     }
     
+    // Switch between viewing joined leagues and all leagues
     @IBAction func leaguesDisplaySwitchToggled() {
         fetchDenormalizedLeagueData {
             self.updateTableView()
@@ -106,6 +105,7 @@ class LeaguesTableViewController: UITableViewController {
     // MARK: - Navigation
     
     // Handle the incoming new league data
+    // TODO: Just update the denormalizedLeagues array and updateTableView() locally instead of fetching them from firebase
     @IBAction func unwindFromCreateLeague(segue: UIStoryboardSegue) {
         
         // Check that we have new league data to parse

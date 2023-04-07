@@ -11,18 +11,15 @@ import UIKit
 
 // MARK: - Main class
 
-// This class/table view cell presents a selectable tournament cell
+// This class/table view cell presents a tournament cell
 class TournamentTableViewCell: UITableViewCell {
-    
-    // MARK: - Properties
     
     // MARK: - Functions
 
     // Set up the cell UI elements
-    func configure(with tournament: Tournament) {
+    func configure(with tournament: DenormalizedTournament) {
         var config = defaultContentConfiguration()
         config.text = tournament.name
-        config.secondaryText = "Start date: \(tournament.startDate.prettyDate()) | End date: \(tournament.endDate.prettyDate())"
         contentConfiguration = config
     }
 

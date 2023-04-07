@@ -19,7 +19,6 @@ struct User: Hashable {
     let id: String
     var email: String
     let databaseReference: DatabaseReference
-    //var username: String
     
     // MARK: - Initializers
     

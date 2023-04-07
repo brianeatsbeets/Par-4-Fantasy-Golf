@@ -51,18 +51,13 @@ class TournamentDetailTableViewController: UITableViewController {
         
         tableView.dataSource = dataSource
         
-        // Testing only - set visual indicator if a tournament is fetching data from the ESPN API
-        if tournament.isUsingApi {
-            title = tournament.name + " (API)"
-        } else {
-            title = tournament.name
-        }
+        title = tournament.name
         
         // Enable/disable make picks button based on tournament status
-        tournamentStartedSwitch.isOn = tournament.tournamentHasStarted
-        if tournamentStartedSwitch.isOn {
-            makePicksButton.isEnabled = false
-        }
+        //tournamentStartedSwitch.isOn = tournament.tournamentHasStarted
+        //if tournamentStartedSwitch.isOn {
+            //makePicksButton.isEnabled = false
+        //}
         
         // If the current user is not the tournament owner, hide administrative actions
         if tournament.creator != currentFirebaseUser.email {
@@ -70,15 +65,8 @@ class TournamentDetailTableViewController: UITableViewController {
             navigationItem.rightBarButtonItem = makePicksButton
         }
         
-        Task {
-            if tournament.isUsingApi {
-                
-            } else {
-                //league.members = await User.fetchMultipleUsers(from: self.league.memberIds) // <- this will be done in parent LeagueDetailTableViewController
-                calculateTournamentStandings()
-                updateTableView()
-            }
-        }
+        calculateTournamentStandings()
+        updateTableView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -167,6 +155,9 @@ class TournamentDetailTableViewController: UITableViewController {
             self.tournament.databaseReference.removeValue()
             Database.database().reference().child("tournamentIds").child(self.tournament.id).removeValue()
             
+            // Remove the tournament data from the league tournamentIds tree
+            self.league.databaseReference.child("tournamentIds").child(self.tournament.id).removeValue()
+            
             // Return to TournamentsTableViewController
             self.navigationController?.popViewController(animated: true)
         }
@@ -180,19 +171,11 @@ class TournamentDetailTableViewController: UITableViewController {
     // Temporary physical switch to set if tournament has started
     @IBAction func tournamentStartedSwitchToggled() {
         makePicksButton.isEnabled.toggle()
-        tournament.tournamentHasStarted.toggle()
-        tournament.databaseReference.child("tournamentHasStarted").setValue(tournament.tournamentHasStarted)
+        //tournament.tournamentHasStarted.toggle()
+        //tournament.databaseReference.child("tournamentHasStarted").setValue(tournament.tournamentHasStarted)
     }
     
     // MARK: - Navigation
-    
-    // Pass league data to ManageUsersTableViewController
-    // TODO: Transfer this to LeagueDetailTableViewController
-    @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
-        guard let manageUsersViewController = ManageUsersTableViewController(coder: coder, league: league) else { return nil }
-        manageUsersViewController.delegate = self
-        return manageUsersViewController
-    }
     
     // Pass tournament data to MakePicksTableViewController
     @IBSegueAction func segueToMakePicks(_ coder: NSCoder) -> MakePicksTableViewController? {
@@ -322,23 +305,4 @@ extension TournamentDetailTableViewController: ManageAthletesDelegate {
         guard let index = (tournament.athletes.firstIndex { $0.id == athlete.id }) else { return }
         tournament.athletes[index] = athlete
     }
-}
-
-// This extention conforms to the ManageUsersDelegate protocol
-// TODO: Move this to LeagueDetailTableViewController
-extension TournamentDetailTableViewController: ManageUsersDelegate {
-    
-    // Add a new user
-    func addUser(user: User) {
-        league.members.append(user)
-        league.memberIds.append(user.id)
-    }
-    
-    // Remove an existing user
-    func removeUser(user: User) {
-        league.members.removeAll { $0.id == user.id }
-        league.memberIds.removeAll { $0 == user.id }
-    }
-    
-    
 }

@@ -9,21 +9,19 @@ import FirebaseDatabase
 
 // MARK: - Main struct
 
-// Helper struct to contain athlete selection data
+// This model represents a denormalized league
 struct DenormalizedLeague: Hashable {
     
     // MARK: - Properties
     
     let id: String
     var name: String
-    //var startDate: Double
     
     // MARK: - Initializers
     
     init(id: String, name: String) {
         self.id = id
         self.name = name
-        //self.startDate = startDate
     }
     
     // Init with snapshot data
@@ -32,12 +30,10 @@ struct DenormalizedLeague: Hashable {
         // Validate and set the incoming values
         guard let snapshotValue = snapshot.value as? [String: AnyObject],
               let name = snapshotValue["name"] as? String
-              //let startDate = snapshotValue["startDate"] as? Double
               else { return nil }
 
         self.id = snapshot.key
         self.name = name
-        //self.startDate = startDate
     }
     
     // MARK: - Functions
@@ -46,7 +42,6 @@ struct DenormalizedLeague: Hashable {
     func toAnyObject() -> Any {
         return [
             "name": name
-            //"startDate": startDate
         ]
     }
     

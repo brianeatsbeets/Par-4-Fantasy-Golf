@@ -81,6 +81,8 @@ class ManageUsersTableViewController: UITableViewController {
     }
     
     // Display an alert that allows the user to add a new user to the league
+    // TODO: Prevent adding a user who is already added
+    // TODO: Fix bug where deleting a member and re-adding them adds them twice (locally)
     func searchForUser(with email: String?) {
         
         // Query for a matching user

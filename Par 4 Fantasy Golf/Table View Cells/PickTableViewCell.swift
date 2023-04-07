@@ -14,8 +14,6 @@ import UIKit
 // This class/table view cell presents a league pick cell
 class PickTableViewCell: UITableViewCell {
     
-    // MARK: - Properties
-    
     // MARK: - Functions
     
     // Set up the cell UI elements

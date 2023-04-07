@@ -14,8 +14,6 @@ import UIKit
 // This class/table view cell presents a tournament standing cell
 class TournamentStandingTableViewCell: UITableViewCell {
     
-    // MARK: - Properties
-    
     // MARK: - Functions
     
     // Set up the cell UI elements

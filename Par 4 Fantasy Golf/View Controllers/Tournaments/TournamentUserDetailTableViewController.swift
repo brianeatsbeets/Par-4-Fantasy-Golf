@@ -8,12 +8,11 @@
 // MARK: - Imported libraries
 
 import UIKit
-import FirebaseAuth
 import FirebaseDatabase
 
 // MARK: - Main class
 
-// This class/view controller allows the user to manage athletes for a given tournament
+// This class/view controller allows the user to view other users' picks for a given tournament
 class TournamentUserDetailTableViewController: UITableViewController {
     
     // MARK: - Properties

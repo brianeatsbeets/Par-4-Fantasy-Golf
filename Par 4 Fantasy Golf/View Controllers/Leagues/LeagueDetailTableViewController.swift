@@ -13,16 +13,20 @@ import FirebaseDatabase
 
 // MARK: - Main class
 
-// This class/view controller displays details for the selected league
+// This class/view controller displays details and tournaments for the selected league
 class LeagueDetailTableViewController: UITableViewController {
     
     // MARK: - Properties
+    
+    @IBOutlet var leagueActionsBarButtonItemGroup: UIBarButtonItemGroup!
     
     lazy var dataSource = createDataSource()
     var league: League
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
     var calendarEvents = [CalendarEvent]()
+    var denormalizedTournaments = [DenormalizedTournament]()
+    let tournamentIdsRef = Database.database().reference(withPath: "tournamentIds")
     
     // MARK: - Initializers
     
@@ -43,38 +47,36 @@ class LeagueDetailTableViewController: UITableViewController {
         tableView.dataSource = dataSource
         title = league.name
         
-        //self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: <#T##Selector?#>)
-        
         // If the current user is not the league owner, hide administrative actions
         if league.creator != currentFirebaseUser.email {
-            // editLeagueButton.isHidden = true
+            leagueActionsBarButtonItemGroup.isHidden = true
         }
         
+        // Fetch league member data
         Task {
             league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
-            //calculateLeagueStandings()
             await fetchEspnData()
             updateTableView()
         }
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//
-//        // If this is the first time displaying this view controller, viewDidLoad will handle updating the table view
-//        if firstLoad {
-//            firstLoad = false
-//        } else {
-//            calculateLeagueStandings()
-//            updateTableView()
-//        }
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Fetch initial tournament data and update the table view
+        fetchDenormalizedTournamentData() {
+            self.updateTableView()
+        }
+    }
     
     // MARK: - Other functions
     
     // Fetch ESPN Data
+    // TODO: Fetch this data in CreateTournamentTableViewController
     func fetchEspnData() async {
+        
         // Construct URL
+        // TODO: Provide today's date as the dates parameter
         let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?dates=20230406")!
         
         do {
@@ -94,48 +96,6 @@ class LeagueDetailTableViewController: UITableViewController {
                     
                     return eventEndDate > Date.now
                 })
-                
-                
-                
-                
-                
-                //let dictionaryResponse = try? jsonDecoder.decode(Scoreboard.self, from: data) {
-                //print("Calendar: \(apiResponse.activeLeagues[0].calendar)")
-//                print("Event name: \(apiResponse.activeEvents[0].name)")
-//                print("Event id: \(apiResponse.activeEvents[0].id)")
-//                print("Event start date: \(apiResponse.activeEvents[0].startDate)")
-//                print("Event start date (pretty print): \(apiResponse.activeEvents[0].startDate.prettyDate())")
-//                print("Event end date: \(apiResponse.activeEvents[0].endDate)")
-//                print("Event status: \(apiResponse.activeEvents[0].competitions[0].status.statusDetails.statusDescription)")
-//
-//                if let competitors = apiResponse.activeEvents[0].competitions[0].competitors {
-//
-//                    //print("Event competitors: \(competitors)")
-//                    for competitor in competitors {
-//
-//                        var playerInfo = "\(competitor.nameContainer.name): \(competitor.overallScore)"
-//
-//                        // Check if competitor has played less rounds than the first place competitor
-//                        if competitor.roundScores.count < competitors[0].roundScores.count {
-//                            playerInfo += " (PLAYER CUT)"
-//                        }
-//
-//                        print(playerInfo)
-//
-//                        //                        print("Competitor name: \(competitor.nameContainer.name)")
-//                        //                        print("Competitor ID: \(competitor.id)")
-//                        //                        print("Competitor overall score: \(competitor.overallScore)")
-//                        //                        for (index, round) in competitor.roundScores.enumerated() {
-//                        //                            print("Competitor round \(index+1) score: \(round.value)")
-//                        //                        }
-//                        //                        if competitor.roundScores.count < 3 {
-//                        //                            print("PLAYER CUT")
-//                        //                        }
-//                        //                        print("------------------------------------------------------------")
-//                    }
-//                } else {
-//                    print("No competitors")
-//                }
             } else {
                 print("HTTP request error: \(response.description)")
             }
@@ -144,63 +104,33 @@ class LeagueDetailTableViewController: UITableViewController {
         }
     }
     
-//    // Calculate the league standings
-//    // TODO: Sort by name if tournament hasn't started yet
-//    // TODO: Use 5th top athlete as a tie-breaker
-//    func calculateLeagueStandings() {
-//        print("Calculating league standings")
-//
-//        var newStandings = [LeagueStanding]()
-//
-//        // Create a league standing object for each user
-//        for user in league.members {
-//
-//            var topAthletes = [Athlete]()
-//
-//            // If user has picked at least one athlete, calculate the top athletes
-//            if let userPicks = league.pickIds[user.id] {
-//
-//                // Fetch the picked athletes
-//                let athletes = league.athletes.filter { userPicks.contains([$0.id]) }
-//
-//                // Sort and copy the top athletes to a new array
-//                if !athletes.isEmpty {
-//                    let sortedAthletes = athletes.sorted { $0.score < $1.score }
-//                    let athleteCount = sortedAthletes.count >= 4 ? 3 : sortedAthletes.count - 1
-//                    topAthletes = Array(sortedAthletes[0...athleteCount])
-//                }
-//            }
-//
-//            // Create and append a new league standing to the temporary container
-//            let userStanding = LeagueStanding(leagueId: league.id, user: user, topAthletes: topAthletes)
-//            newStandings.append(userStanding)
-//        }
-//
-//        // Sort the standings
-//        newStandings = newStandings.sorted(by: <)
-//
-//        //  Format and assign placements
-//        let formatter = NumberFormatter()
-//        formatter.numberStyle = .ordinal
-//        newStandings.indices.forEach { newStandings[$0].place = formatter.string(for: $0+1)! }
-//
-//        // Account for ties
-//        var i = 0
-//        while i < newStandings.count-1 {
-//            if newStandings[i].score == newStandings[i+1].score {
-//
-//                // Don't add a 'T' if the place already has one
-//                if !newStandings[i].place.hasPrefix("T") {
-//                    newStandings[i].place = "T" + newStandings[i].place
-//                }
-//                newStandings[i+1].place = newStandings[i].place
-//            }
-//            i += 1
-//        }
-//
-//        // Save the standings
-//        standings = newStandings
-//    }
+    // Fetch tournament data from the tournamentIds tree and store it
+    func fetchDenormalizedTournamentData(completion: @escaping () -> Void) {
+        
+        // Remove all existing tournament data
+        self.denormalizedTournaments.removeAll()
+        
+        // Fetch the data
+        tournamentIdsRef.observeSingleEvent(of: .value) { snapshot in
+            
+            // Verify that the received data produces valid DenormalizedTournaments, and if it does, append them
+            for childSnapshot in snapshot.children {
+                guard let childSnapshot = childSnapshot as? DataSnapshot,
+                      let tournament = DenormalizedTournament(snapshot: childSnapshot) else {
+                    print("Failed to create denormalized tournament")
+                    continue
+                }
+                
+                self.denormalizedTournaments.append(tournament)
+            }
+            
+            // Sort leagues
+            self.denormalizedTournaments = self.denormalizedTournaments.sorted(by: { $0.name > $1.name})
+            
+            // Call completion handler
+            completion()
+        }
+    }
     
     // Remove league data and user associations
     @IBAction func deleteLeaguePressed(_ sender: Any) {
@@ -231,13 +161,6 @@ class LeagueDetailTableViewController: UITableViewController {
         present(deleteLeagueAlert, animated: true)
     }
     
-//    // Temporary physical switch to set if tournament has started
-//    @IBAction func tournamentStartedSwitchToggled() {
-//        makePicksButton.isEnabled.toggle()
-//        league.tournamentHasStarted.toggle()
-//        league.databaseReference.child("tournamentHasStarted").setValue(league.tournamentHasStarted)
-//    }
-    
     // MARK: - Navigation
     
     // Pass league data to CreateTournamentTableViewController
@@ -245,97 +168,29 @@ class LeagueDetailTableViewController: UITableViewController {
         return CreateTournamentTableViewController(coder: coder, events: calendarEvents)
     }
     
-    // Pass league data to TournamentDetailTableViewController
-    @IBSegueAction func segueToTournamentDetail(_ coder: NSCoder, sender: Any?) -> TournamentDetailTableViewController? {
-        
-        // Get the tournament from the tapped cell and pass it
-        guard let tournamentCell = sender as? UITableViewCell,
-              let indexPath = tableView.indexPath(for: tournamentCell),
-              let tournament = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        
-        return TournamentDetailTableViewController(coder: coder, league: league, tournament: tournament)
+    // Pass league data to ManageUsersTableViewController
+    @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
+        guard let manageUsersViewController = ManageUsersTableViewController(coder: coder, league: league) else { return nil }
+        manageUsersViewController.delegate = self
+        return manageUsersViewController
     }
     
-    
-//    // Pass league data to ManageUsersTableViewController
-//    @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
-//        guard let manageUsersViewController = ManageUsersTableViewController(coder: coder, league: league) else { return nil }
-//        manageUsersViewController.delegate = self
-//        return manageUsersViewController
-//    }
-    
-//    // Pass league data to MakePicksTableViewController
-//    @IBSegueAction func segueToMakePicks(_ coder: NSCoder) -> MakePicksTableViewController? {
-//        return MakePicksTableViewController(coder: coder, league: league)
-//    }
-//
-//    // Pass league data to ManageAthletesTableViewController
-//    @IBSegueAction func segueToManageAthletes(_ coder: NSCoder) -> ManageAthletesTableViewController? {
-//        guard let manageAthletesViewController = ManageAthletesTableViewController(coder: coder, league: league) else { return nil }
-//        manageAthletesViewController.delegate = self
-//        return manageAthletesViewController
-//    }
-    
-//    // Segue to LeagueUserDetailViewController
-//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//
-//        tableView.deselectRow(at: indexPath, animated: true)
-//
-//        // Make sure we have picks for the selected user
-//        guard let leagueStanding = dataSource.itemIdentifier(for: indexPath),
-//              let userPicks = league.pickIds[leagueStanding.user.id] else { print("No picks for this user"); return }
-//
-//        var selectedUserPicks = [Athlete]()
-//
-//        // Grab the athlete object for each athlete Id
-//        for athleteId in userPicks {
-//            if let athlete = league.athletes.first(where: { $0.id == athleteId }) {
-//                selectedUserPicks.append(athlete)
-//            } else {
-//                print("Error finding athlete from pick: No matching athlete ID found")
-//            }
-//        }
-//
-//        // Sort the picked athletes
-//        selectedUserPicks = selectedUserPicks.sorted(by: { $0.score < $1.score })
-//
-//        // Verify we can instantiate an instance of LeagueUserDetailTableViewController
-//        guard let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueUserDetail", creator: { coder in
-//            LeagueUserDetailTableViewController(coder: coder, selectedUserEmail: leagueStanding.user.email, selectedUserPicks: selectedUserPicks)
-//        }) else { return }
-//
-//        // Push the new view controller
-//        navigationController?.pushViewController(destinationViewController, animated: true)
-//    }
-    
-//    // Handle the incoming new picks data
-//    // TODO: Optimize to only write/delete necessary pick data
-//    @IBAction func unwindFromMakePicks(segue: UIStoryboardSegue) {
-//
-//        // Check that we have new picks data to parse
-//        guard segue.identifier == "makePicksUnwind",
-//              let sourceViewController = segue.source as? MakePicksTableViewController else { return }
-//        let pickItems = sourceViewController.pickItems
-//
-//        // Convert pickItems array to Firebase-style dictionary
-//        var pickDict = [String: Bool]()
-//        for pick in pickItems {
-//            if pick.isSelected {
-//                pickDict[pick.athlete.id] = true
-//            }
-//        }
-//
-//        // Save the picks to Firebase
-//        league.databaseReference.child("pickIds").child(currentFirebaseUser.uid).setValue(pickDict)
-//
-//        // Save the picks to the local data source
-//        let pickArray = pickDict.map { $0.key }
-//        league.pickIds[currentFirebaseUser.uid] = pickArray
-//
-//        // Update the league standings and refresh the table view
-//        calculateLeagueStandings()
-//        updateTableView()
-//    }
+    // Segue to TournamentDetailViewController with full tournament data
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        // Fetch the tournament data from the tapped tournament's id
+        Task {
+            guard let denormalizedTournament = dataSource.itemIdentifier(for: indexPath),
+                  let tournament = await Tournament.fetchSingleTournament(from: denormalizedTournament.id),
+                  let destinationViewController = storyboard?.instantiateViewController(identifier: "TournamentDetail", creator: { coder in
+                      TournamentDetailTableViewController(coder: coder, league: self.league, tournament: tournament)
+                  }) else { return }
+            
+            // Deselect the row and push the league details view controller while passing the full league data
+            tableView.deselectRow(at: indexPath, animated: true)
+            navigationController?.pushViewController(destinationViewController, animated: true)
+        }
+    }
     
     // Handle the incoming new tournament data
     @IBAction func unwindFromCreateTournament(segue: UIStoryboardSegue) {
@@ -350,9 +205,20 @@ class LeagueDetailTableViewController: UITableViewController {
         league.tournamentIds.append(newTournament.id)
         league.tournaments.append(newTournament)
         
+        // Save the denormalized tournament to the local data source
+        let denormalizedTournament = DenormalizedTournament(id: newTournament.id, name: newTournament.name)
+        denormalizedTournaments.append(denormalizedTournament)
+        
         // Save the tournament to Firebase
-        //league.databaseReference.child("tournamentIds").child(newTournament.id).setValue(true)
-        //newTournament.databaseReference.setValue(newTournament.toAnyObject())
+        
+        // League tournament Ids
+        league.databaseReference.child("tournamentIds").child(newTournament.id).setValue(true)
+        
+        // Tournaments tree
+        newTournament.databaseReference.setValue(newTournament.toAnyObject())
+        
+        // TournamentIds tree
+        tournamentIdsRef.child(newTournament.id).setValue(denormalizedTournament.toAnyObject())
         
         updateTableView()
     }
@@ -373,13 +239,13 @@ extension LeagueDetailTableViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, Tournament> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, DenormalizedTournament> {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, tournament in
+        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, denormalizedTournament in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! TournamentTableViewCell
-            cell.configure(with: tournament)
+            cell.configure(with: denormalizedTournament)
 
             return cell
         }
@@ -387,32 +253,12 @@ extension LeagueDetailTableViewController {
     
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Tournament>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, DenormalizedTournament>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(league.tournaments)
+        snapshot.appendItems(denormalizedTournaments)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
-
-//// This extention conforms to the ManageAthletesDelegate protocol
-//extension LeagueDetailTableViewController: ManageAthletesDelegate {
-//
-//    // Add a new athlete
-//    func addAthlete(athlete: Athlete) {
-//        league.athletes.append(athlete)
-//    }
-//
-//    // Remove an existing athlete
-//    func removeAthlete(athlete: Athlete) {
-//        league.athletes.removeAll { $0.id == athlete.id }
-//    }
-//
-//    // Update an existing athlete
-//    func updateAthlete(athlete: Athlete) {
-//        guard let index = (league.athletes.firstIndex { $0.id == athlete.id }) else { return }
-//        league.athletes[index] = athlete
-//    }
-//}
 
 // This extention conforms to the ManageUsersDelegate protocol
 extension LeagueDetailTableViewController: ManageUsersDelegate {

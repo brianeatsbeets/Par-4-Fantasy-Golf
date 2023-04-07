@@ -31,13 +31,11 @@ struct Tournament: Hashable {
     var athletes = [Athlete]()
     var pickIds = [String: [String]]()
     let budget: Int
-    var tournamentHasStarted = false
-    var isUsingApi = false
     
     // MARK: - Initializers
     
     // Standard init
-    init(name: String, startDate: String, endDate: String, members: [User] = [], budget: Int, isUsingApi: Bool = false) {
+    init(name: String, startDate: String, endDate: String, members: [User] = [], budget: Int) {
         uuid = UUID()
         databaseReference = Database.database().reference(withPath: "tournaments/\(uuid)")
         self.name = name
@@ -54,7 +52,6 @@ struct Tournament: Hashable {
         self.memberIds = members.map { $0.id }
         self.members = members
         self.budget = budget
-        self.isUsingApi = isUsingApi
     }
     
     // Init with snapshot data
@@ -67,9 +64,7 @@ struct Tournament: Hashable {
               let startDate = value["startDate"] as? String,
               let endDate = value["endDate"] as? String,
               let creator = value["creator"] as? String,
-              let budget = value["budget"] as? Int,
-              let tournamentHasStarted = value["tournamentHasStarted"] as? Bool,
-              let isUsingApi = value["isUsingApi"] as? Bool else { return nil }
+              let budget = value["budget"] as? Int else { return nil }
         
         // Assign properties that will always have values
         uuid = id
@@ -79,8 +74,6 @@ struct Tournament: Hashable {
         self.endDate = endDate
         self.creator = creator
         self.budget = budget
-        self.tournamentHasStarted = tournamentHasStarted
-        self.isUsingApi = isUsingApi
         
         // Conditionally assign properties that may or may not have values
         if let memberIds = value["memberIds"] as? [String: Bool] {
@@ -111,12 +104,6 @@ struct Tournament: Hashable {
     }
     
     // MARK: - Functions
-    
-    // TODO: See if we can get this to work
-//    // Populate tournament members with User objects constructed from tournament memberIds
-//    mutating func populateMembers() async {
-//        members = await User.fetchMultipleUsers(from: memberIds)
-//    }
     
     // Convert the tournament to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
@@ -151,9 +138,7 @@ struct Tournament: Hashable {
             "memberIds": memberDict,
             "athletes": athleteDict,
             "pickIds": pickDict,
-            "budget": budget,
-            "tournamentHasStarted": tournamentHasStarted,
-            "isUsingApi": isUsingApi
+            "budget": budget
         ]
     }
     
@@ -215,6 +200,7 @@ struct Tournament: Hashable {
 // MARK: - Extensions
 
 // This extension houses a date formatting helper function
+// TODO: Is this still needed?
 extension Double {
     func formattedDate() -> String {
         return Date(timeIntervalSince1970: self).formatted(date: .numeric, time: .omitted)
