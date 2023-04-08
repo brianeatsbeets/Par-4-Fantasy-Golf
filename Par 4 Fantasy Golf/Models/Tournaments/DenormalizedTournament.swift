@@ -16,24 +16,31 @@ struct DenormalizedTournament: Hashable {
     
     let id: String
     var name: String
+    var startDate: Double
+    var endDate: Double
     
     // MARK: - Initializers
     
-    init(id: String, name: String) {
-        self.id = id
-        self.name = name
+    init(tournament: Tournament) {
+        self.id = tournament.id
+        self.name = tournament.name
+        self.startDate = tournament.startDate
+        self.endDate = tournament.endDate
     }
     
     // Init with snapshot data
     init?(snapshot: DataSnapshot) {
         
         // Validate and set the incoming values
-        guard let snapshotValue = snapshot.value as? [String: AnyObject],
-              let name = snapshotValue["name"] as? String
-              else { return nil }
+        guard let value = snapshot.value as? [String: AnyObject],
+              let name = value["name"] as? String,
+              let startDate = value["startDate"] as? Double,
+              let endDate = value["endDate"] as? Double else { return nil }
 
         self.id = snapshot.key
         self.name = name
+        self.startDate = startDate
+        self.endDate = endDate
     }
     
     // MARK: - Functions
@@ -41,7 +48,9 @@ struct DenormalizedTournament: Hashable {
     // Convert the DenormalizedTournament to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
         return [
-            "name": name
+            "name": name,
+            "startDate": startDate,
+            "endDate": endDate
         ]
     }
     

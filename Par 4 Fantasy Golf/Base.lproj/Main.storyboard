@@ -109,7 +109,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yec-Y6-fwP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4666.1538461538457" y="335.54502369668245"/>
+            <point key="canvasLocation" x="3958" y="304"/>
         </scene>
         <!--Leagues-->
         <scene sceneID="ZDR-ca-3bt">
@@ -175,7 +175,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dth-SO-4C9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4664.6153846153848" y="-417.29857819905209"/>
+            <point key="canvasLocation" x="3957" y="-449"/>
         </scene>
         <!--League Detail-->
         <scene sceneID="PHR-vb-8DS">
@@ -206,7 +206,7 @@
                                 <barButtonItems>
                                     <barButtonItem title="Create Tournament" id="b0v-Rp-TPP">
                                         <connections>
-                                            <segue destination="hO1-XU-926" kind="presentation" id="Jqg-C7-f1L"/>
+                                            <segue destination="Zwf-GU-jPr" kind="presentation" id="TXn-Jx-SC8"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem title="Manage Users" id="PaB-d9-Qmv" userLabel="Manage Users">
@@ -229,7 +229,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wJ8-qC-FQs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8588" y="-417"/>
+            <point key="canvasLocation" x="8232" y="-28"/>
         </scene>
         <!--Tournament Detail-->
         <scene sceneID="8EG-Ea-ZIu">
@@ -306,7 +306,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Idz-HM-wJR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="12435" y="-417"/>
+            <point key="canvasLocation" x="12443" y="-28"/>
         </scene>
         <!--Make Picks-->
         <scene sceneID="QBn-oE-bdY">
@@ -372,7 +372,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Eoo-ZX-fvI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="35M-Jp-Hd6" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="14232" y="-1182"/>
+            <point key="canvasLocation" x="15283.076923076922" y="-449.28909952606631"/>
         </scene>
         <!--Manage Users-->
         <scene sceneID="WCJ-oa-6Hw">
@@ -407,7 +407,93 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TwC-Kj-3Wl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9454" y="336"/>
+            <point key="canvasLocation" x="9217" y="304"/>
+        </scene>
+        <!--Create A Tournament-->
+        <scene sceneID="OwC-9A-Bi0">
+            <objects>
+                <tableViewController id="Uh1-nH-dKc" customClass="CreateTournamentTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="hE4-oR-XCS">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="787"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <sections>
+                            <tableViewSection headerTitle="Event" id="DvC-6g-KPe">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="I55-QS-hS6">
+                                        <rect key="frame" x="0.0" y="50" width="390" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="I55-QS-hS6" id="Zrg-1v-3Lw">
+                                            <rect key="frame" x="0.0" y="0.0" width="359.66666666666669" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Event Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IIg-dv-2Z5">
+                                                    <rect key="frame" x="20" y="11" width="320" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="hO1-XU-926" kind="presentation" id="Jq1-a1-8gK"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Budget" id="N3a-TO-x3I">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="HYb-PO-rwd">
+                                        <rect key="frame" x="0.0" y="171.66666793823242" width="390" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HYb-PO-rwd" id="2N8-Qb-kn2">
+                                            <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hXf-MG-cON">
+                                                    <rect key="frame" x="20" y="5" width="350" height="34"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                    <connections>
+                                                        <action selector="textEditingChanged:" destination="Uh1-nH-dKc" eventType="editingChanged" id="OXq-rL-n5z"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="Uh1-nH-dKc" id="jfo-uQ-pAO"/>
+                            <outlet property="delegate" destination="Uh1-nH-dKc" id="bhs-dj-C0P"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Create A Tournament" id="0u5-4j-gfb">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="tlY-UA-axj">
+                            <connections>
+                                <segue destination="4AD-5N-lJI" kind="unwind" identifier="unwindCancelCreateTournament" unwindAction="unwindFromCreateTournamentWithSegue:" id="H7W-kb-y7I"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="aGr-He-Ynn">
+                            <connections>
+                                <segue destination="4AD-5N-lJI" kind="unwind" identifier="unwindCreateTournament" unwindAction="unwindFromCreateTournamentWithSegue:" id="Md3-Ak-B0y"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="budgetTextField" destination="hXf-MG-cON" id="HtD-Lu-pLX"/>
+                        <outlet property="eventCell" destination="I55-QS-hS6" id="dZ1-UN-3yq"/>
+                        <outlet property="eventNameLabel" destination="IIg-dv-2Z5" id="0O6-xs-PaS"/>
+                        <outlet property="saveButton" destination="aGr-He-Ynn" id="cht-Dn-qAN"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="e3U-aO-XYz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="4AD-5N-lJI" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="10016.923076923076" y="-739.33649289099526"/>
         </scene>
         <!--Manage Athletes-->
         <scene sceneID="Jjo-ZG-Zab">
@@ -445,7 +531,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RQp-Tb-xTk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="13308" y="304"/>
+            <point key="canvasLocation" x="13429" y="304"/>
         </scene>
         <!--Tournament User Detail Table View Controller-->
         <scene sceneID="yf9-ka-KBY">
@@ -474,9 +560,9 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Y1u-sN-SBh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="13308" y="982"/>
+            <point key="canvasLocation" x="13429" y="982"/>
         </scene>
-        <!--New Athlete-->
+        <!--Add Edit Athlete-->
         <scene sceneID="SeE-jY-4JA">
             <objects>
                 <tableViewController id="BsD-vQ-KIB" customClass="AddEditAthleteTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
@@ -583,7 +669,7 @@
                             <outlet property="delegate" destination="BsD-vQ-KIB" id="WWL-L6-Dg3"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="New Athlete" id="uN4-Do-Ol3">
+                    <navigationItem key="navigationItem" title="Add Edit Athlete" id="uN4-Do-Ol3">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="1q2-BV-XSs">
                             <connections>
                                 <segue destination="7kG-3k-hay" kind="unwind" unwindAction="unwindFromAddEditAthleteWithSegue:" id="dIs-1M-4bL"/>
@@ -606,7 +692,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="u2N-8d-Yfq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="7kG-3k-hay" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="15165" y="304"/>
+            <point key="canvasLocation" x="15286" y="304"/>
         </scene>
         <!--Create League-->
         <scene sceneID="S54-ja-mGi">
@@ -646,13 +732,11 @@
                     <navigationItem key="navigationItem" title="Create League" id="LS9-qq-h1r">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="nNi-0d-kZu">
                             <connections>
-                                <action selector="cancelButtonPressed:" destination="mL8-7X-6yZ" id="FXI-MC-DEo"/>
                                 <segue destination="v0p-O2-XaO" kind="unwind" identifier="cancelCreateLeagueUnwind" unwindAction="unwindFromCreateLeagueWithSegue:" id="kav-UH-Ws2"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="J0Q-5U-gQd">
                             <connections>
-                                <action selector="saveButtonPressed:" destination="mL8-7X-6yZ" id="xHe-xl-A0V"/>
                                 <segue destination="v0p-O2-XaO" kind="unwind" identifier="createLeagueUnwind" unwindAction="unwindFromCreateLeagueWithSegue:" id="fAz-vd-iez"/>
                             </connections>
                         </barButtonItem>
@@ -664,7 +748,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TMG-Ml-bV5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="v0p-O2-XaO" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="6470.7692307692305" y="-1184.3601895734596"/>
+            <point key="canvasLocation" x="5811" y="-819"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="tR4-9P-5H4">
@@ -763,7 +847,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z85-Pa-IVY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3736.9230769230767" y="-417.29857819905209"/>
+            <point key="canvasLocation" x="3029" y="-449"/>
         </scene>
         <!--Account-->
         <scene sceneID="yLC-Je-fJU">
@@ -782,7 +866,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lqm-xg-n8i" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3736.9230769230767" y="335.54502369668245"/>
+            <point key="canvasLocation" x="3029" y="304"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="nhI-UH-eqm">
@@ -800,12 +884,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDM-nv-Lxl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5563" y="-1183"/>
+            <point key="canvasLocation" x="4902" y="-819"/>
         </scene>
-        <!--Select A Tournament-->
+        <!--Select An Event-->
         <scene sceneID="nZJ-pQ-6lp">
             <objects>
-                <tableViewController id="C0T-uD-FzL" customClass="CreateTournamentTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="C0T-uD-FzL" customClass="SelectEventTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="x9v-ZV-gbt">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="787"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -825,7 +909,7 @@
                             <outlet property="delegate" destination="C0T-uD-FzL" id="KRa-DS-lbM"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Select A Tournament" id="a5u-5f-ipk">
+                    <navigationItem key="navigationItem" title="Select An Event" id="a5u-5f-ipk">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="u9s-zu-Sv6">
                             <connections>
                                 <action selector="cancelButtonPressed:" destination="C0T-uD-FzL" id="M43-dg-yJl"/>
@@ -833,13 +917,13 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="S2P-et-ckR" kind="unwind" identifier="unwindCreateTournament" unwindAction="unwindFromCreateTournamentWithSegue:" id="0NR-3H-CMK"/>
+                        <segue destination="S2P-et-ckR" kind="unwind" identifier="unwindSelectEvent" unwindAction="unwindFromSelectEventWithSegue:" id="ccv-iQ-Ves"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JL1-KA-Vmu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="S2P-et-ckR" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="10380" y="-1184"/>
+            <point key="canvasLocation" x="11748" y="-739"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="qFe-V1-aWs">
@@ -857,7 +941,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XU5-I9-sFY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="13306" y="-1184"/>
+            <point key="canvasLocation" x="14356.923076923076" y="-451.42180094786727"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="2T3-aB-8zq">
@@ -875,11 +959,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G41-zE-RFk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="14232" y="304"/>
+            <point key="canvasLocation" x="14352" y="304"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="3tS-7X-yZw">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JIe-yu-M3S" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="hO1-XU-926" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Xtn-uS-trB">
@@ -888,12 +973,11 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="C0T-uD-FzL" kind="relationship" relationship="rootViewController" destinationCreationSelector="segueToCreateTournament:" id="vBi-Qj-69i"/>
+                        <segue destination="C0T-uD-FzL" kind="relationship" relationship="rootViewController" destinationCreationSelector="segueToSelectEvent:" id="vBi-Qj-69i"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="JIe-yu-M3S" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9454" y="-1184"/>
+            <point key="canvasLocation" x="10878" y="-739"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Sd0-h0-AOU">
@@ -911,7 +995,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OCz-JE-rsC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7658" y="-417"/>
+            <point key="canvasLocation" x="7300" y="-28"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="NyZ-YC-gqs">
@@ -929,11 +1013,29 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xaj-eH-qD6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11506" y="-417"/>
+            <point key="canvasLocation" x="11514" y="-28"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="TfX-jo-Q2j">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Zwf-GU-jPr" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="HT8-8R-ezO">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="56"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Uh1-nH-dKc" kind="relationship" relationship="rootViewController" id="wJ2-HQ-xot"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BAx-PL-oiH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="9161.538461538461" y="-739.33649289099526"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="blq-Xm-rGH"/>
+        <segue reference="qAz-oj-d79"/>
     </inferredMetricsTieBreakers>
     <resources>
         <systemColor name="systemBackgroundColor">

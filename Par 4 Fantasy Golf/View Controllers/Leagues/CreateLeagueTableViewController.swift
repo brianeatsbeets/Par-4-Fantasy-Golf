@@ -25,12 +25,6 @@ class CreateLeagueTableViewController: UITableViewController {
     
     @IBOutlet var nameTextField: UITextField!
     
-    // MARK: - View life cycle functions
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     // MARK: - Navigation
     
     // Compile the league data for sending back to the leagues table view controller

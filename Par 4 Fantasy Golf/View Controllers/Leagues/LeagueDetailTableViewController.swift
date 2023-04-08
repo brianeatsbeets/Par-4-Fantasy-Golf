@@ -55,7 +55,6 @@ class LeagueDetailTableViewController: UITableViewController {
         // Fetch league member data
         Task {
             league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
-            await fetchEspnData()
             updateTableView()
         }
     }
@@ -70,39 +69,6 @@ class LeagueDetailTableViewController: UITableViewController {
     }
     
     // MARK: - Other functions
-    
-    // Fetch ESPN Data
-    // TODO: Fetch this data in CreateTournamentTableViewController
-    func fetchEspnData() async {
-        
-        // Construct URL
-        // TODO: Provide today's date as the dates parameter
-        let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?dates=20230406")!
-        
-        do {
-            // Request data from the URL
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            // Make sure we have a valid HTTP response
-            if let httpResponse = response as? HTTPURLResponse,
-               httpResponse.statusCode == 200,
-               let apiResponse = try? JSONDecoder().decode(ServerResponse.self, from: data) {
-                
-                // Filter the calendar events to those whose end date is later than now
-                calendarEvents = apiResponse.activeLeagues[0].calendar.filter({ event in
-                    let formatter = ISO8601DateFormatter()
-                    formatter.formatOptions = [.withFullDate]
-                    guard let eventEndDate = formatter.date(from: event.endDate) else { print("AAA"); return false }
-                    
-                    return eventEndDate > Date.now
-                })
-            } else {
-                print("HTTP request error: \(response.description)")
-            }
-        } catch {
-            print("Caught error from URLSession.shared.data function")
-        }
-    }
     
     // Fetch tournament data from the tournamentIds tree and store it
     func fetchDenormalizedTournamentData(completion: @escaping () -> Void) {
@@ -124,8 +90,8 @@ class LeagueDetailTableViewController: UITableViewController {
                 self.denormalizedTournaments.append(tournament)
             }
             
-            // Sort leagues
-            self.denormalizedTournaments = self.denormalizedTournaments.sorted(by: { $0.name > $1.name})
+            // Sort tournament
+            self.denormalizedTournaments = self.denormalizedTournaments.sorted(by: { $0.name < $1.name})
             
             // Call completion handler
             completion()
@@ -163,9 +129,9 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // MARK: - Navigation
     
-    // Pass league data to CreateTournamentTableViewController
-    @IBSegueAction func segueToCreateTournament(_ coder: NSCoder) -> CreateTournamentTableViewController? {
-        return CreateTournamentTableViewController(coder: coder, events: calendarEvents)
+    // Pass league data to SelectEventTableViewController
+    @IBSegueAction func segueToCreateTournament(_ coder: NSCoder) -> SelectEventTableViewController? {
+        return SelectEventTableViewController(coder: coder, events: calendarEvents)
     }
     
     // Pass league data to ManageUsersTableViewController
@@ -198,16 +164,16 @@ class LeagueDetailTableViewController: UITableViewController {
         // Check that we have new tournament data to parse
         guard segue.identifier == "unwindCreateTournament",
               let sourceViewController = segue.source as? CreateTournamentTableViewController,
-              let selectedEvent = sourceViewController.selectedEvent else { return }
+              let newTournament = sourceViewController.tournament else { return }
         
         // Save the tournament to the local data source
-        let newTournament = Tournament(name: selectedEvent.name, startDate: selectedEvent.startDate, endDate: selectedEvent.endDate, budget: 25)
         league.tournamentIds.append(newTournament.id)
         league.tournaments.append(newTournament)
         
-        // Save the denormalized tournament to the local data source
-        let denormalizedTournament = DenormalizedTournament(id: newTournament.id, name: newTournament.name)
+        // Save the denormalized tournament to the local data source and sort
+        let denormalizedTournament = DenormalizedTournament(tournament: newTournament)
         denormalizedTournaments.append(denormalizedTournament)
+        denormalizedTournaments = denormalizedTournaments.sorted(by: { $0.name < $1.name})
         
         // Save the tournament to Firebase
         

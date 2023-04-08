@@ -10,17 +10,6 @@
 
 import Foundation
 
-// This extension formats the date strings returned from the API into more readable strings
-extension String {
-    func prettyDate() -> String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate]
-        guard let date = formatter.date(from: self) else { return "Couldn't create string from date" }
-        let prettyString = date.formatted(date: .numeric, time: .omitted)
-        return prettyString
-    }
-}
-
 // MARK: - Top Level
 
 // This is the top-level item in the JSON tree

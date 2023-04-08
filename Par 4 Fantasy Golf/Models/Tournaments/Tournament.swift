@@ -23,24 +23,23 @@ struct Tournament: Hashable {
     }
     let databaseReference: DatabaseReference
     var name: String
-    var startDate: String
-    var endDate: String
+    var startDate: Double
+    var endDate: Double
     let creator: String
-    var memberIds: [String]
-    var members = [User]()
     var athletes = [Athlete]()
     var pickIds = [String: [String]]()
-    let budget: Int
+    var budget: Int
     
     // MARK: - Initializers
     
     // Standard init
-    init(name: String, startDate: String, endDate: String, members: [User] = [], budget: Int) {
+    init(name: String, startDate: Double, endDate: Double, budget: Int) {
         uuid = UUID()
         databaseReference = Database.database().reference(withPath: "tournaments/\(uuid)")
         self.name = name
         self.startDate = startDate
         self.endDate = endDate
+        self.budget = budget
         
         // Set the current user as the creator when creating a new tournament
         if let user = Auth.auth().currentUser {
@@ -48,10 +47,6 @@ struct Tournament: Hashable {
         } else {
             creator = "unknown user"
         }
-        
-        self.memberIds = members.map { $0.id }
-        self.members = members
-        self.budget = budget
     }
     
     // Init with snapshot data
@@ -61,8 +56,8 @@ struct Tournament: Hashable {
         guard let value = snapshot.value as? [String: AnyObject],
               let id = UUID(uuidString: snapshot.key),
               let name = value["name"] as? String,
-              let startDate = value["startDate"] as? String,
-              let endDate = value["endDate"] as? String,
+              let startDate = value["startDate"] as? Double,
+              let endDate = value["endDate"] as? Double,
               let creator = value["creator"] as? String,
               let budget = value["budget"] as? Int else { return nil }
         
@@ -74,13 +69,6 @@ struct Tournament: Hashable {
         self.endDate = endDate
         self.creator = creator
         self.budget = budget
-        
-        // Conditionally assign properties that may or may not have values
-        if let memberIds = value["memberIds"] as? [String: Bool] {
-            self.memberIds = memberIds.map { $0.key }
-        } else {
-            self.memberIds = []
-        }
         
         self.athletes = []
         if let athletes = value["athletes"] as? [String: [String: AnyObject]] {
@@ -108,12 +96,6 @@ struct Tournament: Hashable {
     // Convert the tournament to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
         
-        // Convert mebmerIds array to Firebase-style dictionary
-        var memberDict = [String: Bool]()
-        for member in members {
-            memberDict[member.id] = true
-        }
-        
         // Convert athletes array to Firebase-style dictionary
         var athleteDict = [String: Any]()
         for athlete in athletes {
@@ -135,7 +117,6 @@ struct Tournament: Hashable {
             "startDate": startDate,
             "endDate": endDate,
             "creator": creator,
-            "memberIds": memberDict,
             "athletes": athleteDict,
             "pickIds": pickDict,
             "budget": budget
@@ -200,9 +181,23 @@ struct Tournament: Hashable {
 // MARK: - Extensions
 
 // This extension houses a date formatting helper function
-// TODO: Is this still needed?
 extension Double {
     func formattedDate() -> String {
         return Date(timeIntervalSince1970: self).formatted(date: .numeric, time: .omitted)
+    }
+}
+
+// This extension converts the ESPN date string into more usable formats
+extension String {
+    
+    // Return a since-epoch double
+    func espnDateStringToDouble() -> Double? {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        guard let date = formatter.date(from: self) else {
+            print("Couldn't convert ESPN date string to date")
+            return nil
+        }
+        return date.timeIntervalSince1970
     }
 }

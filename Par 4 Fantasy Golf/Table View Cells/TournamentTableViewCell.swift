@@ -20,6 +20,7 @@ class TournamentTableViewCell: UITableViewCell {
     func configure(with tournament: DenormalizedTournament) {
         var config = defaultContentConfiguration()
         config.text = tournament.name
+        config.secondaryText = "Start date: \(tournament.startDate.formattedDate()) | End date: \(tournament.endDate.formattedDate())"
         contentConfiguration = config
     }
 

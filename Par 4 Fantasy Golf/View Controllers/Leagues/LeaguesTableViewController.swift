@@ -118,7 +118,7 @@ class LeaguesTableViewController: UITableViewController {
         league.databaseReference.setValue(league.toAnyObject())
         
         // Save the league to the leagueIds tree in Firebase
-        let denormalizedLeague = DenormalizedLeague(id: league.id, name: league.name)
+        let denormalizedLeague = DenormalizedLeague(league: league)
         leagueIdsRef.child(league.id).setValue(denormalizedLeague.toAnyObject())
         
         // Save the league to the league members' data

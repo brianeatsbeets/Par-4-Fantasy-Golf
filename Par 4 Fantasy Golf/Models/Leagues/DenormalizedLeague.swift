@@ -19,9 +19,9 @@ struct DenormalizedLeague: Hashable {
     
     // MARK: - Initializers
     
-    init(id: String, name: String) {
-        self.id = id
-        self.name = name
+    init(league: League) {
+        self.id = league.id
+        self.name = league.name
     }
     
     // Init with snapshot data

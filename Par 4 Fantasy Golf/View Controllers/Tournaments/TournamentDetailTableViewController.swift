@@ -87,7 +87,6 @@ class TournamentDetailTableViewController: UITableViewController {
     // TODO: Sort by name if tournament hasn't started yet
     // TODO: Use 5th top athlete as a tie-breaker
     func calculateTournamentStandings() {
-        print("Calculating tournament standings")
         
         var newStandings = [TournamentStanding]()
         
