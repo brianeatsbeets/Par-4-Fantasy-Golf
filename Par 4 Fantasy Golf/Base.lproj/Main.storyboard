@@ -479,7 +479,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="aGr-He-Ynn">
                             <connections>
-                                <segue destination="4AD-5N-lJI" kind="unwind" identifier="unwindCreateTournament" unwindAction="unwindFromCreateTournamentWithSegue:" id="Md3-Ak-B0y"/>
+                                <action selector="saveButtonPressed:" destination="Uh1-nH-dKc" id="l8k-2R-iyr"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -488,6 +488,7 @@
                         <outlet property="eventCell" destination="I55-QS-hS6" id="dZ1-UN-3yq"/>
                         <outlet property="eventNameLabel" destination="IIg-dv-2Z5" id="0O6-xs-PaS"/>
                         <outlet property="saveButton" destination="aGr-He-Ynn" id="cht-Dn-qAN"/>
+                        <segue destination="4AD-5N-lJI" kind="unwind" identifier="unwindCreateTournament" unwindAction="unwindFromCreateTournamentWithSegue:" id="PZV-XU-lbc"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e3U-aO-XYz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

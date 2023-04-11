@@ -65,8 +65,11 @@ class TournamentDetailTableViewController: UITableViewController {
             navigationItem.rightBarButtonItem = makePicksButton
         }
         
-        calculateTournamentStandings()
-        updateTableView()
+        Task {
+            //await fetchEventData()
+            calculateTournamentStandings()
+            updateTableView()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {

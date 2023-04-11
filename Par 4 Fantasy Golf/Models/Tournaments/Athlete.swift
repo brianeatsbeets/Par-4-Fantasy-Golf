@@ -38,7 +38,7 @@ struct Athlete: Hashable, Codable {
     // MARK: - Initializers
     
     // Standard init
-    init(id: UUID = UUID(), name: String, odds: Int, value: Int, score: Int = 0) {
+    init(id: UUID = UUID(), name: String, odds: Int = 0, value: Int = 0, score: Int = 0) {
         self.uuid = id
         self.name = name
         self.odds = odds

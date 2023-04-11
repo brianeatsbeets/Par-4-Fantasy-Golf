@@ -21,6 +21,7 @@ struct Tournament: Hashable {
     var id: String {
         uuid.uuidString
     }
+    var espnId: String
     let databaseReference: DatabaseReference
     var name: String
     var startDate: Double
@@ -33,13 +34,15 @@ struct Tournament: Hashable {
     // MARK: - Initializers
     
     // Standard init
-    init(name: String, startDate: Double, endDate: Double, budget: Int) {
+    init(name: String, startDate: Double, endDate: Double, budget: Int, athletes: [Athlete], espnId: String) {
         uuid = UUID()
         databaseReference = Database.database().reference(withPath: "tournaments/\(uuid)")
         self.name = name
         self.startDate = startDate
         self.endDate = endDate
         self.budget = budget
+        self.athletes = athletes
+        self.espnId = espnId
         
         // Set the current user as the creator when creating a new tournament
         if let user = Auth.auth().currentUser {
@@ -59,7 +62,8 @@ struct Tournament: Hashable {
               let startDate = value["startDate"] as? Double,
               let endDate = value["endDate"] as? Double,
               let creator = value["creator"] as? String,
-              let budget = value["budget"] as? Int else { return nil }
+              let budget = value["budget"] as? Int,
+              let espnId = value["espnId"] as? String else { return nil }
         
         // Assign properties that will always have values
         uuid = id
@@ -69,6 +73,7 @@ struct Tournament: Hashable {
         self.endDate = endDate
         self.creator = creator
         self.budget = budget
+        self.espnId = espnId
         
         self.athletes = []
         if let athletes = value["athletes"] as? [String: [String: AnyObject]] {
@@ -119,7 +124,8 @@ struct Tournament: Hashable {
             "creator": creator,
             "athletes": athleteDict,
             "pickIds": pickDict,
-            "budget": budget
+            "budget": budget,
+            "espnId": espnId
         ]
     }
     

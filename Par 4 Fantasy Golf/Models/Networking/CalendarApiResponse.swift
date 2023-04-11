@@ -1,5 +1,5 @@
 //
-//  ServerResponse.swift
+//  CalendarApiResponse.swift
 //  Par 4 Fantasy Golf
 //
 //  Created by Aguirre, Brian P. on 4/1/23.
@@ -13,13 +13,13 @@ import Foundation
 // MARK: - Top Level
 
 // This is the top-level item in the JSON tree
-struct ServerResponse: Codable {
+struct CalendarApiResponse: Codable {
     let activeLeagues: [ProfessionalLeague] // Drill down for calendar
-    let activeEvents: [Event] // Drill down for competitors and event status
+    //let activeEvents: [Event] // Drill down for competitors and event status
 
     enum CodingKeys: String, CodingKey {
         case activeLeagues = "leagues"
-        case activeEvents = "events"
+        //case activeEvents = "events"
     }
 }
 
@@ -47,7 +47,15 @@ struct CalendarEvent: Codable, Hashable, Equatable {
     let name: String // Event name
     let startDate: String // Event start date
     let endDate: String // Event end date
-    let urlContainer: CalendarEventUrl // Contains url with event ID
+    var urlContainer: CalendarEventUrl // Contains url with event ID
+    var eventId: String {
+        if let id = URL(string: urlContainer.url)?.lastPathComponent {
+            return id
+        } else {
+            print("Couldn't extract event ID from event URL")
+            return "nil"
+        }
+    }
 
     enum CodingKeys: String, CodingKey {
         case name = "label"
@@ -69,88 +77,88 @@ struct CalendarEventUrl: Codable, Hashable, Equatable {
 
 // MARK: - Competition Data
 
-// This is an event that is/was active on the date provided to the API call
-struct Event: Codable {
-    let id: String // Event ID - may not be needed
-    let startDate: String // Event start date
-    let endDate: String // Event end date
-    let name: String // Event name
-    let competitions: [Competition] // Drill down for competitors
-
-    enum CodingKeys: String, CodingKey {
-        case id = "id"
-        case startDate = "date"
-        case endDate = "endDate"
-        case name = "name"
-        case competitions = "competitions"
-    }
-}
-
-// This is a container for event status and competitor data
-struct Competition: Codable {
-    let competitors: [Competitor]? // Drill down for competitor data
-    let status: CompetitionStatus // Drill down for competition status
-
-    enum CodingKeys: String, CodingKey {
-        case competitors = "competitors"
-        case status = "status"
-    }
-}
-
-// This is a container for the competition status
-struct CompetitionStatus: Codable {
-    let statusDetails: CompetitionStatusDetail // Contains competition status details
-
-    enum CodingKeys: String, CodingKey {
-        case statusDetails = "type"
-    }
-}
-
-// This is a container for the competition status details
-struct CompetitionStatusDetail: Codable {
-    let isCompleted: Bool // Whether or not the event has completed
-    let statusDescription: String // Textual description of event status (i.e. "Round 2 - In Progress")
-
-    enum CodingKeys: String, CodingKey {
-        case isCompleted = "completed"
-        case statusDescription = "description"
-    }
-}
-
-// MARK: - Competitor Data
-
-// This is an individual competitor for this event
-struct Competitor: Codable {
-    let id: String // Competitor ID - may not be needed
-    let nameContainer: CompetitorNameContainer // Container for competitor name
-    let overallScore: String // Overall score for event
-    let roundScores: [RoundScore] // Scoring information for each round
-
-    enum CodingKeys: String, CodingKey {
-        case id = "id"
-        case nameContainer = "athlete"
-        case overallScore = "score"
-        case roundScores = "linescores"
-    }
-}
-
-// This is a container for a competitor name
-struct CompetitorNameContainer: Codable {
-    let name: String
-
-    enum CodingKeys: String, CodingKey {
-        case name = "displayName"
-    }
-}
-
-// This is a container for a competitor round score
-struct RoundScore: Codable {
-    let value: Int? // Overall score
-
-    enum CodingKeys: String, CodingKey {
-        case value = "value"
-    }
-}
+//// This is an event that is/was active on the date provided to the API call
+//struct Event: Codable {
+//    let id: String // Event ID - may not be needed
+//    let startDate: String // Event start date
+//    let endDate: String // Event end date
+//    let name: String // Event name
+//    let competitions: [Competition] // Drill down for competitors
+//
+//    enum CodingKeys: String, CodingKey {
+//        case id = "id"
+//        case startDate = "date"
+//        case endDate = "endDate"
+//        case name = "name"
+//        case competitions = "competitions"
+//    }
+//}
+//
+//// This is a container for event status and competitor data
+//struct Competition: Codable {
+//    let competitors: [Competitor]? // Drill down for competitor data
+//    let status: CompetitionStatus // Drill down for competition status
+//
+//    enum CodingKeys: String, CodingKey {
+//        case competitors = "competitors"
+//        case status = "status"
+//    }
+//}
+//
+//// This is a container for the competition status
+//struct CompetitionStatus: Codable {
+//    let statusDetails: CompetitionStatusDetail // Contains competition status details
+//
+//    enum CodingKeys: String, CodingKey {
+//        case statusDetails = "type"
+//    }
+//}
+//
+//// This is a container for the competition status details
+//struct CompetitionStatusDetail: Codable {
+//    let isCompleted: Bool // Whether or not the event has completed
+//    let statusDescription: String // Textual description of event status (i.e. "Round 2 - In Progress")
+//
+//    enum CodingKeys: String, CodingKey {
+//        case isCompleted = "completed"
+//        case statusDescription = "description"
+//    }
+//}
+//
+//// MARK: - Competitor Data
+//
+//// This is an individual competitor for this event
+//struct Competitor: Codable {
+//    let id: String // Competitor ID - may not be needed
+//    let nameContainer: CompetitorNameContainer // Container for competitor name
+//    let overallScore: String // Overall score for event
+//    let roundScores: [RoundScore] // Scoring information for each round
+//
+//    enum CodingKeys: String, CodingKey {
+//        case id = "id"
+//        case nameContainer = "athlete"
+//        case overallScore = "score"
+//        case roundScores = "linescores"
+//    }
+//}
+//
+//// This is a container for a competitor name
+//struct CompetitorNameContainer: Codable {
+//    let name: String
+//
+//    enum CodingKeys: String, CodingKey {
+//        case name = "displayName"
+//    }
+//}
+//
+//// This is a container for a competitor round score
+//struct RoundScore: Codable {
+//    let value: Int? // Overall score
+//
+//    enum CodingKeys: String, CodingKey {
+//        case value = "value"
+//    }
+//}
 
 // MARK: - app.quicktype.io encode/decode helpers (unsure if needed)
 

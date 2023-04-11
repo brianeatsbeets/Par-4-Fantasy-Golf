@@ -48,7 +48,7 @@ class CreateTournamentTableViewController: UITableViewController {
         
         // Construct URL
         // TODO: Provide today's date as the dates parameter
-        let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?dates=20230406")!
+        let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard")!
         
         do {
             // Request data from the URL
@@ -57,7 +57,7 @@ class CreateTournamentTableViewController: UITableViewController {
             // Make sure we have a valid HTTP response
             if let httpResponse = response as? HTTPURLResponse,
                httpResponse.statusCode == 200,
-               let apiResponse = try? JSONDecoder().decode(ServerResponse.self, from: data) {
+               let apiResponse = try? JSONDecoder().decode(CalendarApiResponse.self, from: data) {
                 
                 // Filter the calendar events to those whose end date is later than now
                 calendarEvents = apiResponse.activeLeagues[0].calendar.filter({ event in
@@ -72,6 +72,46 @@ class CreateTournamentTableViewController: UITableViewController {
             }
         } catch {
             print("Caught error from URLSession.shared.data function")
+        }
+    }
+    
+    // Fetch event athletes
+    func fetchEventAthletes(eventId: String) async -> [Athlete]? {
+        
+        var athletes = [Athlete]()
+        
+        // Construct URL
+        let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=\(eventId)")!
+        
+        do {
+            // Request data from the URL
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            // Make sure we have a valid HTTP response
+            if let httpResponse = response as? HTTPURLResponse,
+               httpResponse.statusCode == 200,
+               let apiResponse = try? JSONDecoder().decode(EventApiResponse.self, from: data) {
+                
+                // Parse each competitor and create an Athlete from each one
+                let competitors = apiResponse.events[0].competitions[0].competitors
+                for competitor in competitors {
+                    let name = competitor.athlete.displayName
+                    let score = competitor.score.value
+                    athletes.append(Athlete(name: name, score: score))
+                }
+                
+                // Sort the athletes
+                athletes = athletes.sorted { $0.name < $1.name }
+                
+                return athletes
+                
+            } else {
+                print("HTTP request error: \(response.description)")
+                return nil
+            }
+        } catch {
+            print("Caught error from URLSession.shared.data function")
+            return nil
         }
     }
     
@@ -102,9 +142,12 @@ class CreateTournamentTableViewController: UITableViewController {
               let event = sourceViewController.selectedEvent
         else { return }
         
+        print(event)
+        
         // Update the selected event
         selectedEvent = event
         eventNameLabel.text = selectedEvent?.name
+        print("Event ID: \(event.eventId)")
         
         // Deselect cell and update save button state
         eventCell.isSelected = false
@@ -112,15 +155,31 @@ class CreateTournamentTableViewController: UITableViewController {
     }
     
     // Compile the league data for sending back to the league detail table view controller
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard segue.identifier == "unwindCreateTournament",
-        let selectedEvent = selectedEvent,
-        let startDate = selectedEvent.startDate.espnDateStringToDouble(),
-        let endDate = selectedEvent.endDate.espnDateStringToDouble() else { return }
+    @IBAction func saveButtonPressed(_ sender: Any) {
+        saveButton.isEnabled = false
+        
+        guard let selectedEvent = selectedEvent,
+              let startDate = selectedEvent.startDate.espnDateStringToDouble(),
+              let endDate = selectedEvent.endDate.espnDateStringToDouble() else { return }
         
         let budget = Int(budgetTextField.text ?? "") ?? 0
+        let eventId = selectedEvent.eventId
         
-        // Create new tournament object
-        tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget)
+        Task {
+            var athletes = [Athlete]()
+            
+            if let eventAthletes = await fetchEventAthletes(eventId: eventId) {
+                athletes = eventAthletes
+                print("Added athletes")
+            } else {
+                print("No athletes added to tournament")
+            }
+            
+            // Create new tournament object
+            tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget, athletes: athletes, espnId: eventId)
+            
+            // Segue back to LeagueDetailTableViewController
+            performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
+        }
     }
 }
