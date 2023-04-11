@@ -17,7 +17,7 @@ class LeagueTableViewCell: UITableViewCell {
     // MARK: - Functions
 
     // Set up the cell UI elements
-    func configure(with league: DenormalizedLeague) {
+    func configure(with league: MinimalLeague) {
         var config = defaultContentConfiguration()
         config.text = league.name
         contentConfiguration = config

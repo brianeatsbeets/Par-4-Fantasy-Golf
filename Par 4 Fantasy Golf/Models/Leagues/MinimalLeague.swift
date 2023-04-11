@@ -1,5 +1,5 @@
 //
-//  DenormalizedLeague.swift
+//  MinimalLeague.swift
 //  Par 4 Fantasy Golf
 //
 //  Created by Aguirre, Brian P. on 3/27/23.
@@ -10,7 +10,7 @@ import FirebaseDatabase
 // MARK: - Main struct
 
 // This model represents a denormalized league
-struct DenormalizedLeague: Hashable {
+struct MinimalLeague: Hashable {
     
     // MARK: - Properties
     
@@ -38,7 +38,7 @@ struct DenormalizedLeague: Hashable {
     
     // MARK: - Functions
     
-    // Convert the DenormalizedLeague to a Dictionary to be stored in Firebase
+    // Convert the MinimalLeague to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
         return [
             "name": name
@@ -46,7 +46,7 @@ struct DenormalizedLeague: Hashable {
     }
     
     // Helper function to fetch a league object from a league id
-    static func fetchSingleLeague(from id: String) async -> DenormalizedLeague? {
+    static func fetchSingleLeague(from id: String) async -> MinimalLeague? {
         
         // Set league database reference
         let leagueRef = Database.database().reference(withPath: "leagueIds/" + id)
@@ -54,7 +54,7 @@ struct DenormalizedLeague: Hashable {
         // Attempt to create a league from a snapshot
         do {
             let snapshot = try await leagueRef.getData()
-            if let denormalizedLeague = DenormalizedLeague(snapshot: snapshot) {
+            if let denormalizedLeague = MinimalLeague(snapshot: snapshot) {
                 return denormalizedLeague
             } else {
                 print("Couldn't create league from snapshot")
@@ -67,12 +67,12 @@ struct DenormalizedLeague: Hashable {
     }
     
     // Helper function to fetch multiple league objects from an array of league ids
-    static func fetchMultipleLeagues(from ids: [String]) async -> [DenormalizedLeague] {
+    static func fetchMultipleLeagues(from ids: [String]) async -> [MinimalLeague] {
         
         // Use a task group to make sure that all league fetch requests return a response before we return the league array to the caller
-        return await withTaskGroup(of: DenormalizedLeague?.self, returning: [DenormalizedLeague].self) { group in
+        return await withTaskGroup(of: MinimalLeague?.self, returning: [MinimalLeague].self) { group in
             
-            var denormalizedLeagues = [DenormalizedLeague]()
+            var denormalizedLeagues = [MinimalLeague]()
             
             // Loop through league IDs
             for id in ids {
@@ -81,7 +81,7 @@ struct DenormalizedLeague: Hashable {
                 group.addTask {
                     
                     // Fetch league from ID
-                    await DenormalizedLeague.fetchSingleLeague(from: id)
+                    await MinimalLeague.fetchSingleLeague(from: id)
                 }
                 
                 // Wait for each league request to receive a response

@@ -25,7 +25,7 @@ class LeagueDetailTableViewController: UITableViewController {
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
     var calendarEvents = [CalendarEvent]()
-    var denormalizedTournaments = [DenormalizedTournament]()
+    var denormalizedTournaments = [MinimalTournament]()
     let tournamentIdsRef = Database.database().reference(withPath: "tournamentIds")
     
     // MARK: - Initializers
@@ -82,7 +82,7 @@ class LeagueDetailTableViewController: UITableViewController {
             // Verify that the received data produces valid DenormalizedTournaments, and if it does, append them
             for childSnapshot in snapshot.children {
                 guard let childSnapshot = childSnapshot as? DataSnapshot,
-                      let tournament = DenormalizedTournament(snapshot: childSnapshot) else {
+                      let tournament = MinimalTournament(snapshot: childSnapshot) else {
                     print("Failed to create denormalized tournament")
                     continue
                 }
@@ -171,7 +171,7 @@ class LeagueDetailTableViewController: UITableViewController {
         league.tournaments.append(newTournament)
         
         // Save the denormalized tournament to the local data source and sort
-        let denormalizedTournament = DenormalizedTournament(tournament: newTournament)
+        let denormalizedTournament = MinimalTournament(tournament: newTournament)
         denormalizedTournaments.append(denormalizedTournament)
         denormalizedTournaments = denormalizedTournaments.sorted(by: { $0.name < $1.name})
         
@@ -205,7 +205,7 @@ extension LeagueDetailTableViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, DenormalizedTournament> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, MinimalTournament> {
         
         return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, denormalizedTournament in
             
@@ -219,7 +219,7 @@ extension LeagueDetailTableViewController {
     
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, DenormalizedTournament>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, MinimalTournament>()
         snapshot.appendSections(Section.allCases)
         snapshot.appendItems(denormalizedTournaments)
         dataSource.apply(snapshot, animatingDifferences: animated)

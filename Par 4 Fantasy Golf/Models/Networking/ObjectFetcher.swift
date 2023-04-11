@@ -30,7 +30,7 @@ enum ObjectType: String {
         switch type.self {
         case is League.Type:
             self = .league
-        case is DenormalizedLeague.Type:
+        case is MinimalLeague.Type:
             self = .denormalizedLeague
         case is User.Type:
             self = .user

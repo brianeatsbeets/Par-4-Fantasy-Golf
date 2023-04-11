@@ -23,7 +23,7 @@ class LeaguesTableViewController: UITableViewController {
     @IBOutlet var leaguesDisplaySwitch: UISwitch!
     
     lazy var dataSource = createDataSource()
-    var denormalizedLeagues = [DenormalizedLeague]()
+    var denormalizedLeagues = [MinimalLeague]()
     let leagueIdsRef = Database.database().reference(withPath: "leagueIds")
     let userLeaguesRef = Database.database().reference(withPath: "users/\(Auth.auth().currentUser!.uid)/leagues")
     
@@ -62,7 +62,7 @@ class LeaguesTableViewController: UITableViewController {
                 
                 // Fetch denormalized leagues from user league Ids
                 Task {
-                    self.denormalizedLeagues = await DenormalizedLeague.fetchMultipleLeagues(from: userLeagueIds)
+                    self.denormalizedLeagues = await MinimalLeague.fetchMultipleLeagues(from: userLeagueIds)
                     
                     // Sort leagues
                     self.denormalizedLeagues = self.denormalizedLeagues.sorted(by: { $0.name > $1.name})
@@ -80,7 +80,7 @@ class LeaguesTableViewController: UITableViewController {
                 // Verify that the received data produces valid DenormalizedLeagues, and if it does, append them
                 for childSnapshot in snapshot.children {
                     guard let childSnapshot = childSnapshot as? DataSnapshot,
-                          let league = DenormalizedLeague(snapshot: childSnapshot) else {
+                          let league = MinimalLeague(snapshot: childSnapshot) else {
                         print("Failed to create denormalized league")
                         continue
                     }
@@ -118,7 +118,7 @@ class LeaguesTableViewController: UITableViewController {
         league.databaseReference.setValue(league.toAnyObject())
         
         // Save the league to the leagueIds tree in Firebase
-        let denormalizedLeague = DenormalizedLeague(league: league)
+        let denormalizedLeague = MinimalLeague(league: league)
         leagueIdsRef.child(league.id).setValue(denormalizedLeague.toAnyObject())
         
         // Save the league to the league members' data
@@ -165,7 +165,7 @@ extension LeaguesTableViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, DenormalizedLeague> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, MinimalLeague> {
         
         return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, league in
             
@@ -179,7 +179,7 @@ extension LeaguesTableViewController {
     
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, DenormalizedLeague>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, MinimalLeague>()
         snapshot.appendSections(Section.allCases)
         snapshot.appendItems(denormalizedLeagues)
         dataSource.apply(snapshot, animatingDifferences: animated)

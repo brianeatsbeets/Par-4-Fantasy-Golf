@@ -1,5 +1,5 @@
 //
-//  DenormalizedTournament.swift
+//  MinimalTournament.swift
 //  Par 4 Fantasy Golf
 //
 //  Created by Aguirre, Brian P. on 4/7/23.
@@ -10,7 +10,7 @@ import FirebaseDatabase
 // MARK: - Main struct
 
 // This model represents a denormalized tournament
-struct DenormalizedTournament: Hashable {
+struct MinimalTournament: Hashable {
     
     // MARK: - Properties
     
@@ -45,7 +45,7 @@ struct DenormalizedTournament: Hashable {
     
     // MARK: - Functions
     
-    // Convert the DenormalizedTournament to a Dictionary to be stored in Firebase
+    // Convert the MinimalTournament to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
         return [
             "name": name,
@@ -55,7 +55,7 @@ struct DenormalizedTournament: Hashable {
     }
     
     // Helper function to fetch a tournament object from a tournament id
-    static func fetchSingleTournament(from id: String) async -> DenormalizedTournament? {
+    static func fetchSingleTournament(from id: String) async -> MinimalTournament? {
         
         // Set tournament database reference
         let tournamentRef = Database.database().reference(withPath: "tournamentIds/" + id)
@@ -63,7 +63,7 @@ struct DenormalizedTournament: Hashable {
         // Attempt to create a tournament from a snapshot
         do {
             let snapshot = try await tournamentRef.getData()
-            if let denormalizedTournament = DenormalizedTournament(snapshot: snapshot) {
+            if let denormalizedTournament = MinimalTournament(snapshot: snapshot) {
                 return denormalizedTournament
             } else {
                 print("Couldn't create tournament from snapshot")
@@ -76,12 +76,12 @@ struct DenormalizedTournament: Hashable {
     }
     
     // Helper function to fetch multiple tournament objects from an array of tournament ids
-    static func fetchMultipleTournaments(from ids: [String]) async -> [DenormalizedTournament] {
+    static func fetchMultipleTournaments(from ids: [String]) async -> [MinimalTournament] {
         
         // Use a task group to make sure that all tournament fetch requests return a response before we return the tournament array to the caller
-        return await withTaskGroup(of: DenormalizedTournament?.self, returning: [DenormalizedTournament].self) { group in
+        return await withTaskGroup(of: MinimalTournament?.self, returning: [MinimalTournament].self) { group in
             
-            var denormalizedTournaments = [DenormalizedTournament]()
+            var denormalizedTournaments = [MinimalTournament]()
             
             // Loop through tournament IDs
             for id in ids {
@@ -90,7 +90,7 @@ struct DenormalizedTournament: Hashable {
                 group.addTask {
                     
                     // Fetch tournament from ID
-                    await DenormalizedTournament.fetchSingleTournament(from: id)
+                    await MinimalTournament.fetchSingleTournament(from: id)
                 }
                 
                 // Wait for each tournament request to receive a response

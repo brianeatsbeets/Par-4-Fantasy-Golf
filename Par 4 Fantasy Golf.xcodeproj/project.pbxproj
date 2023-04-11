@@ -17,7 +17,7 @@
 		E149793E29DE2D5600ADEE60 /* LeagueDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793D29DE2D5600ADEE60 /* LeagueDetailTableViewController.swift */; };
 		E149794029DE305200ADEE60 /* TournamentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793F29DE305200ADEE60 /* TournamentTableViewCell.swift */; };
 		E149794429DF712A00ADEE60 /* SelectEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149794329DF712A00ADEE60 /* SelectEventTableViewController.swift */; };
-		E149794929E0A41F00ADEE60 /* DenormalizedTournament.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149794829E0A41F00ADEE60 /* DenormalizedTournament.swift */; };
+		E149794929E0A41F00ADEE60 /* MinimalTournament.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149794829E0A41F00ADEE60 /* MinimalTournament.swift */; };
 		E16C1B8929E1EC1B0034762C /* CreateTournamentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C1B8829E1EC1B0034762C /* CreateTournamentTableViewController.swift */; };
 		E16C1E7529C3970E003F037B /* ManageUsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C1E7429C3970E003F037B /* ManageUsersTableViewController.swift */; };
 		E19E3EA629CC75AB008A7D2E /* MakePicksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */; };
@@ -42,7 +42,7 @@
 		E1C4B12829A6C89C00F0DF67 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C4B12729A6C89C00F0DF67 /* AccountViewController.swift */; };
 		E1E0179C29CFD14600A5A546 /* TournamentStanding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0179B29CFD14600A5A546 /* TournamentStanding.swift */; };
 		E1E0179E29CFD17A00A5A546 /* PickItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0179D29CFD17A00A5A546 /* PickItem.swift */; };
-		E1E824B329D26EEA0094903D /* DenormalizedLeague.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E824B229D26EEA0094903D /* DenormalizedLeague.swift */; };
+		E1E824B329D26EEA0094903D /* MinimalLeague.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E824B229D26EEA0094903D /* MinimalLeague.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,7 +56,7 @@
 		E149793D29DE2D5600ADEE60 /* LeagueDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueDetailTableViewController.swift; sourceTree = "<group>"; };
 		E149793F29DE305200ADEE60 /* TournamentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentTableViewCell.swift; sourceTree = "<group>"; };
 		E149794329DF712A00ADEE60 /* SelectEventTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectEventTableViewController.swift; sourceTree = "<group>"; };
-		E149794829E0A41F00ADEE60 /* DenormalizedTournament.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DenormalizedTournament.swift; sourceTree = "<group>"; };
+		E149794829E0A41F00ADEE60 /* MinimalTournament.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinimalTournament.swift; sourceTree = "<group>"; };
 		E16C1B8829E1EC1B0034762C /* CreateTournamentTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTournamentTableViewController.swift; sourceTree = "<group>"; };
 		E16C1E7429C3970E003F037B /* ManageUsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageUsersTableViewController.swift; sourceTree = "<group>"; };
 		E19E3EA529CC75AB008A7D2E /* MakePicksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePicksTableViewController.swift; sourceTree = "<group>"; };
@@ -81,7 +81,7 @@
 		E1C4B12729A6C89C00F0DF67 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		E1E0179B29CFD14600A5A546 /* TournamentStanding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentStanding.swift; sourceTree = "<group>"; };
 		E1E0179D29CFD17A00A5A546 /* PickItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickItem.swift; sourceTree = "<group>"; };
-		E1E824B229D26EEA0094903D /* DenormalizedLeague.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DenormalizedLeague.swift; sourceTree = "<group>"; };
+		E1E824B229D26EEA0094903D /* MinimalLeague.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinimalLeague.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,7 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				E138DE5E29AE89E400BBE47F /* League.swift */,
-				E1E824B229D26EEA0094903D /* DenormalizedLeague.swift */,
+				E1E824B229D26EEA0094903D /* MinimalLeague.swift */,
 			);
 			path = Leagues;
 			sourceTree = "<group>";
@@ -141,7 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				E149793929DD06CC00ADEE60 /* Tournament.swift */,
-				E149794829E0A41F00ADEE60 /* DenormalizedTournament.swift */,
+				E149794829E0A41F00ADEE60 /* MinimalTournament.swift */,
 				E19E3EAB29CD33F2008A7D2E /* Athlete.swift */,
 				E1E0179D29CFD17A00A5A546 /* PickItem.swift */,
 				E1E0179B29CFD14600A5A546 /* TournamentStanding.swift */,
@@ -357,12 +357,12 @@
 				E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */,
 				E1E0179C29CFD14600A5A546 /* TournamentStanding.swift in Sources */,
 				E138DE5F29AE89E400BBE47F /* League.swift in Sources */,
-				E149794929E0A41F00ADEE60 /* DenormalizedTournament.swift in Sources */,
+				E149794929E0A41F00ADEE60 /* MinimalTournament.swift in Sources */,
 				E1AB1C3A29B29F9E002A354B /* User.swift in Sources */,
 				E149794029DE305200ADEE60 /* TournamentTableViewCell.swift in Sources */,
 				E19E3EAA29CD33DC008A7D2E /* ManageAthletesTableViewController.swift in Sources */,
 				E149794429DF712A00ADEE60 /* SelectEventTableViewController.swift in Sources */,
-				E1E824B329D26EEA0094903D /* DenormalizedLeague.swift in Sources */,
+				E1E824B329D26EEA0094903D /* MinimalLeague.swift in Sources */,
 				E1AB1C3829B28B8E002A354B /* TournamentStandingTableViewCell.swift in Sources */,
 				E19E3EAC29CD33F2008A7D2E /* Athlete.swift in Sources */,
 				E1C4B12629A6C1DD00F0DF67 /* SignInViewController.swift in Sources */,

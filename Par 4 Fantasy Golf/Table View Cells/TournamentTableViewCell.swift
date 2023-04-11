@@ -17,7 +17,7 @@ class TournamentTableViewCell: UITableViewCell {
     // MARK: - Functions
 
     // Set up the cell UI elements
-    func configure(with tournament: DenormalizedTournament) {
+    func configure(with tournament: MinimalTournament) {
         var config = defaultContentConfiguration()
         config.text = tournament.name
         config.secondaryText = "Start date: \(tournament.startDate.formattedDate()) | End date: \(tournament.endDate.formattedDate())"
