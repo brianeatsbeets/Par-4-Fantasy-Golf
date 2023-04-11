@@ -30,6 +30,7 @@ struct Tournament: Hashable {
     var athletes = [Athlete]()
     var pickIds = [String: [String]]()
     var budget: Int
+    var lastUpdateTime: Double
     
     // MARK: - Initializers
     
@@ -43,6 +44,7 @@ struct Tournament: Hashable {
         self.budget = budget
         self.athletes = athletes
         self.espnId = espnId
+        lastUpdateTime = Date.now.timeIntervalSince1970
         
         // Set the current user as the creator when creating a new tournament
         if let user = Auth.auth().currentUser {
@@ -63,7 +65,8 @@ struct Tournament: Hashable {
               let endDate = value["endDate"] as? Double,
               let creator = value["creator"] as? String,
               let budget = value["budget"] as? Int,
-              let espnId = value["espnId"] as? String else { return nil }
+              let espnId = value["espnId"] as? String,
+              let lastUpdateTime = value["lastUpdateTime"] as? Double else { return nil }
         
         // Assign properties that will always have values
         uuid = id
@@ -74,6 +77,7 @@ struct Tournament: Hashable {
         self.creator = creator
         self.budget = budget
         self.espnId = espnId
+        self.lastUpdateTime = lastUpdateTime
         
         self.athletes = []
         if let athletes = value["athletes"] as? [String: [String: AnyObject]] {
@@ -125,7 +129,8 @@ struct Tournament: Hashable {
             "athletes": athleteDict,
             "pickIds": pickDict,
             "budget": budget,
-            "espnId": espnId
+            "espnId": espnId,
+            "lastUpdateTime": lastUpdateTime
         ]
     }
     

@@ -97,7 +97,8 @@ class CreateTournamentTableViewController: UITableViewController {
                 for competitor in competitors {
                     let name = competitor.athlete.displayName
                     let score = competitor.score.value
-                    athletes.append(Athlete(name: name, score: score))
+                    let id = competitor.id
+                    athletes.append(Athlete(espnId: id, name: name, score: score))
                 }
                 
                 // Sort the athletes

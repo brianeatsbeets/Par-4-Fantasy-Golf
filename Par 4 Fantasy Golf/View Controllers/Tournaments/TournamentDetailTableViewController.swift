@@ -23,7 +23,7 @@ class TournamentDetailTableViewController: UITableViewController {
     
     @IBOutlet var makePicksButton: UIBarButtonItem!
     @IBOutlet var tournamentActionBarButtonItemGroup: UIBarButtonItemGroup!
-    @IBOutlet var tournamentStartedSwitch: UISwitch!
+    @IBOutlet var lastUpdateTimeLabel: UILabel!
     
     lazy var dataSource = createDataSource()
     var league: League
@@ -52,6 +52,20 @@ class TournamentDetailTableViewController: UITableViewController {
         tableView.dataSource = dataSource
         
         title = tournament.name
+        
+        let startTime = Date.now.timeIntervalSince1970
+        
+        if tournament.lastUpdateTime > Date.now.timeIntervalSince1970 - 900 { // 15 minutes
+            tournament.lastUpdateTime = Date.now.timeIntervalSince1970
+        }
+        
+        var nextUpdateTime = tournament.lastUpdateTime + 900
+        
+        let updateTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            //let time = Date.timeIntervalSince(Date(timeIntervalSince1970: self.tournament.lastUpdateTime))
+            //Date(timeInterval: , since: Date(timeIntervalSince1970: tournament.lastUpdateTime))
+            self.lastUpdateTimeLabel.text = "Next update in \((nextUpdateTime - Date.now.timeIntervalSince1970).rounded()) seconds"
+        }
         
         // Enable/disable make picks button based on tournament status
         //tournamentStartedSwitch.isOn = tournament.tournamentHasStarted

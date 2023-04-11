@@ -20,6 +20,7 @@ struct Athlete: Hashable, Codable {
     var id: String {
         uuid.uuidString
     }
+    var espnId: String
     var name: String
     var odds: Int
     var value: Int
@@ -38,8 +39,9 @@ struct Athlete: Hashable, Codable {
     // MARK: - Initializers
     
     // Standard init
-    init(id: UUID = UUID(), name: String, odds: Int = 0, value: Int = 0, score: Int = 0) {
+    init(id: UUID = UUID(), espnId: String, name: String, odds: Int = 0, value: Int = 0, score: Int = 0) {
         self.uuid = id
+        self.espnId = espnId
         self.name = name
         self.odds = odds
         self.value = value
@@ -52,11 +54,13 @@ struct Athlete: Hashable, Codable {
         // Validate and set the incoming values
         guard let snapshotValue = snapshot.value as? [String: AnyObject],
               let id = UUID(uuidString: snapshot.key),
+              let espnId = snapshotValue["espnId"] as? String,
               let name = snapshotValue["name"] as? String,
               let odds = snapshotValue["odds"] as? Int,
               let value = snapshotValue["value"] as? Int else { return nil }
 
         self.uuid = id
+        self.espnId = espnId
         self.name = name
         self.odds = odds
         self.value = value
@@ -73,6 +77,7 @@ struct Athlete: Hashable, Codable {
     // Convert the athlete to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
         return [
+            "espnId": espnId,
             "name": name,
             "odds": odds,
             "value": value,
