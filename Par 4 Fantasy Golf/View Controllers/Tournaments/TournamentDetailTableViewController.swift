@@ -31,6 +31,10 @@ class TournamentDetailTableViewController: UITableViewController {
     var standings = [TournamentStanding]()
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
+    var updateTimer = Timer()
+    
+    // Timer update interval in minutes
+    let updateInterval = 15.0
     
     // MARK: - Initializers
     
@@ -53,8 +57,6 @@ class TournamentDetailTableViewController: UITableViewController {
         
         title = tournament.name
         
-        initializeUpdateTimer()
-        
         // Enable/disable make picks button based on tournament status
         //tournamentStartedSwitch.isOn = tournament.tournamentHasStarted
         //if tournamentStartedSwitch.isOn {
@@ -68,10 +70,14 @@ class TournamentDetailTableViewController: UITableViewController {
         }
         
         Task {
-            //await fetchEventData()
             calculateTournamentStandings()
             updateTableView()
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        initializeUpdateTimer()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -86,13 +92,15 @@ class TournamentDetailTableViewController: UITableViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        updateTimer.invalidate()
+    }
+    
     // MARK: - Other functions
     
     // Set up the update countdown timer
     func initializeUpdateTimer() {
-        
-        // Define update interval in minutes
-        let updateInterval = 15.0
         
         // Create a string formatter to display the time how we want
         let formatter = DateComponentsFormatter()
@@ -106,7 +114,7 @@ class TournamentDetailTableViewController: UITableViewController {
         let finishUpdateCycle = {
             self.tournament.lastUpdateTime = Date.now.timeIntervalSince1970
             self.tournament.databaseReference.child("lastUpdateTime").setValue(self.tournament.lastUpdateTime)
-            nextUpdateTime = Date.now.addingTimeInterval(updateInterval*60).timeIntervalSince1970
+            nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval*60).timeIntervalSince1970
         }
         
         // Calculate the next update timestamp
@@ -116,11 +124,16 @@ class TournamentDetailTableViewController: UITableViewController {
             nextUpdateTime = tournament.lastUpdateTime + (updateInterval*60) // lastUpdateTime + 15 minutes
         }
         
+        // Update countdown with initial value before timer starts
+        var timeLeft = Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
+        var formattedTime = formatter.string(from: TimeInterval(timeLeft))!
+        self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
+        
         // Create the timer
-        let updateTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        updateTimer = Timer(timeInterval: 1, repeats: true) { _ in
             
             // Calculate the amount of time left until the next update
-            var timeLeft = Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
+            timeLeft = Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
             
             // Check if the countdown has completed
             if timeLeft < 0 {
@@ -145,11 +158,14 @@ class TournamentDetailTableViewController: UITableViewController {
             }
             
             // Format the time left
-            let formattedTime = formatter.string(from: TimeInterval(timeLeft))!
+            formattedTime = formatter.string(from: TimeInterval(timeLeft))!
             
             // Update the label text
             self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
         }
+        
+        // Add the timer to the .common runloop so it will update during user interaction
+        RunLoop.current.add(updateTimer, forMode: .common)
     }
     
     // Calculate the tournament standings
