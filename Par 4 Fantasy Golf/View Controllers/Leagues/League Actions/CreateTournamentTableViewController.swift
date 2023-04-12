@@ -75,47 +75,6 @@ class CreateTournamentTableViewController: UITableViewController {
         }
     }
     
-    // Fetch event athletes
-    func fetchEventAthletes(eventId: String) async -> [Athlete]? {
-        
-        var athletes = [Athlete]()
-        
-        // Construct URL
-        let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=\(eventId)")!
-        
-        do {
-            // Request data from the URL
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            // Make sure we have a valid HTTP response
-            if let httpResponse = response as? HTTPURLResponse,
-               httpResponse.statusCode == 200,
-               let apiResponse = try? JSONDecoder().decode(EventApiResponse.self, from: data) {
-                
-                // Parse each competitor and create an Athlete from each one
-                let competitors = apiResponse.events[0].competitions[0].competitors
-                for competitor in competitors {
-                    let name = competitor.athlete.displayName
-                    let score = competitor.score.value
-                    let id = competitor.id
-                    athletes.append(Athlete(espnId: id, name: name, score: score))
-                }
-                
-                // Sort the athletes
-                athletes = athletes.sorted { $0.name < $1.name }
-                
-                return athletes
-                
-            } else {
-                print("HTTP request error: \(response.description)")
-                return nil
-            }
-        } catch {
-            print("Caught error from URLSession.shared.data function")
-            return nil
-        }
-    }
-    
     // Toggle enabled state of save button
     func updateSaveButtonState() {
         let budgetText = budgetTextField.text ?? ""
@@ -169,7 +128,7 @@ class CreateTournamentTableViewController: UITableViewController {
         Task {
             var athletes = [Athlete]()
             
-            if let eventAthletes = await fetchEventAthletes(eventId: eventId) {
+            if let eventAthletes = await Tournament.fetchEventAthletes(eventId: eventId) {
                 athletes = eventAthletes
                 print("Added athletes")
             } else {

@@ -53,19 +53,7 @@ class TournamentDetailTableViewController: UITableViewController {
         
         title = tournament.name
         
-        let startTime = Date.now.timeIntervalSince1970
-        
-        if tournament.lastUpdateTime > Date.now.timeIntervalSince1970 - 900 { // 15 minutes
-            tournament.lastUpdateTime = Date.now.timeIntervalSince1970
-        }
-        
-        var nextUpdateTime = tournament.lastUpdateTime + 900
-        
-        let updateTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            //let time = Date.timeIntervalSince(Date(timeIntervalSince1970: self.tournament.lastUpdateTime))
-            //Date(timeInterval: , since: Date(timeIntervalSince1970: tournament.lastUpdateTime))
-            self.lastUpdateTimeLabel.text = "Next update in \((nextUpdateTime - Date.now.timeIntervalSince1970).rounded()) seconds"
-        }
+        initializeUpdateTimer()
         
         // Enable/disable make picks button based on tournament status
         //tournamentStartedSwitch.isOn = tournament.tournamentHasStarted
@@ -99,6 +87,70 @@ class TournamentDetailTableViewController: UITableViewController {
     }
     
     // MARK: - Other functions
+    
+    // Set up the update countdown timer
+    func initializeUpdateTimer() {
+        
+        // Define update interval in minutes
+        let updateInterval = 15.0
+        
+        // Create a string formatter to display the time how we want
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.minute, .second]
+        formatter.unitsStyle = .positional
+        formatter.zeroFormattingBehavior = [.pad]
+        
+        var nextUpdateTime = Double()
+        
+        // Helper code to set values when update is needed
+        let finishUpdateCycle = {
+            self.tournament.lastUpdateTime = Date.now.timeIntervalSince1970
+            self.tournament.databaseReference.child("lastUpdateTime").setValue(self.tournament.lastUpdateTime)
+            nextUpdateTime = Date.now.addingTimeInterval(updateInterval*60).timeIntervalSince1970
+        }
+        
+        // Calculate the next update timestamp
+        if tournament.lastUpdateTime < Date.now.addingTimeInterval(-updateInterval*60).timeIntervalSince1970 { // 15 minutes ago
+            finishUpdateCycle()
+        } else {
+            nextUpdateTime = tournament.lastUpdateTime + (updateInterval*60) // lastUpdateTime + 15 minutes
+        }
+        
+        // Create the timer
+        let updateTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            
+            // Calculate the amount of time left until the next update
+            var timeLeft = Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
+            
+            // Check if the countdown has completed
+            if timeLeft < 0 {
+                finishUpdateCycle()
+                timeLeft = Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
+                
+                // Fetch updated tournament data and update UI
+                Task {
+                    
+                    // Attempt to fetch updated athlete info
+                    if let updatedAthletes = await Tournament.fetchEventAthletes(eventId: self.tournament.espnId) {
+                        self.tournament.athletes = updatedAthletes
+                        self.calculateTournamentStandings()
+                        self.updateTableView()
+                        
+                        // Update athlete data in forebase
+                        try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
+                    } else {
+                        print("Failed to get updated tournament data")
+                    }
+                }
+            }
+            
+            // Format the time left
+            let formattedTime = formatter.string(from: TimeInterval(timeLeft))!
+            
+            // Update the label text
+            self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
+        }
+    }
     
     // Calculate the tournament standings
     // TODO: Sort by name if tournament hasn't started yet
