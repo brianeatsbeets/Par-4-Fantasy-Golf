@@ -116,6 +116,9 @@ class TournamentDetailTableViewController: UITableViewController {
         formatter.unitsStyle = .abbreviated
         
         var nextUpdateTime = Double()
+        var timeLeft: Int {
+            Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
+        }
         
         // Helper code to set values when update is needed
         let finishUpdateCycle = {
@@ -132,38 +135,31 @@ class TournamentDetailTableViewController: UITableViewController {
         }
         
         // Update countdown with initial value before timer starts
-        var timeLeft = Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
         var formattedTime = formatter.string(from: TimeInterval(timeLeft))!
         self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
         
         // Create the timer
         updateTimer = Timer(timeInterval: 1, repeats: true) { _ in
             
-            // Calculate the amount of time left until the next update
-            timeLeft = Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
-            
             // Check if the countdown has completed
             if timeLeft < 0 {
                 finishUpdateCycle()
-                timeLeft = Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
-                
+
                 // Fetch updated tournament data and update UI
                 Task {
-                    
+
                     // Attempt to fetch updated athlete info
                     self.tournament.athletes = await Tournament.fetchEventAthletes(eventId: self.tournament.espnId)
                     self.calculateTournamentStandings()
                     self.updateTableView()
-                    
+
                     // Update athlete data in forebase
                     try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
                 }
             }
             
-            // Format the time left
+            // Format and present the time remaining until the next update
             formattedTime = formatter.string(from: TimeInterval(timeLeft))!
-            
-            // Update the label text
             self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
         }
         

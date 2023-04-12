@@ -50,7 +50,7 @@ struct Athlete: Hashable, Codable {
     
     // Init with snapshot data
     init?(snapshot: DataSnapshot) {
-        print("Athlete created")
+        
         // Validate and set the incoming values
         guard let snapshotValue = snapshot.value as? [String: AnyObject],
               let id = UUID(uuidString: snapshot.key),

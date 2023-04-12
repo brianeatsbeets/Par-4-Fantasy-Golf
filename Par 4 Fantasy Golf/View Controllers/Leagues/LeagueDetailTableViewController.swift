@@ -144,7 +144,7 @@ class LeagueDetailTableViewController: UITableViewController {
     // Segue to TournamentDetailViewController with full tournament data
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        // Fetch the tournament data from the tapped tournament's id
+        // Fetch the stored tournament data from firebase
         Task {
             guard let denormalizedTournament = dataSource.itemIdentifier(for: indexPath),
                   let tournament = await Tournament.fetchSingleTournament(from: denormalizedTournament.id),

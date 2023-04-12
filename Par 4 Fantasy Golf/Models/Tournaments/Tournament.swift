@@ -193,6 +193,8 @@ struct Tournament: Hashable {
     // TODO: Mark as throws to catch errors instead of returning empty array
     static func fetchEventAthletes(eventId: String) async -> [Athlete] {
         
+        print("Fetching athlete data from ESPN api")
+        
         var athletes = [Athlete]()
         
         // Construct URL
