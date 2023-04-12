@@ -77,7 +77,15 @@ class TournamentDetailTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        initializeUpdateTimer()
+        
+        // Check if the tournament has started
+        if Date.now.timeIntervalSince1970 >= tournament.startDate {
+            // If so, initialize update timer
+            initializeUpdateTimer()
+        } else {
+            // If not, display tournament start date
+            lastUpdateTimeLabel.text = "Tournament begins on \(tournament.startDate.formattedDate())"
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -105,8 +113,7 @@ class TournamentDetailTableViewController: UITableViewController {
         // Create a string formatter to display the time how we want
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.minute, .second]
-        formatter.unitsStyle = .positional
-        formatter.zeroFormattingBehavior = [.pad]
+        formatter.unitsStyle = .abbreviated
         
         var nextUpdateTime = Double()
         
