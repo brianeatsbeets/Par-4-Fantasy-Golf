@@ -55,32 +55,15 @@ class TournamentDetailTableViewController: UITableViewController {
         
         tableView.dataSource = dataSource
         
-        title = tournament.name
-        
-        // Enable/disable make picks button based on tournament status
-        //tournamentStartedSwitch.isOn = tournament.tournamentHasStarted
-        //if tournamentStartedSwitch.isOn {
-            //makePicksButton.isEnabled = false
-        //}
-        
-        // If the current user is not the tournament owner, hide administrative actions
-        if tournament.creator != currentFirebaseUser.email {
-            tournamentActionBarButtonItemGroup.isHidden = true
-            navigationItem.rightBarButtonItem = makePicksButton
-        }
-        
-        Task {
-            calculateTournamentStandings()
-            updateTableView()
-        }
+        setupUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Check if the tournament has started
+        // Set timer label text depending on tournament status
         if Date.now.timeIntervalSince1970 >= tournament.startDate {
-            // If so, initialize update timer
+            // If tournament has started, initialize update timer
             initializeUpdateTimer()
         } else {
             // If not, display tournament start date
@@ -106,6 +89,31 @@ class TournamentDetailTableViewController: UITableViewController {
     }
     
     // MARK: - Other functions
+    
+    // Initialize UI elements
+    func setupUI() {
+        title = tournament.name
+        makePicksButton.isEnabled = false
+        
+        // Set make picks button text and state
+        if tournament.athletes.isEmpty {
+            makePicksButton.title = "Make Picks (Players not yet available)"
+        } else if Date.now.timeIntervalSince1970 >= tournament.startDate {
+            makePicksButton.title = "Make Picks (Tournament has started)"
+        } else {
+            makePicksButton.isEnabled = true
+        }
+        
+        // If the current user is not the tournament owner, hide administrative actions
+        if tournament.creator != currentFirebaseUser.email {
+            tournamentActionBarButtonItemGroup.isHidden = true
+            navigationItem.rightBarButtonItem = makePicksButton
+        }
+        
+        // Calculate the standings and update the table view
+        calculateTournamentStandings()
+        updateTableView()
+    }
     
     // Set up the update countdown timer
     func initializeUpdateTimer() {
