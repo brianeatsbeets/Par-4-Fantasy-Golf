@@ -190,7 +190,8 @@ struct Tournament: Hashable {
     
     // Fetch updated athlete data
     // TODO: fetch updated tournament status as well?
-    static func fetchEventAthletes(eventId: String) async -> [Athlete]? {
+    // TODO: Mark as throws to catch errors instead of returning empty array
+    static func fetchEventAthletes(eventId: String) async -> [Athlete] {
         
         var athletes = [Athlete]()
         
@@ -206,8 +207,16 @@ struct Tournament: Hashable {
                httpResponse.statusCode == 200,
                let apiResponse = try? JSONDecoder().decode(EventApiResponse.self, from: data) {
                 
-                // Parse each competitor and create an Athlete from each one
+                // Get the competitors
                 let competitors = apiResponse.events[0].competitions[0].competitors
+                
+                // If there are no competitors, exit early
+                if competitors.isEmpty {
+                    print("No competitors found")
+                    return []
+                }
+                
+                // Parse each competitor and create an Athlete from each one
                 for competitor in competitors {
                     let name = competitor.athlete.displayName
                     let score = competitor.score.value
@@ -222,11 +231,11 @@ struct Tournament: Hashable {
                 
             } else {
                 print("HTTP request error: \(response.description)")
-                return nil
+                return []
             }
         } catch {
             print("Caught error from URLSession.shared.data function")
-            return nil
+            return []
         }
     }
 }

@@ -126,14 +126,9 @@ class CreateTournamentTableViewController: UITableViewController {
         let eventId = selectedEvent.eventId
         
         Task {
-            var athletes = [Athlete]()
             
-            if let eventAthletes = await Tournament.fetchEventAthletes(eventId: eventId) {
-                athletes = eventAthletes
-                print("Added athletes")
-            } else {
-                print("No athletes added to tournament")
-            }
+            // Fetch tournament athletes
+            let athletes = await Tournament.fetchEventAthletes(eventId: eventId)
             
             // Create new tournament object
             tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget, athletes: athletes, espnId: eventId)

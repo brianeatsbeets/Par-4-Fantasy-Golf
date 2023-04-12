@@ -144,16 +144,12 @@ class TournamentDetailTableViewController: UITableViewController {
                 Task {
                     
                     // Attempt to fetch updated athlete info
-                    if let updatedAthletes = await Tournament.fetchEventAthletes(eventId: self.tournament.espnId) {
-                        self.tournament.athletes = updatedAthletes
-                        self.calculateTournamentStandings()
-                        self.updateTableView()
-                        
-                        // Update athlete data in forebase
-                        try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
-                    } else {
-                        print("Failed to get updated tournament data")
-                    }
+                    self.tournament.athletes = await Tournament.fetchEventAthletes(eventId: self.tournament.espnId)
+                    self.calculateTournamentStandings()
+                    self.updateTableView()
+                    
+                    // Update athlete data in forebase
+                    try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
                 }
             }
             
