@@ -45,7 +45,7 @@ class LeagueDetailTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
-        title = league.name
+        title = league.name + " Tournaments"
         
         // If the current user is not the league owner, hide administrative actions
         if league.creator != currentFirebaseUser.email {
@@ -125,6 +125,64 @@ class LeagueDetailTableViewController: UITableViewController {
         deleteLeagueAlert.addAction(confirm)
         
         present(deleteLeagueAlert, animated: true)
+    }
+    
+    // Temporary action to test downloading data from a Google Sheet
+    @IBAction func sheetsButtonPressed(_ sender: Any) {
+        
+        // Construct URL
+        let url = URL(string: "https://docs.google.com/spreadsheets/d/1I8_hu_44SuskdFJekwp_kM2aCsKXSV8dULqGXqXxTJw/export?format=tsv")!
+        
+        Task {
+            do {
+                // Request data from the URL
+                let (data, response) = try await URLSession.shared.data(from: url)
+                
+                // Make sure we have a valid HTTP response and that the data can be decoded into a string
+                if let httpResponse = response as? HTTPURLResponse,
+                   httpResponse.statusCode == 200,
+                   var tsvResponse = String(data: data, encoding: .utf8) {
+                    
+                    let betData = parseAthleteBetData(tsvString: tsvResponse)
+                    
+                    print(betData)
+                    
+                } else {
+                    print("HTTP request error: \(response.description)")
+                }
+            } catch {
+                print("Caught error from URLSession.shared.data function")
+            }
+        }
+    }
+    
+    // Parse the downloaded athlete bet data and return an array of usable objects
+    func parseAthleteBetData(tsvString: String) -> [AthleteBetData] {
+        var athleteBetDataArray = [AthleteBetData]()
+        
+        // Remove instaces of carriage return
+        let filteredCsvString = tsvString.replacingOccurrences(of: "\r", with: "")
+        
+        // Split the single string into an array of strings for each row
+        var rows = filteredCsvString.components(separatedBy: "\n")
+        
+        // Remove the header row
+        rows.removeFirst()
+        
+        // Parse each row and create a new AthleteBetData object from the contents
+        for row in rows {
+            let columns = row.components(separatedBy: "\t")
+            
+            let espnId = columns[0]
+            let name = columns[1]
+            let odds = columns[2]
+            let value = columns[3]
+            
+            let athleteBetData = AthleteBetData(espnId: espnId, name: name, odds: odds, value: value)
+            athleteBetDataArray.append(athleteBetData)
+        }
+        
+        return athleteBetDataArray
     }
     
     // MARK: - Navigation
