@@ -25,7 +25,7 @@ class LeagueDetailTableViewController: UITableViewController {
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
     var calendarEvents = [CalendarEvent]()
-    var denormalizedTournaments = [MinimalTournament]()
+    var minimalTournaments = [MinimalTournament]()
     let tournamentIdsRef = Database.database().reference(withPath: "tournamentIds")
     
     // MARK: - Initializers
@@ -63,7 +63,7 @@ class LeagueDetailTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         
         // Fetch initial tournament data and update the table view
-        fetchDenormalizedTournamentData() {
+        fetchMinimalTournamentData() {
             self.updateTableView()
         }
     }
@@ -71,27 +71,27 @@ class LeagueDetailTableViewController: UITableViewController {
     // MARK: - Other functions
     
     // Fetch tournament data from the tournamentIds tree and store it
-    func fetchDenormalizedTournamentData(completion: @escaping () -> Void) {
+    func fetchMinimalTournamentData(completion: @escaping () -> Void) {
         
         // Remove all existing tournament data
-        self.denormalizedTournaments.removeAll()
+        self.minimalTournaments.removeAll()
         
         // Fetch the data
         tournamentIdsRef.observeSingleEvent(of: .value) { snapshot in
             
-            // Verify that the received data produces valid DenormalizedTournaments, and if it does, append them
+            // Verify that the received data produces valid MinimalTournaments, and if it does, append them
             for childSnapshot in snapshot.children {
                 guard let childSnapshot = childSnapshot as? DataSnapshot,
                       let tournament = MinimalTournament(snapshot: childSnapshot) else {
-                    print("Failed to create denormalized tournament")
+                    print("Failed to create minimal tournament")
                     continue
                 }
                 
-                self.denormalizedTournaments.append(tournament)
+                self.minimalTournaments.append(tournament)
             }
             
             // Sort tournament
-            self.denormalizedTournaments = self.denormalizedTournaments.sorted(by: { $0.name < $1.name})
+            self.minimalTournaments = self.minimalTournaments.sorted(by: { $0.name < $1.name})
             
             // Call completion handler
             completion()
@@ -127,64 +127,6 @@ class LeagueDetailTableViewController: UITableViewController {
         present(deleteLeagueAlert, animated: true)
     }
     
-    // Temporary action to test downloading data from a Google Sheet
-    @IBAction func sheetsButtonPressed(_ sender: Any) {
-        
-        // Construct URL
-        let url = URL(string: "https://docs.google.com/spreadsheets/d/1I8_hu_44SuskdFJekwp_kM2aCsKXSV8dULqGXqXxTJw/export?format=tsv")!
-        
-        Task {
-            do {
-                // Request data from the URL
-                let (data, response) = try await URLSession.shared.data(from: url)
-                
-                // Make sure we have a valid HTTP response and that the data can be decoded into a string
-                if let httpResponse = response as? HTTPURLResponse,
-                   httpResponse.statusCode == 200,
-                   var tsvResponse = String(data: data, encoding: .utf8) {
-                    
-                    let betData = parseAthleteBetData(tsvString: tsvResponse)
-                    
-                    print(betData)
-                    
-                } else {
-                    print("HTTP request error: \(response.description)")
-                }
-            } catch {
-                print("Caught error from URLSession.shared.data function")
-            }
-        }
-    }
-    
-    // Parse the downloaded athlete bet data and return an array of usable objects
-    func parseAthleteBetData(tsvString: String) -> [AthleteBetData] {
-        var athleteBetDataArray = [AthleteBetData]()
-        
-        // Remove instaces of carriage return
-        let filteredCsvString = tsvString.replacingOccurrences(of: "\r", with: "")
-        
-        // Split the single string into an array of strings for each row
-        var rows = filteredCsvString.components(separatedBy: "\n")
-        
-        // Remove the header row
-        rows.removeFirst()
-        
-        // Parse each row and create a new AthleteBetData object from the contents
-        for row in rows {
-            let columns = row.components(separatedBy: "\t")
-            
-            let espnId = columns[0]
-            let name = columns[1]
-            let odds = columns[2]
-            let value = columns[3]
-            
-            let athleteBetData = AthleteBetData(espnId: espnId, name: name, odds: odds, value: value)
-            athleteBetDataArray.append(athleteBetData)
-        }
-        
-        return athleteBetDataArray
-    }
-    
     // MARK: - Navigation
     
     // Pass league data to SelectEventTableViewController
@@ -204,8 +146,8 @@ class LeagueDetailTableViewController: UITableViewController {
         
         // Fetch the stored tournament data from firebase
         Task {
-            guard let denormalizedTournament = dataSource.itemIdentifier(for: indexPath),
-                  let tournament = await Tournament.fetchSingleTournament(from: denormalizedTournament.id),
+            guard let minimalTournament = dataSource.itemIdentifier(for: indexPath),
+                  let tournament = await Tournament.fetchSingleTournament(from: minimalTournament.id),
                   let destinationViewController = storyboard?.instantiateViewController(identifier: "TournamentDetail", creator: { coder in
                       TournamentDetailTableViewController(coder: coder, league: self.league, tournament: tournament)
                   }) else { return }
@@ -228,10 +170,10 @@ class LeagueDetailTableViewController: UITableViewController {
         league.tournamentIds.append(newTournament.id)
         league.tournaments.append(newTournament)
         
-        // Save the denormalized tournament to the local data source and sort
-        let denormalizedTournament = MinimalTournament(tournament: newTournament)
-        denormalizedTournaments.append(denormalizedTournament)
-        denormalizedTournaments = denormalizedTournaments.sorted(by: { $0.name < $1.name})
+        // Save the minimal tournament to the local data source and sort
+        let minimalTournament = MinimalTournament(tournament: newTournament)
+        minimalTournaments.append(minimalTournament)
+        minimalTournaments = minimalTournaments.sorted(by: { $0.name < $1.name})
         
         // Save the tournament to Firebase
         
@@ -242,7 +184,7 @@ class LeagueDetailTableViewController: UITableViewController {
         newTournament.databaseReference.setValue(newTournament.toAnyObject())
         
         // TournamentIds tree
-        tournamentIdsRef.child(newTournament.id).setValue(denormalizedTournament.toAnyObject())
+        tournamentIdsRef.child(newTournament.id).setValue(minimalTournament.toAnyObject())
         
         updateTableView()
     }
@@ -265,11 +207,11 @@ extension LeagueDetailTableViewController {
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> UITableViewDiffableDataSource<Section, MinimalTournament> {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, denormalizedTournament in
+        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, minimalTournament in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! TournamentTableViewCell
-            cell.configure(with: denormalizedTournament)
+            cell.configure(with: minimalTournament)
 
             return cell
         }
@@ -279,7 +221,7 @@ extension LeagueDetailTableViewController {
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, MinimalTournament>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(denormalizedTournaments)
+        snapshot.appendItems(minimalTournaments)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }

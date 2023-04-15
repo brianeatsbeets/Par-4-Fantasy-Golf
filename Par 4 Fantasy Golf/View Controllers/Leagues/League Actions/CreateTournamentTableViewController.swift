@@ -18,12 +18,15 @@ class CreateTournamentTableViewController: UITableViewController {
     
     @IBOutlet var eventCell: UITableViewCell!
     @IBOutlet var eventNameLabel: UILabel!
+    @IBOutlet var googleSheetIdCell: UITableViewCell!
+    @IBOutlet var googleSheetIdLabel: UILabel!
     @IBOutlet var budgetTextField: UITextField!
     @IBOutlet var saveButton: UIBarButtonItem!
     
     var tournament: Tournament?
     var calendarEvents = [CalendarEvent]()
     var selectedEvent: CalendarEvent?
+    var googleSheetId: String?
     
     // MARK: - View life cycle functions
     
@@ -31,7 +34,6 @@ class CreateTournamentTableViewController: UITableViewController {
         super.viewDidLoad()
         
         eventCell.isUserInteractionEnabled = false
-        eventNameLabel.text = "Loading events..."
         saveButton.isEnabled = false
         
         Task {
@@ -96,6 +98,9 @@ class CreateTournamentTableViewController: UITableViewController {
     // Handle the incoming selected event
     @IBAction func unwindFromSelectEvent(segue: UIStoryboardSegue) {
         
+        // Deselect cell
+        eventCell.isSelected = false
+        
         // Check that we have new league data to parse
         guard segue.identifier == "unwindSelectEvent",
               let sourceViewController = segue.source as? SelectEventTableViewController,
@@ -109,9 +114,25 @@ class CreateTournamentTableViewController: UITableViewController {
         eventNameLabel.text = selectedEvent?.name
         print("Event ID: \(event.eventId)")
         
-        // Deselect cell and update save button state
-        eventCell.isSelected = false
+        // Update save button state
         updateSaveButtonState()
+    }
+    
+    // Handle the incoming Google Sheet Id
+    
+    // TODO: Verify and fetch data upon saving in GoogleSheetsIDTableViewController
+    @IBAction func unwindFromGoogleSheetId(segue: UIStoryboardSegue) {
+        
+        // Deselect cell
+        googleSheetIdCell.isSelected = false
+        
+        // Check that we have new league data to parse
+        guard segue.identifier == "unwindSaveSheetId",
+              let sourceViewController = segue.source as? GoogleSheetsIDTableViewController else { return }
+        
+        // Update the selected event
+        googleSheetId = sourceViewController.sheetId
+        googleSheetIdLabel.text = googleSheetId
     }
     
     // Compile the league data for sending back to the league detail table view controller
@@ -127,6 +148,8 @@ class CreateTournamentTableViewController: UITableViewController {
         
         Task {
             
+            //await fetchGoogleSheetData()
+            
             // Fetch tournament athletes
             let athletes = await Tournament.fetchEventAthletes(eventId: eventId)
             
@@ -136,5 +159,65 @@ class CreateTournamentTableViewController: UITableViewController {
             // Segue back to LeagueDetailTableViewController
             performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
         }
+    }
+    
+    func fetchGoogleSheetData() async -> [AthleteBetData]? {
+        
+        // Construct URL
+        let url = URL(string: "https://docs.google.com/spreadsheets/d/\(googleSheetId!)/export?format=tsv")!
+        var athleteBetData: [AthleteBetData]?
+        
+        Task {
+            do {
+                // Request data from the URL
+                let (data, response) = try await URLSession.shared.data(from: url)
+                
+                // Make sure we have a valid HTTP response and that the data can be decoded into a string
+                if let httpResponse = response as? HTTPURLResponse,
+                   httpResponse.statusCode == 200,
+                   let tsvResponse = String(data: data, encoding: .utf8) {
+                    
+                    athleteBetData = parseAthleteBetData(tsvString: tsvResponse)
+                    
+                    print(athleteBetData)
+                    
+                } else {
+                    print("HTTP request error: \(response.description)")
+                }
+            } catch {
+                print("Caught error from URLSession.shared.data function")
+            }
+        }
+        
+        return athleteBetData
+    }
+    
+    // Parse the downloaded athlete bet data and return an array of usable objects
+    func parseAthleteBetData(tsvString: String) -> [AthleteBetData] {
+        var athleteBetData = [AthleteBetData]()
+        
+        // Remove instaces of carriage return
+        let filteredCsvString = tsvString.replacingOccurrences(of: "\r", with: "")
+        
+        // Split the single string into an array of strings for each row
+        var rows = filteredCsvString.components(separatedBy: "\n")
+        
+        // Remove the header row
+        rows.removeFirst()
+        
+        // Parse each row and create a new AthleteBetData object from the contents
+        for row in rows {
+            let columns = row.components(separatedBy: "\t")
+            
+            let espnId = columns[0]
+            let name = columns[1]
+            let odds = columns[2]
+            let value = columns[3]
+            
+            let singleAthleteBetData = AthleteBetData(espnId: espnId, name: name, odds: odds, value: value)
+            athleteBetData.append(singleAthleteBetData)
+        }
+        
+        return athleteBetData
     }
 }

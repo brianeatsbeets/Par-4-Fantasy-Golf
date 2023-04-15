@@ -9,7 +9,7 @@ import FirebaseDatabase
 
 // MARK: - Main struct
 
-// This model represents a denormalized league
+// This model represents a minimal league
 struct MinimalLeague: Hashable {
     
     // MARK: - Properties
@@ -54,8 +54,8 @@ struct MinimalLeague: Hashable {
         // Attempt to create a league from a snapshot
         do {
             let snapshot = try await leagueRef.getData()
-            if let denormalizedLeague = MinimalLeague(snapshot: snapshot) {
-                return denormalizedLeague
+            if let minimalLeague = MinimalLeague(snapshot: snapshot) {
+                return minimalLeague
             } else {
                 print("Couldn't create league from snapshot")
                 return nil
@@ -72,7 +72,7 @@ struct MinimalLeague: Hashable {
         // Use a task group to make sure that all league fetch requests return a response before we return the league array to the caller
         return await withTaskGroup(of: MinimalLeague?.self, returning: [MinimalLeague].self) { group in
             
-            var denormalizedLeagues = [MinimalLeague]()
+            var minimalLeagues = [MinimalLeague]()
             
             // Loop through league IDs
             for id in ids {
@@ -85,17 +85,17 @@ struct MinimalLeague: Hashable {
                 }
                 
                 // Wait for each league request to receive a response
-                for await denormalizedLeague in group {
+                for await minimalLeague in group {
                     
                     // Check each league that was generated. If it's not nil, append it
-                    if let denormalizedLeague = denormalizedLeague {
-                        denormalizedLeagues.append(denormalizedLeague)
+                    if let minimalLeague = minimalLeague {
+                        minimalLeagues.append(minimalLeague)
                     }
                 }
             }
             
             // Return the leagues sorted in descending order
-            return denormalizedLeagues.sorted { $0.name > $1.name }
+            return minimalLeagues.sorted { $0.name > $1.name }
         }
     }
 }

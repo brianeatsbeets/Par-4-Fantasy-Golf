@@ -9,7 +9,7 @@ import FirebaseDatabase
 
 // MARK: - Main struct
 
-// This model represents a denormalized tournament
+// This model represents a minimal tournament
 struct MinimalTournament: Hashable {
     
     // MARK: - Properties
@@ -63,8 +63,8 @@ struct MinimalTournament: Hashable {
         // Attempt to create a tournament from a snapshot
         do {
             let snapshot = try await tournamentRef.getData()
-            if let denormalizedTournament = MinimalTournament(snapshot: snapshot) {
-                return denormalizedTournament
+            if let minimalTournament = MinimalTournament(snapshot: snapshot) {
+                return minimalTournament
             } else {
                 print("Couldn't create tournament from snapshot")
                 return nil
@@ -81,7 +81,7 @@ struct MinimalTournament: Hashable {
         // Use a task group to make sure that all tournament fetch requests return a response before we return the tournament array to the caller
         return await withTaskGroup(of: MinimalTournament?.self, returning: [MinimalTournament].self) { group in
             
-            var denormalizedTournaments = [MinimalTournament]()
+            var minimalTournaments = [MinimalTournament]()
             
             // Loop through tournament IDs
             for id in ids {
@@ -94,17 +94,17 @@ struct MinimalTournament: Hashable {
                 }
                 
                 // Wait for each tournament request to receive a response
-                for await denormalizedTournament in group {
+                for await minimalTournament in group {
                     
                     // Check each tournament that was generated. If it's not nil, append it
-                    if let denormalizedTournament = denormalizedTournament {
-                        denormalizedTournaments.append(denormalizedTournament)
+                    if let minimalTournament = minimalTournament {
+                        minimalTournaments.append(minimalTournament)
                     }
                 }
             }
             
             // Return the tournaments sorted in descending order
-            return denormalizedTournaments.sorted { $0.name > $1.name }
+            return minimalTournaments.sorted { $0.name > $1.name }
         }
     }
 }

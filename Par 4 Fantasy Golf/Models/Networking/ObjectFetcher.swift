@@ -22,7 +22,7 @@ protocol CanFetch {
 
 enum ObjectType: String {
     case league = "leagues"
-    case denormalizedLeague = "leagueIds"
+    case minimalLeague = "leagueIds"
     case user = "users"
     //case athlete = Athlete
     
@@ -31,7 +31,7 @@ enum ObjectType: String {
         case is League.Type:
             self = .league
         case is MinimalLeague.Type:
-            self = .denormalizedLeague
+            self = .minimalLeague
         case is User.Type:
             self = .user
         default:
@@ -45,7 +45,7 @@ extension CanFetch {
     // Helper function to fetch an object from a league id
     static func fetchSingleObject(from id: String) async -> T? {
         //let leagueRef = Database.database().reference(withPath: "leagues/" + id)
-        //let denormalizedLeagueRef = Database.database().reference(withPath: "leagueIds/" + id)
+        //let minimalLeagueRef = Database.database().reference(withPath: "leagueIds/" + id)
         //let userRef = Database.database().reference(withPath: "users/" + id)
         //let athleteRef = Database.database().reference(withPath: "leagues/" + leagueId + "/athletes/" + id)
         

@@ -23,7 +23,7 @@ class LeaguesTableViewController: UITableViewController {
     @IBOutlet var leaguesDisplaySwitch: UISwitch!
     
     lazy var dataSource = createDataSource()
-    var denormalizedLeagues = [MinimalLeague]()
+    var minimalLeagues = [MinimalLeague]()
     let leagueIdsRef = Database.database().reference(withPath: "leagueIds")
     let userLeaguesRef = Database.database().reference(withPath: "users/\(Auth.auth().currentUser!.uid)/leagues")
     
@@ -39,7 +39,7 @@ class LeaguesTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         
         // Fetch initial league data and update the table view
-        fetchDenormalizedLeagueData() {
+        fetchMinimalLeagueData() {
             self.updateTableView()
         }
     }
@@ -47,49 +47,49 @@ class LeaguesTableViewController: UITableViewController {
     // MARK: - Other functions
     
     // Fetch league data from the leagueIds tree and store it
-    func fetchDenormalizedLeagueData(completion: @escaping () -> Void) {
+    func fetchMinimalLeagueData(completion: @escaping () -> Void) {
         
         // Only display joined leagues
         if !leaguesDisplaySwitch.isOn {
             
             // Remove all existing league data
-            self.denormalizedLeagues.removeAll()
+            self.minimalLeagues.removeAll()
             
             // Fetch user league Ids
             userLeaguesRef.observeSingleEvent(of: .value) { snapshot in
                 guard let userLeagueIdValues = snapshot.value as? [String: Bool] else { print("Boo"); return }
                 let userLeagueIds = userLeagueIdValues.map { $0.key }
                 
-                // Fetch denormalized leagues from user league Ids
+                // Fetch minimal leagues from user league Ids
                 Task {
-                    self.denormalizedLeagues = await MinimalLeague.fetchMultipleLeagues(from: userLeagueIds)
+                    self.minimalLeagues = await MinimalLeague.fetchMultipleLeagues(from: userLeagueIds)
                     
                     // Sort leagues
-                    self.denormalizedLeagues = self.denormalizedLeagues.sorted(by: { $0.name > $1.name})
+                    self.minimalLeagues = self.minimalLeagues.sorted(by: { $0.name > $1.name})
                     completion()
                 }
             }
         } else { // Display all leagues
             
             // Remove all existing league data
-            self.denormalizedLeagues.removeAll()
+            self.minimalLeagues.removeAll()
             
             // Fetch the data
             leagueIdsRef.observeSingleEvent(of: .value) { snapshot in
                 
-                // Verify that the received data produces valid DenormalizedLeagues, and if it does, append them
+                // Verify that the received data produces valid MinimalLeagues, and if it does, append them
                 for childSnapshot in snapshot.children {
                     guard let childSnapshot = childSnapshot as? DataSnapshot,
                           let league = MinimalLeague(snapshot: childSnapshot) else {
-                        print("Failed to create denormalized league")
+                        print("Failed to create minimal league")
                         continue
                     }
                     
-                    self.denormalizedLeagues.append(league)
+                    self.minimalLeagues.append(league)
                 }
                 
                 // Sort leagues
-                self.denormalizedLeagues = self.denormalizedLeagues.sorted(by: { $0.name > $1.name})
+                self.minimalLeagues = self.minimalLeagues.sorted(by: { $0.name > $1.name})
                 completion()
             }
         }
@@ -97,7 +97,7 @@ class LeaguesTableViewController: UITableViewController {
     
     // Switch between viewing joined leagues and all leagues
     @IBAction func leaguesDisplaySwitchToggled() {
-        fetchDenormalizedLeagueData {
+        fetchMinimalLeagueData {
             self.updateTableView()
         }
     }
@@ -105,7 +105,7 @@ class LeaguesTableViewController: UITableViewController {
     // MARK: - Navigation
     
     // Handle the incoming new league data
-    // TODO: Just update the denormalizedLeagues array and updateTableView() locally instead of fetching them from firebase
+    // TODO: Just update the minimalLeagues array and updateTableView() locally instead of fetching them from firebase
     @IBAction func unwindFromCreateLeague(segue: UIStoryboardSegue) {
         
         // Check that we have new league data to parse
@@ -118,8 +118,8 @@ class LeaguesTableViewController: UITableViewController {
         league.databaseReference.setValue(league.toAnyObject())
         
         // Save the league to the leagueIds tree in Firebase
-        let denormalizedLeague = MinimalLeague(league: league)
-        leagueIdsRef.child(league.id).setValue(denormalizedLeague.toAnyObject())
+        let minimalLeague = MinimalLeague(league: league)
+        leagueIdsRef.child(league.id).setValue(minimalLeague.toAnyObject())
         
         // Save the league to the league members' data
         for user in league.members {
@@ -127,7 +127,7 @@ class LeaguesTableViewController: UITableViewController {
         }
         
         // Fetch league data and update the table view
-        fetchDenormalizedLeagueData() {
+        fetchMinimalLeagueData() {
             self.updateTableView()
         }
     }
@@ -137,8 +137,8 @@ class LeaguesTableViewController: UITableViewController {
         
         // Fetch the league data from the tapped league's id
         Task {
-            guard let denormalizedLeague = dataSource.itemIdentifier(for: indexPath),
-                  let league = await League.fetchSingleLeague(from: denormalizedLeague.id),
+            guard let minimalLeague = dataSource.itemIdentifier(for: indexPath),
+                  let league = await League.fetchSingleLeague(from: minimalLeague.id),
                   let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
                       LeagueDetailTableViewController(coder: coder, league: league)
                   }) else { return }
@@ -181,7 +181,7 @@ extension LeaguesTableViewController {
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, MinimalLeague>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(denormalizedLeagues)
+        snapshot.appendItems(minimalLeagues)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }

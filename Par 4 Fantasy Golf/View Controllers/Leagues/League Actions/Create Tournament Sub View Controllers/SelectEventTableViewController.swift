@@ -53,11 +53,6 @@ class SelectEventTableViewController: UITableViewController {
         selectedEvent = dataSource.itemIdentifier(for: indexPath)
         performSegue(withIdentifier: "unwindSelectEvent", sender: nil)
     }
-    
-    // Dismiss the view controller when the cancel button is tapped
-    @IBAction func cancelButtonPressed(_ sender: Any) {
-        dismiss(animated: true)
-    }
 }
 
 // MARK: - Extensions
