@@ -140,7 +140,7 @@ struct Competitor: Codable {
     let id: String
     //let uid: String
     let athlete: CompetitorAthlete
-    //let status: CompetitorStatus
+    let status: CompetitorStatus
     let score: Score
     //let linescores: [Linescore] // Maybe need these?
     //let earnings: Int
@@ -153,7 +153,7 @@ struct Competitor: Codable {
         case id = "id"
         //case uid = "uid"
         case athlete = "athlete"
-        //case status = "status"
+        case status = "status"
         case score = "score"
         //case linescores = "linescores"
         //case earnings = "earnings"
@@ -287,30 +287,30 @@ struct Score: Codable {
 //    case e = "E"
 //}
 
-//// MARK: - CompetitorStatus
-//struct CompetitorStatus: Codable {
-//    let period: Int
-//    let type: PurpleType
-//    let displayValue: Date
-//    let teeTime: String
-//    let startHole: Int
-//    let position: Position
-//    let thru: Int
-//    let playoff: Bool
-//    let behindCurrentRound: Bool
-//
-//    enum CodingKeys: String, CodingKey {
-//        case period = "period"
-//        case type = "type"
-//        case displayValue = "displayValue"
-//        case teeTime = "teeTime"
-//        case startHole = "startHole"
-//        case position = "position"
-//        case thru = "thru"
-//        case playoff = "playoff"
-//        case behindCurrentRound = "behindCurrentRound"
-//    }
-//}
+// MARK: - CompetitorStatus
+struct CompetitorStatus: Codable {
+    //let period: Int
+    //let type: PurpleType
+    let displayValue: String?
+    //let teeTime: String
+    //let startHole: Int
+    //let position: Position
+    //let thru: Int
+    //let playoff: Bool
+    //let behindCurrentRound: Bool
+
+    enum CodingKeys: String, CodingKey {
+        //case period = "period"
+        //case type = "type"
+        case displayValue = "displayValue"
+        //case teeTime = "teeTime"
+        //case startHole = "startHole"
+        //case position = "position"
+        //case thru = "thru"
+        //case playoff = "playoff"
+        //case behindCurrentRound = "behindCurrentRound"
+    }
+}
 
 //// MARK: - Position
 //struct Position: Codable {
