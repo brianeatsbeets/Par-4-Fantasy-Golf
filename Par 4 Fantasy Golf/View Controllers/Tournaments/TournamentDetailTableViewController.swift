@@ -133,6 +133,18 @@ class TournamentDetailTableViewController: UITableViewController {
             self.tournament.lastUpdateTime = Date.now.timeIntervalSince1970
             self.tournament.databaseReference.child("lastUpdateTime").setValue(self.tournament.lastUpdateTime)
             nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval*60).timeIntervalSince1970
+            
+            // Fetch updated tournament data and update UI
+            Task {
+
+                // Attempt to fetch updated athlete info
+                self.tournament.athletes = await Tournament.fetchEventAthletes(eventId: self.tournament.espnId)
+                self.calculateTournamentStandings()
+                self.updateTableView()
+
+                // Update athlete data in forebase
+                try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
+            }
         }
         
         // Calculate the next update timestamp
@@ -152,18 +164,6 @@ class TournamentDetailTableViewController: UITableViewController {
             // Check if the countdown has completed
             if timeLeft < 0 {
                 finishUpdateCycle()
-
-                // Fetch updated tournament data and update UI
-                Task {
-
-                    // Attempt to fetch updated athlete info
-                    self.tournament.athletes = await Tournament.fetchEventAthletes(eventId: self.tournament.espnId)
-                    self.calculateTournamentStandings()
-                    self.updateTableView()
-
-                    // Update athlete data in forebase
-                    try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
-                }
             }
             
             // Format and present the time remaining until the next update

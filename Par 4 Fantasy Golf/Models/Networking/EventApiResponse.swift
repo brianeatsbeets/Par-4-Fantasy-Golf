@@ -274,12 +274,12 @@ struct CompetitorAthlete: Codable {
 
 // MARK: - Score
 struct Score: Codable {
-    //let displayValue: WindDirection
-    let value: Int
+    let displayValue: String
+    //let value: Int
 
     enum CodingKeys: String, CodingKey {
-        //case displayValue = "displayValue"
-        case value = "value"
+        case displayValue = "displayValue"
+        //case value = "value"
     }
 }
 

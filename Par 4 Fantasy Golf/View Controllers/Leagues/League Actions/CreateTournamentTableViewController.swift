@@ -27,6 +27,7 @@ class CreateTournamentTableViewController: UITableViewController {
     var calendarEvents = [CalendarEvent]()
     var selectedEvent: CalendarEvent?
     var googleSheetId: String?
+    var athleteBetTsv: String?
     
     // MARK: - View life cycle functions
     
@@ -126,11 +127,11 @@ class CreateTournamentTableViewController: UITableViewController {
         // Deselect cell
         googleSheetIdCell.isSelected = false
         
-        // Check that we have new league data to parse
+        // Check that we have new Google Sheets data to parse
         guard segue.identifier == "unwindSaveSheetId",
               let sourceViewController = segue.source as? GoogleSheetsIDTableViewController else { return }
         
-        // Update the selected event
+        athleteBetTsv = sourceViewController.athleteBetData
         googleSheetId = sourceViewController.sheetId
         googleSheetIdLabel.text = googleSheetId
     }
@@ -148,10 +149,13 @@ class CreateTournamentTableViewController: UITableViewController {
         
         Task {
             
-            //await fetchGoogleSheetData()
-            
             // Fetch tournament athletes
-            let athletes = await Tournament.fetchEventAthletes(eventId: eventId)
+            var athletes = await Tournament.fetchEventAthletes(eventId: eventId)
+            
+            // Parse bet data if it was provided
+            if athleteBetTsv != nil {
+                athletes = parseAthleteBetData(athletes: athletes, tsvString: athleteBetTsv!)
+            }
             
             // Create new tournament object
             tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget, athletes: athletes, espnId: eventId)
@@ -161,40 +165,9 @@ class CreateTournamentTableViewController: UITableViewController {
         }
     }
     
-    func fetchGoogleSheetData() async -> [AthleteBetData]? {
-        
-        // Construct URL
-        let url = URL(string: "https://docs.google.com/spreadsheets/d/\(googleSheetId!)/export?format=tsv")!
-        var athleteBetData: [AthleteBetData]?
-        
-        Task {
-            do {
-                // Request data from the URL
-                let (data, response) = try await URLSession.shared.data(from: url)
-                
-                // Make sure we have a valid HTTP response and that the data can be decoded into a string
-                if let httpResponse = response as? HTTPURLResponse,
-                   httpResponse.statusCode == 200,
-                   let tsvResponse = String(data: data, encoding: .utf8) {
-                    
-                    athleteBetData = parseAthleteBetData(tsvString: tsvResponse)
-                    
-                    print(athleteBetData)
-                    
-                } else {
-                    print("HTTP request error: \(response.description)")
-                }
-            } catch {
-                print("Caught error from URLSession.shared.data function")
-            }
-        }
-        
-        return athleteBetData
-    }
-    
-    // Parse the downloaded athlete bet data and return an array of usable objects
-    func parseAthleteBetData(tsvString: String) -> [AthleteBetData] {
-        var athleteBetData = [AthleteBetData]()
+    // Parse the downloaded athlete bet data and return updated athletes
+    func parseAthleteBetData(athletes: [Athlete], tsvString: String) -> [Athlete] {
+        var updatedAthletes = athletes
         
         // Remove instaces of carriage return
         let filteredCsvString = tsvString.replacingOccurrences(of: "\r", with: "")
@@ -205,19 +178,50 @@ class CreateTournamentTableViewController: UITableViewController {
         // Remove the header row
         rows.removeFirst()
         
-        // Parse each row and create a new AthleteBetData object from the contents
-        for row in rows {
-            let columns = row.components(separatedBy: "\t")
+        // Check if athletes have been provided with the tournament data from ESPN
+        if !updatedAthletes.isEmpty {
             
-            let espnId = columns[0]
-            let name = columns[1]
-            let odds = columns[2]
-            let value = columns[3]
+            // If so, parse each row and update the corresponding athlete
+            for row in rows {
+                
+                // Separate the columns
+                let columns = row.components(separatedBy: "\t")
+                
+                // Assign the fields and check for a matching athlete
+                let espnId = columns[0]
+                let name = columns[1]
+                guard let odds = Int(columns[2]),
+                      let value = Int(columns[3]),
+                      let index = athletes.firstIndex(where: { $0.espnId == espnId }) else {
+                    
+                    print("Couldn't cast odds/value to Int or couldn't find matching athlete")
+                    continue
+                }
+                
+                updatedAthletes[index].odds = odds
+                updatedAthletes[index].value = value
+            }
+        } else {
             
-            let singleAthleteBetData = AthleteBetData(espnId: espnId, name: name, odds: odds, value: value)
-            athleteBetData.append(singleAthleteBetData)
+            // If not, parse each row and create a new athlete object
+            for row in rows {
+                
+                // Separate the columns
+                let columns = row.components(separatedBy: "\t")
+                
+                // Assign the fields and check for a matching athlete
+                let espnId = columns[0]
+                let name = columns[1]
+                guard let odds = Int(columns[2]),
+                      let value = Int(columns[3]) else {
+                    print("Couldn't cast odds/value to Int")
+                    continue
+                }
+                
+                updatedAthletes.append(Athlete(espnId: espnId, name: name, odds: odds, value: value))
+            }
         }
         
-        return athleteBetData
+        return updatedAthletes
     }
 }

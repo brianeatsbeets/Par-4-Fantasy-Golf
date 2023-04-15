@@ -221,8 +221,16 @@ struct Tournament: Hashable {
                 // Parse each competitor and create an Athlete from each one
                 for competitor in competitors {
                     let name = competitor.athlete.displayName
-                    let score = competitor.score.value
+                    let scoreString = competitor.score.displayValue
                     let id = competitor.id
+                    var score = 0
+                    
+                    // Convert score string to int
+                    if scoreString != "E",
+                       Int(scoreString) != nil {
+                        score = Int(scoreString)!
+                    }
+                    
                     athletes.append(Athlete(espnId: id, name: name, score: score))
                 }
                 

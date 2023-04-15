@@ -996,14 +996,14 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="kov-YI-FmY">
                             <connections>
-                                <action selector="saveButtonPressed:" destination="dlK-DA-ciN" id="AP8-ti-W8u"/>
-                                <segue destination="Igf-iR-fqN" kind="unwind" identifier="unwindSaveSheetId" unwindAction="unwindFromGoogleSheetIdWithSegue:" id="4wj-BJ-qBC"/>
+                                <action selector="saveButtonPressed:" destination="dlK-DA-ciN" id="SI9-PO-KGI"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="googleSheetIdTextField" destination="w0J-Df-AUi" id="ou1-FL-ae1"/>
                         <outlet property="saveButton" destination="kov-YI-FmY" id="WgG-P5-ZjE"/>
+                        <segue destination="Igf-iR-fqN" kind="unwind" identifier="unwindSaveSheetId" unwindAction="unwindFromGoogleSheetIdWithSegue:" id="wl8-6q-9Af"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Uk-R3-K4z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1050,7 +1050,6 @@
         <!--Navigation Controller-->
         <scene sceneID="3tS-7X-yZw">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="JIe-yu-M3S" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="hO1-XU-926" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Xtn-uS-trB">
@@ -1062,6 +1061,7 @@
                         <segue destination="C0T-uD-FzL" kind="relationship" relationship="rootViewController" destinationCreationSelector="segueToSelectEvent:" id="vBi-Qj-69i"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JIe-yu-M3S" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="10977" y="-791"/>
         </scene>
