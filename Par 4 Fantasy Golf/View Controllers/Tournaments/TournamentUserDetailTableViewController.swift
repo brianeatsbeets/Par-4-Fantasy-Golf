@@ -67,7 +67,7 @@ extension TournamentUserDetailTableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "PickedAthleteCell", for: indexPath)
             
             var config = cell.defaultContentConfiguration()
-            config.text = athlete.name
+            config.text = athlete.isCut ? athlete.name + " (CUT)" : athlete.name
             config.secondaryText = "Value: \(athlete.value) | Odds: \(athlete.odds) | Score: \(athlete.score)"
             cell.contentConfiguration = config
 

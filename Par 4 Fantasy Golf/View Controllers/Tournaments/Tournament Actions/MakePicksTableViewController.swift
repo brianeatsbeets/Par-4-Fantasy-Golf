@@ -19,10 +19,14 @@ class MakePicksTableViewController: UITableViewController {
     
     @IBOutlet var budgetLabel: UILabel!
     @IBOutlet var spentLabel: UILabel!
+    @IBOutlet var saveButton: UIBarButtonItem!
     
     lazy var dataSource = createDataSource()
     var tournament: Tournament
     var pickItems = [PickItem]()
+    var pickCount: Int {
+        pickItems.filter { $0.isSelected }.count
+    }
     var totalSpent = 0
     
     // MARK: - Initializers
@@ -41,6 +45,7 @@ class MakePicksTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        saveButton.isEnabled = pickCount >= 6
         pickItems = getPickItems()
         tableView.dataSource = dataSource
         title = "Picks for \(tournament.name)"
@@ -111,6 +116,9 @@ class MakePicksTableViewController: UITableViewController {
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
         }
+        
+        // Enable save button if at least 6 athletes were picked
+        saveButton.isEnabled = pickCount >= 6
     }
 }
 

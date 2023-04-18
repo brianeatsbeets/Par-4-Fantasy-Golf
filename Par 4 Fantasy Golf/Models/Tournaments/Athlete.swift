@@ -25,7 +25,7 @@ struct Athlete: Hashable, Codable {
     var odds: Int
     var value: Int
     var score: Int
-    //var isCut: Bool
+    var isCut: Bool
     var formattedScore: String {
         switch score {
         case 1...:
@@ -40,13 +40,14 @@ struct Athlete: Hashable, Codable {
     // MARK: - Initializers
     
     // Standard init
-    init(id: UUID = UUID(), espnId: String, name: String, odds: Int = 0, value: Int = 0, score: Int = 0) {
+    init(id: UUID = UUID(), espnId: String, name: String, odds: Int = 0, value: Int = 0, score: Int = 0, isCut: Bool = false) {
         self.uuid = id
         self.espnId = espnId
         self.name = name
         self.odds = odds
         self.value = value
         self.score = score
+        self.isCut = isCut
     }
     
     // Init with snapshot data
@@ -58,13 +59,15 @@ struct Athlete: Hashable, Codable {
               let espnId = snapshotValue["espnId"] as? String,
               let name = snapshotValue["name"] as? String,
               let odds = snapshotValue["odds"] as? Int,
-              let value = snapshotValue["value"] as? Int else { return nil }
+              let value = snapshotValue["value"] as? Int,
+              let isCut = snapshotValue["isCut"] as? Bool else { return nil }
 
         self.uuid = id
         self.espnId = espnId
         self.name = name
         self.odds = odds
         self.value = value
+        self.isCut = isCut
         
         if let score = snapshotValue["score"] as? Int {
             self.score = score
@@ -82,7 +85,8 @@ struct Athlete: Hashable, Codable {
             "name": name,
             "odds": odds,
             "value": value,
-            "score": score
+            "score": score,
+            "isCut": isCut
         ]
     }
     

@@ -17,12 +17,16 @@ struct TournamentStanding: Hashable {
     let user: User
     var topAthletes: [Athlete]
     var score: Int
+    var penalties: Int
+    var totalScore: Int {
+        score + penalties
+    }
     var formattedScore: String {
-        switch score {
+        switch totalScore {
         case 1...:
-            return "+\(score)"
+            return "+\(totalScore)"
         case ..<0:
-            return "\(score)"
+            return "\(totalScore)"
         default:
             return "E"
         }
@@ -30,11 +34,12 @@ struct TournamentStanding: Hashable {
     
     // MARK: - Initializers
     
-    init(tournamentId: String, user: User, topAthletes: [Athlete]) {
+    init(tournamentId: String, user: User, topAthletes: [Athlete], penalties: Int) {
         self.tournamentId = tournamentId
         self.user = user
         self.topAthletes = topAthletes
         score = topAthletes.reduce(0) { $0 + $1.score }
+        self.penalties = penalties
     }
 }
 

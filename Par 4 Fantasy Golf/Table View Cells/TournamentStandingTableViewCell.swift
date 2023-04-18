@@ -20,7 +20,18 @@ class TournamentStandingTableViewCell: UITableViewCell {
     func configure(with standing: TournamentStanding) {
         
         var config = defaultContentConfiguration()
-        config.text = "\(standing.place): \(standing.user.email): \(standing.formattedScore)"
+        let penaltiesText: String = {
+            switch standing.penalties {
+            case 1:
+                return " (1 CUT)"
+            case 2...:
+                return " (\(standing.penalties) CUTs)"
+            default:
+                return ""
+            }
+        }()
+        
+        config.text = "\(standing.place): \(standing.user.email): \(standing.formattedScore)" + penaltiesText
         
         // Format the top athletes listing
         let topAthletesFormatted = {

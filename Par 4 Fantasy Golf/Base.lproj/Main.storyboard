@@ -364,6 +364,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="budgetLabel" destination="kbR-4x-cyt" id="C0M-ND-Fwf"/>
+                        <outlet property="saveButton" destination="jM3-Wu-GKm" id="whM-1u-YnK"/>
                         <outlet property="spentLabel" destination="3kf-xF-x6i" id="Fiu-lN-g9Y"/>
                     </connections>
                 </tableViewController>

@@ -189,12 +189,17 @@ class TournamentDetailTableViewController: UITableViewController {
         for user in league.members {
             
             var topAthletes = [Athlete]()
+            var cutAthleteCount = 0
             
             // If user has picked at least one athlete, calculate the top athletes
             if let userPicks = tournament.pickIds[user.id] {
                 
                 // Fetch the picked athletes
-                let athletes = tournament.athletes.filter { userPicks.contains([$0.id]) }
+                var athletes = tournament.athletes.filter { userPicks.contains([$0.id]) }
+                
+                // Filter out and count cut athletes
+                cutAthleteCount = athletes.filter { $0.isCut }.count
+                athletes = athletes.filter { !$0.isCut }
                 
                 // Sort and copy the top athletes to a new array
                 if !athletes.isEmpty {
@@ -205,7 +210,7 @@ class TournamentDetailTableViewController: UITableViewController {
             }
             
             // Create and append a new tournament standing to the temporary container
-            let userStanding = TournamentStanding(tournamentId: tournament.id, user: user, topAthletes: topAthletes)
+            let userStanding = TournamentStanding(tournamentId: tournament.id, user: user, topAthletes: topAthletes, penalties: cutAthleteCount)
             newStandings.append(userStanding)
         }
         

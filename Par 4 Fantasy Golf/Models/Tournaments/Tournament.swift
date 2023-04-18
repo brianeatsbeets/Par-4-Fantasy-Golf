@@ -222,6 +222,7 @@ struct Tournament: Hashable {
                 for competitor in competitors {
                     let scoreString = competitor.score.displayValue
                     let id = competitor.id
+                    var isCut = false
                     var score = 0
                     
                     // Convert score string to int
@@ -230,12 +231,12 @@ struct Tournament: Hashable {
                         score = Int(scoreString)!
                     }
                     
-                    var name = competitor.athlete.displayName
+                    let name = competitor.athlete.displayName
                     if competitor.status.displayValue == "CUT" {
-                        name = name + " (CUT)"
+                        isCut = true
                     }
                     
-                    athletes.append(Athlete(espnId: id, name: name, score: score))
+                    athletes.append(Athlete(espnId: id, name: name, score: score, isCut: isCut))
                 }
                 
                 // Sort the athletes
