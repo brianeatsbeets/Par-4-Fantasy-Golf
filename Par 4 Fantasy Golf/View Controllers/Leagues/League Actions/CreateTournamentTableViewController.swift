@@ -150,7 +150,7 @@ class CreateTournamentTableViewController: UITableViewController {
         Task {
             
             // Fetch tournament athletes
-            var athletes = await Tournament.fetchEventAthletes(eventId: eventId)
+            var athletes = await Tournament.fetchEventAthleteData(eventId: eventId)
             
             // Parse bet data if it was provided
             if athleteBetTsv != nil {

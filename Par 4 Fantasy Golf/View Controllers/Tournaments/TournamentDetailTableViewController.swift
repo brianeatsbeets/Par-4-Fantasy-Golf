@@ -62,12 +62,15 @@ class TournamentDetailTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         
         // Set timer label text depending on tournament status
-        if Date.now.timeIntervalSince1970 >= tournament.startDate {
-            // If tournament has started, initialize update timer
+        if Date.now.timeIntervalSince1970 < tournament.startDate {
+            // Tournament hasn't started yet
+            lastUpdateTimeLabel.text = "Tournament begins on \(tournament.startDate.formattedDate())"
+        } else if Date.now.timeIntervalSince1970 <= tournament.endDate {
+            // Tournament is active
             initializeUpdateTimer()
         } else {
-            // If not, display tournament start date
-            lastUpdateTimeLabel.text = "Tournament begins on \(tournament.startDate.formattedDate())"
+            // Tournament has ended
+            lastUpdateTimeLabel.text = "Tournament ended on \(tournament.endDate.formattedDate())"
         }
     }
     
@@ -138,7 +141,7 @@ class TournamentDetailTableViewController: UITableViewController {
             Task {
 
                 // Attempt to fetch updated athlete info
-                self.tournament.athletes = await Tournament.fetchEventAthletes(eventId: self.tournament.espnId)
+                self.tournament.athletes = await Tournament.fetchEventAthleteData(eventId: self.tournament.espnId)
                 self.calculateTournamentStandings()
                 self.updateTableView()
 

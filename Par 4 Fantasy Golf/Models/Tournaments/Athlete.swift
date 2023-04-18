@@ -25,6 +25,7 @@ struct Athlete: Hashable, Codable {
     var odds: Int
     var value: Int
     var score: Int
+    //var isCut: Bool
     var formattedScore: String {
         switch score {
         case 1...:
