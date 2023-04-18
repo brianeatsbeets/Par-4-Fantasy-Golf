@@ -25,6 +25,8 @@ class PickTableViewCell: UITableViewCell {
         
         if pickItem.isSelected {
             backgroundColor = UIColor(red: 202/255, green: 1, blue: 196/255, alpha: 1)
+        } else {
+            backgroundColor = .systemBackground
         }
     }
 }

@@ -95,6 +95,8 @@ class MakePicksTableViewController: UITableViewController {
         guard let dataSourcePick = dataSource.itemIdentifier(for: indexPath),
               let index = pickItems.firstIndex(of: dataSourcePick) else { return }
         
+        tableView.deselectRow(at: indexPath, animated: true)
+        
         let remainingBudget = tournament.budget - totalSpent
         
         // Helper function to reduce code duplication
@@ -108,13 +110,10 @@ class MakePicksTableViewController: UITableViewController {
         if pickItems[index].isSelected {
             totalSpent -= pickItems[index].athlete.value
             updatePicksTable()
-            
-        // If not, make sure we have adequate funds to make the pick
         } else if pickItems[index].athlete.value <= remainingBudget {
+            // If not, make sure we have adequate funds to make the pick
             totalSpent += pickItems[index].athlete.value
             updatePicksTable()
-        } else {
-            tableView.deselectRow(at: indexPath, animated: true)
         }
         
         // Enable save button if at least 6 athletes were picked
