@@ -84,8 +84,8 @@ struct League: Hashable {
         
         // Convert mebmerIds array to Firebase-style dictionary
         var memberDict = [String: Bool]()
-        for member in members {
-            memberDict[member.id] = true
+        for id in memberIds {
+            memberDict[id] = true
         }
         
         // Convert tournamentIds array to Firebase-style dictionary

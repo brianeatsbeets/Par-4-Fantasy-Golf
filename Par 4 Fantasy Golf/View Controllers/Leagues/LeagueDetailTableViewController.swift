@@ -48,7 +48,7 @@ class LeagueDetailTableViewController: UITableViewController {
         title = league.name + " Tournaments"
         
         // If the current user is not the league owner, hide administrative actions
-        if league.creator != currentFirebaseUser.email {
+        if league.creator != currentFirebaseUser.uid {
             leagueActionsBarButtonItemGroup.isHidden = true
         }
         
