@@ -219,11 +219,6 @@
                                             <action selector="deleteLeaguePressed:" destination="dSS-7s-RJv" id="JPR-RK-Q6G"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Sheets API Test" id="a46-lM-ftT">
-                                        <connections>
-                                            <action selector="sheetsButtonPressed:" destination="dSS-7s-RJv" id="bhw-BC-RAd"/>
-                                        </connections>
-                                    </barButtonItem>
                                 </barButtonItems>
                             </barButtonItemGroup>
                         </centerItemGroups>

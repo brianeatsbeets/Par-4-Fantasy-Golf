@@ -62,41 +62,14 @@ class LeagueDetailTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Fetch initial tournament data and update the table view
-        fetchMinimalTournamentData() {
+        Task {
+            // Fetch initial tournament data and update the table view
+            minimalTournaments = (await MinimalTournament.fetchMultipleTournaments(from: self.league.tournamentIds)).sorted(by: { $0.name < $1.name})
             self.updateTableView()
         }
     }
     
     // MARK: - Other functions
-    
-    // Fetch tournament data from the tournamentIds tree and store it
-    func fetchMinimalTournamentData(completion: @escaping () -> Void) {
-        
-        // Remove all existing tournament data
-        self.minimalTournaments.removeAll()
-        
-        // Fetch the data
-        tournamentIdsRef.observeSingleEvent(of: .value) { snapshot in
-            
-            // Verify that the received data produces valid MinimalTournaments, and if it does, append them
-            for childSnapshot in snapshot.children {
-                guard let childSnapshot = childSnapshot as? DataSnapshot,
-                      let tournament = MinimalTournament(snapshot: childSnapshot) else {
-                    print("Failed to create minimal tournament")
-                    continue
-                }
-                
-                self.minimalTournaments.append(tournament)
-            }
-            
-            // Sort tournament
-            self.minimalTournaments = self.minimalTournaments.sorted(by: { $0.name < $1.name})
-            
-            // Call completion handler
-            completion()
-        }
-    }
     
     // Remove league data and user associations
     @IBAction func deleteLeaguePressed(_ sender: Any) {

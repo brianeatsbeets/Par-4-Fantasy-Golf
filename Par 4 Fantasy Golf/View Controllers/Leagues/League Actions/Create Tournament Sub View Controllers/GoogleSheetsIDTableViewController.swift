@@ -82,7 +82,6 @@ class GoogleSheetsIDTableViewController: UITableViewController {
         }
         
         do {
-            
             // Attempt to return the resulting string
             return try await downloadTask.result.get()
         }  catch {
