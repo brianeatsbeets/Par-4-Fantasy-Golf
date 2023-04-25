@@ -18,6 +18,11 @@ protocol ManageUsersDelegate: AnyObject {
     func removeUser(user: User)
 }
 
+// This protocol allows the ManageUsersTableViewController to be notified when a swipe-to-delete event occurs
+protocol ManageUsersSwipeToDeleteDelegate: AnyObject {
+    func removeUser(user: User)
+}
+
 // MARK: - Main class
 
 // This class/view controller allows for management of the selected league's members
@@ -96,18 +101,29 @@ class ManageUsersTableViewController: UITableViewController {
                 guard let childSnapshot = snapshot.children.nextObject() as? DataSnapshot,
                       let newUser = User(snapshot: childSnapshot) else { return }
                 
-                // Add the user to the local data source
-                self.league.members.append(newUser)
-                self.league.memberIds.append(newUser.id)
-                self.delegate?.addUser(user: newUser)
-                
-                // Sort the members and update the table view
-                self.league.members = self.league.members.sorted(by: { $0.email < $1.email })
-                self.updateTableView()
-                
-                // Add the user's ID to the league and add the league's ID to the user in Firebase
-                self.leagueUsersRef.child(newUser.id).setValue(true)
-                usersRef.child(newUser.id).child("leagues").child(self.league.id).setValue(true)
+                // Check if the user is already a league member
+                if !self.league.memberIds.contains([newUser.id]) {
+                    
+                    // Add the user to the local data source
+                    self.league.members.append(newUser)
+                    self.league.memberIds.append(newUser.id)
+                    self.delegate?.addUser(user: newUser)
+                    
+                    // Sort the members and update the table view
+                    self.league.members = self.league.members.sorted(by: { $0.email < $1.email })
+                    self.updateTableView()
+                    
+                    // Add the user's ID to the league and add the league's ID to the user in Firebase
+                    self.leagueUsersRef.child(newUser.id).setValue(true)
+                    usersRef.child(newUser.id).child("leagues").child(self.league.id).setValue(true)
+                } else {
+                    
+                    // If so, alert the user
+                    let userAlreadyAddedAlert = UIAlertController(title: "User Already Added", message: "The user with the provided email address is already a member of this league.", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default)
+                    userAlreadyAddedAlert.addAction(ok)
+                    self.present(userAlreadyAddedAlert, animated: true)
+                }
             } else {
                 
                 // If no matching user was not found, alert the user
@@ -121,6 +137,15 @@ class ManageUsersTableViewController: UITableViewController {
 }
 
 // MARK: - Extensions
+
+// This extension conforms to the ManageUsersSwipeToDeleteDelegate procotol
+extension ManageUsersTableViewController: ManageUsersSwipeToDeleteDelegate {
+    func removeUser(user: User) {
+        league.members.removeAll { $0.id == user.id }
+        league.memberIds.removeAll { $0 == user.id }
+        updateTableView()
+    }
+}
 
 // This extention houses table view management functions that utilize the diffable data source API
 extension ManageUsersTableViewController {
@@ -136,6 +161,7 @@ extension ManageUsersTableViewController {
         var usersRef = DatabaseReference()
         var selectedLeague: League!
         var delegate: ManageUsersDelegate?
+        var swipeToDeleteDelegate: ManageUsersSwipeToDeleteDelegate?
         
         // MARK: - Other functions
         
@@ -144,7 +170,7 @@ extension ManageUsersTableViewController {
             
             // Check if selected user is league owner; if so, disable swipe-to-delete
             if let user = itemIdentifier(for: indexPath),
-               user.email != selectedLeague.creator {
+               user.id != selectedLeague.creator {
                 return true
             } else {
                 return false
@@ -156,13 +182,9 @@ extension ManageUsersTableViewController {
             guard let user = itemIdentifier(for: indexPath),
                   editingStyle == .delete else { return }
             
-            // Remove the user from the league's members in the local data source
-            if let membersIndex = selectedLeague.members.firstIndex(where: { $0.id == user.id }),
-               let memberIdsIndex = selectedLeague.memberIds.firstIndex(where: { $0 == user.id }) {
-                selectedLeague.members.remove(at: membersIndex)
-                selectedLeague.memberIds.remove(at: memberIdsIndex)
-                delegate?.removeUser(user: user)
-            }
+            // Alert delegates of removed user
+            delegate?.removeUser(user: user)
+            swipeToDeleteDelegate?.removeUser(user: user)
             
             // Remove the user's picks from the local data source and Firebase
             // TODO: Remove user picks from each tournament in the league
@@ -172,12 +194,6 @@ extension ManageUsersTableViewController {
             // Remove the user's id from the league's memberIds and remove the league's id from the user's league ids
             leagueUsersRef.child(user.id).removeValue()
             usersRef.child(user.id).child("leagues").child(selectedLeague.id).removeValue()
-            
-            // Update the data source
-            var snapshot = NSDiffableDataSourceSnapshot<Section, User>()
-            snapshot.appendSections(Section.allCases)
-            snapshot.appendItems(selectedLeague.members)
-            apply(snapshot, animatingDifferences: true)
         }
     }
     
@@ -200,7 +216,7 @@ extension ManageUsersTableViewController {
             
             var config = cell.defaultContentConfiguration()
             config.text = user.email
-            if user.email == self.league.creator {
+            if user.id == self.league.creator {
                 config.text! += " (owner)"
             }
             cell.contentConfiguration = config
@@ -212,7 +228,8 @@ extension ManageUsersTableViewController {
         dataSource.leagueUsersRef = leagueUsersRef
         dataSource.usersRef = Database.database().reference(withPath: "users")
         dataSource.selectedLeague = league
-        dataSource.delegate = delegate
+        dataSource.delegate = delegate // LeagueDetailTableViewController
+        dataSource.swipeToDeleteDelegate = self
         
         return dataSource
     }
