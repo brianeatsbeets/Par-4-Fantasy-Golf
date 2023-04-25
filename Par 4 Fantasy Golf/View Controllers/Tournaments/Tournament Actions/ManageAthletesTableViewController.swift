@@ -20,6 +20,11 @@ protocol ManageAthletesDelegate: AnyObject {
     func updateAthlete(athlete: Athlete)
 }
 
+// This protocol allows the ManageAthletesTableViewController to be notified when a swipe-to-delete event occurs
+protocol ManageAthletesSwipeToDeleteDelegate: AnyObject {
+    func removeAthlete(athlete: Athlete)
+}
+
 // MARK: - Main class
 
 // This class/view controller allows the user to manage athletes for a given tournament
@@ -106,6 +111,14 @@ class ManageAthletesTableViewController: UITableViewController {
 
 // MARK: - Extensions
 
+// This extension conforms to the ManageAthletesSwipeToDeleteDelegate procotol
+extension ManageAthletesTableViewController: ManageAthletesSwipeToDeleteDelegate {
+    func removeAthlete(athlete: Athlete) {
+        tournament.athletes.removeAll { $0.id == athlete.id }
+        updateTableView()
+    }
+}
+
 // This extention houses table view management functions that utilize the diffable data source API
 extension ManageAthletesTableViewController {
     
@@ -120,6 +133,7 @@ extension ManageAthletesTableViewController {
         var tournamentPicksRef = DatabaseReference()
         var selectedTournament: Tournament!
         weak var delegate: ManageAthletesDelegate?
+        weak var swipeToDeleteDelegate: ManageAthletesSwipeToDeleteDelegate?
         
         // MARK: - Other functions
         
@@ -133,11 +147,11 @@ extension ManageAthletesTableViewController {
             guard let athlete = itemIdentifier(for: indexPath),
                   editingStyle == .delete else { return }
             
-            // Remove the athlete from the tournament's athletes, both in the local data source and in firebase
-            if let index = selectedTournament.athletes.firstIndex(where: { $0.id == athlete.id }) {
-                selectedTournament.athletes.remove(at: index)
-                delegate?.removeAthlete(athlete: athlete)
-            }
+            // Alert delegates of removed user
+            delegate?.removeAthlete(athlete: athlete)
+            swipeToDeleteDelegate?.removeAthlete(athlete: athlete)
+            
+            // Remove the athlete from the tournament in firebase
             tournamentAthletesRef.child(athlete.id).removeValue()
             
             // Remove the athlete pick from each user's picks in this tournament, both in the local data source and in firebase
@@ -147,12 +161,6 @@ extension ManageAthletesTableViewController {
                     tournamentPicksRef.child(userPicks.key).child(athlete.id).removeValue()
                 }
             }
-            
-            // Update the data source
-            var snapshot = NSDiffableDataSourceSnapshot<Section, Athlete>()
-            snapshot.appendSections(Section.allCases)
-            snapshot.appendItems(selectedTournament.athletes)
-            apply(snapshot, animatingDifferences: true)
         }
     }
     
@@ -185,7 +193,8 @@ extension ManageAthletesTableViewController {
         dataSource.tournamentAthletesRef = tournament.databaseReference.child("athletes")
         dataSource.tournamentPicksRef = tournament.databaseReference.child("pickIds")
         dataSource.selectedTournament = tournament
-        dataSource.delegate = delegate
+        dataSource.delegate = delegate // TournamentDetailTableViewController
+        dataSource.swipeToDeleteDelegate = self
         
         return dataSource
     }
