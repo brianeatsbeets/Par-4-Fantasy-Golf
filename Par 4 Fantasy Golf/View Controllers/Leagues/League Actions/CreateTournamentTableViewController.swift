@@ -50,7 +50,6 @@ class CreateTournamentTableViewController: UITableViewController {
     func fetchCalendarEvents() async {
         
         // Construct URL
-        // TODO: Provide today's date as the dates parameter
         let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard")!
         
         do {
@@ -120,8 +119,6 @@ class CreateTournamentTableViewController: UITableViewController {
     }
     
     // Handle the incoming Google Sheet Id
-    
-    // TODO: Verify and fetch data upon saving in GoogleSheetsIDTableViewController
     @IBAction func unwindFromGoogleSheetId(segue: UIStoryboardSegue) {
         
         // Deselect cell

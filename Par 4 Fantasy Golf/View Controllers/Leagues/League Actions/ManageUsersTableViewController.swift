@@ -86,8 +86,6 @@ class ManageUsersTableViewController: UITableViewController {
     }
     
     // Display an alert that allows the user to add a new user to the league
-    // TODO: Prevent adding a user who is already added
-    // TODO: Fix bug where deleting a member and re-adding them adds them twice (locally)
     func searchForUser(with email: String?) {
         
         // Query for a matching user
@@ -187,7 +185,6 @@ extension ManageUsersTableViewController {
             swipeToDeleteDelegate?.removeUser(user: user)
             
             // Remove the user's picks from the local data source and Firebase
-            // TODO: Remove user picks from each tournament in the league
             //selectedLeague.pickIds.removeValue(forKey: user.id)
             selectedLeague.databaseReference.child("pickIds").child(user.id).removeValue()
             

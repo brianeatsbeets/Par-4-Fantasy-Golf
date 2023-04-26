@@ -5,9 +5,6 @@
 //  Created by Aguirre, Brian P. on 4/6/23.
 //
 
-// TODO: Hide events that already have a tournament created
-// TODO: Create an additional table view controller to allow the user to select a budget (have this one be the secondary view controller)
-
 // MARK: - Imported libraries
 
 import UIKit

@@ -5,11 +5,6 @@
 //  Created by Aguirre, Brian P. on 3/1/23.
 //
 
-// TODO: Validate text fields
-// TODO: Add password confirmation text field
-// TODO: Provide error feedback via alert
-// TODO: Transition to tab bar controller with animation
-
 // MARK: - Imported libraries
 
 import UIKit

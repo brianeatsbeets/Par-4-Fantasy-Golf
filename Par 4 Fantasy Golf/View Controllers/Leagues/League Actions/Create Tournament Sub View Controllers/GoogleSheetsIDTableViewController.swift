@@ -54,7 +54,6 @@ class GoogleSheetsIDTableViewController: UITableViewController {
     }
     
     // Fetch the athlete bet data from the Google sheet
-    // TODO: Build out errors a la https://www.hackingwithswift.com/quick-start/concurrency/how-to-get-a-result-from-a-task
     func fetchGoogleSheetData() async -> String? {
         
         // Construct URL using the provided Google sheet id
@@ -92,9 +91,7 @@ class GoogleSheetsIDTableViewController: UITableViewController {
     // MARK: - Navigation
     
     @IBAction func saveButtonPressed(_ sender: Any) {
-        
         saveButton.isEnabled = false
-        // TODO: Disable/enable cancel button as well (do this in other VCs)
         
         Task {
             

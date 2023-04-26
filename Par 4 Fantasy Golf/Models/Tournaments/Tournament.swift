@@ -189,8 +189,6 @@ struct Tournament: Hashable {
     }
     
     // Fetch updated athlete data
-    // TODO: fetch updated tournament status as well?
-    // TODO: Mark as throws to catch errors instead of returning empty array
     static func fetchEventAthleteData(eventId: String) async -> [Athlete] {
         
         print("Fetching athlete data from ESPN api")

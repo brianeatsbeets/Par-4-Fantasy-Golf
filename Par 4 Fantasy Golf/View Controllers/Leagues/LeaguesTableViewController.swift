@@ -5,8 +5,6 @@
 //  Created by Aguirre, Brian P. on 3/1/23.
 //
 
-// TODO: Figure out why leagues sometimes update after returning from league details (maybe related to sorting?) - is this still an issue?
-
 // MARK: - Imported libraries
 
 import UIKit
@@ -105,7 +103,6 @@ class LeaguesTableViewController: UITableViewController {
     // MARK: - Navigation
     
     // Handle the incoming new league data
-    // TODO: Just update the minimalLeagues array and updateTableView() locally instead of fetching them from firebase
     @IBAction func unwindFromCreateLeague(segue: UIStoryboardSegue) {
         
         // Check that we have new league data to parse

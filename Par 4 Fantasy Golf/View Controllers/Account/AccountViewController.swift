@@ -5,8 +5,6 @@
 //  Created by Aguirre, Brian P. on 2/22/23.
 //
 
-// TODO: Have the user confirm before signing out
-
 // MARK: - Imported libraries
 
 import UIKit

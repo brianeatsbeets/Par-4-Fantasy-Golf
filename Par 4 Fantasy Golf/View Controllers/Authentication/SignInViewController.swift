@@ -5,10 +5,6 @@
 //  Created by Aguirre, Brian P. on 2/22/23.
 //
 
-// TODO: Validate text fields
-// TODO: Provide error feedback via alert
-// TODO: Transition to tab bar controller with animation
-
 // MARK: - Imported libraries
 
 import UIKit

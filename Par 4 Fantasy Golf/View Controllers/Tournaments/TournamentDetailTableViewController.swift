@@ -5,9 +5,6 @@
 //  Created by Aguirre, Brian P. on 3/3/23.
 //
 
-// TODO: Have Make Picks button show an alert when no athletes exist and prevent segue
-// TODO: Tap on a user to see their picked athletes and their stats
-
 // MARK: - Imported libraries
 
 import UIKit
@@ -179,8 +176,6 @@ class TournamentDetailTableViewController: UITableViewController {
     }
     
     // Calculate the tournament standings
-    // TODO: Sort by name if tournament hasn't started yet
-    // TODO: Use 5th top athlete as a tie-breaker
     func calculateTournamentStandings() {
         
         var newStandings = [TournamentStanding]()
@@ -321,7 +316,6 @@ class TournamentDetailTableViewController: UITableViewController {
     }
     
     // Handle the incoming new picks data
-    // TODO: Optimize to only write/delete necessary pick data
     @IBAction func unwindFromMakePicks(segue: UIStoryboardSegue) {
         
         // Check that we have new picks data to parse

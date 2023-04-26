@@ -5,9 +5,6 @@
 //  Created by Aguirre, Brian P. on 2/28/23.
 //
 
-// TODO: Validate input fields
-// TODO: Aggregate fields/values before creating league in prepare(for segue:sender:)
-
 // MARK: - Imported libraries
 
 import UIKit
