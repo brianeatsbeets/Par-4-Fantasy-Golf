@@ -135,8 +135,6 @@ class CreateTournamentTableViewController: UITableViewController {
     
     // Compile the league data for sending back to the league detail table view controller
     @IBAction func saveButtonPressed(_ sender: Any) {
-        saveButton.isEnabled = false
-        
         guard let selectedEvent = selectedEvent,
               let startDate = selectedEvent.startDate.espnDateStringToDouble(),
               let endDate = selectedEvent.endDate.espnDateStringToDouble() else { return }
@@ -145,6 +143,8 @@ class CreateTournamentTableViewController: UITableViewController {
         let eventId = selectedEvent.eventId
         
         Task {
+            
+            displayLoadingIndicator(animated: true)
             
             // Fetch tournament athletes
             var athletes = await Tournament.fetchEventAthleteData(eventId: eventId)

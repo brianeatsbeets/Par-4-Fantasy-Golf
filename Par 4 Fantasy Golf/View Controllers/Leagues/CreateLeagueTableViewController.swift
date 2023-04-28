@@ -27,6 +27,8 @@ class CreateLeagueTableViewController: UITableViewController {
     // Compile the league data for sending back to the leagues table view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard segue.identifier == "createLeagueUnwind" else { return }
+        
+        displayLoadingIndicator(animated: true)
         league = League(name: nameTextField.text ?? "", creator: currentFirebaseUser.uid)
     }
 }

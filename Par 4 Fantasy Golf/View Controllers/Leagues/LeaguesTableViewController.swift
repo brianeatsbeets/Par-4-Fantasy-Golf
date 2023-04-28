@@ -36,8 +36,11 @@ class LeaguesTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        displayLoadingIndicator(animated: false)
+        
         // Fetch initial league data and update the table view
         fetchMinimalLeagueData() {
+            self.dismissLoadingIndicator(animated: true)
             self.updateTableView()
         }
     }
@@ -47,56 +50,19 @@ class LeaguesTableViewController: UITableViewController {
     // Fetch league data from the leagueIds tree and store it
     func fetchMinimalLeagueData(completion: @escaping () -> Void) {
         
-        // Only display joined leagues
-        if !leaguesDisplaySwitch.isOn {
+        // Fetch user league Ids
+        userLeaguesRef.observeSingleEvent(of: .value) { snapshot in
+            guard let userLeagueIdValues = snapshot.value as? [String: Bool] else { print("Boo"); return }
+            let userLeagueIds = userLeagueIdValues.map { $0.key }
             
-            // Remove all existing league data
-            self.minimalLeagues.removeAll()
-            
-            // Fetch user league Ids
-            userLeaguesRef.observeSingleEvent(of: .value) { snapshot in
-                guard let userLeagueIdValues = snapshot.value as? [String: Bool] else { print("Boo"); return }
-                let userLeagueIds = userLeagueIdValues.map { $0.key }
-                
-                // Fetch minimal leagues from user league Ids
-                Task {
-                    self.minimalLeagues = await MinimalLeague.fetchMultipleLeagues(from: userLeagueIds)
-                    
-                    // Sort leagues
-                    self.minimalLeagues = self.minimalLeagues.sorted(by: { $0.name > $1.name})
-                    completion()
-                }
-            }
-        } else { // Display all leagues
-            
-            // Remove all existing league data
-            self.minimalLeagues.removeAll()
-            
-            // Fetch the data
-            leagueIdsRef.observeSingleEvent(of: .value) { snapshot in
-                
-                // Verify that the received data produces valid MinimalLeagues, and if it does, append them
-                for childSnapshot in snapshot.children {
-                    guard let childSnapshot = childSnapshot as? DataSnapshot,
-                          let league = MinimalLeague(snapshot: childSnapshot) else {
-                        print("Failed to create minimal league")
-                        continue
-                    }
-                    
-                    self.minimalLeagues.append(league)
-                }
+            // Fetch minimal leagues from user league Ids
+            Task {
+                self.minimalLeagues = await MinimalLeague.fetchMultipleLeagues(from: userLeagueIds)
                 
                 // Sort leagues
                 self.minimalLeagues = self.minimalLeagues.sorted(by: { $0.name > $1.name})
                 completion()
             }
-        }
-    }
-    
-    // Switch between viewing joined leagues and all leagues
-    @IBAction func leaguesDisplaySwitchToggled() {
-        fetchMinimalLeagueData {
-            self.updateTableView()
         }
     }
     
@@ -111,26 +77,34 @@ class LeaguesTableViewController: UITableViewController {
               let league = sourceViewController.league
         else { return }
         
-        // Save the league to the leagues tree in Firebase
-        league.databaseReference.setValue(league.toAnyObject())
-        
-        // Save the league to the leagueIds tree in Firebase
         let minimalLeague = MinimalLeague(league: league)
-        leagueIdsRef.child(league.id).setValue(minimalLeague.toAnyObject())
         
-        // Save the league to the league members' data
-        for user in league.members {
-            user.databaseReference.child("leagues").child(league.id).setValue(true)
-        }
-        
-        // Fetch league data and update the table view
-        fetchMinimalLeagueData() {
-            self.updateTableView()
+        Task {
+            // Save the league to the leagues tree in Firebase
+            try await league.databaseReference.setValue(league.toAnyObject())
+            
+            // Save the league to the leagueIds tree in Firebase
+            try await leagueIdsRef.child(league.id).setValue(minimalLeague.toAnyObject())
+            
+            // Save the league to the league members' data
+            for id in league.memberIds {
+                try await Database.database().reference(withPath: "users").child(id).child("leagues").child(league.id).setValue(true)
+            }
+            
+            // Save the minimal league to the local data source
+            minimalLeagues.append(minimalLeague)
+            minimalLeagues = minimalLeagues.sorted(by: { $0.name > $1.name})
+            
+            updateTableView()
+            
+            dismissLoadingIndicator(animated: true)
         }
     }
     
     // Segue to LeagueDetailViewController with full league data
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        displayLoadingIndicator(animated: true)
         
         // Fetch the league data from the tapped league's id
         Task {
@@ -142,7 +116,7 @@ class LeaguesTableViewController: UITableViewController {
             
             // Deselect the row and push the league details view controller while passing the full league data
             tableView.deselectRow(at: indexPath, animated: true)
-            navigationController?.pushViewController(destinationViewController, animated: true)
+            self.navigationController?.pushViewController(destinationViewController, animated: true)
         }
     }
 }

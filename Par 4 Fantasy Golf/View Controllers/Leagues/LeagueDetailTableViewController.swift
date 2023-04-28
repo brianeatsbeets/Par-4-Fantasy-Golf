@@ -28,6 +28,9 @@ class LeagueDetailTableViewController: UITableViewController {
     var minimalTournaments = [MinimalTournament]()
     let tournamentIdsRef = Database.database().reference(withPath: "tournamentIds")
     
+    var finishedFetchingUsers = false
+    var finishedFetchingTournaments = false
+    
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
@@ -54,7 +57,14 @@ class LeagueDetailTableViewController: UITableViewController {
         
         // Fetch league member data
         Task {
-            league.members = await User.fetchMultipleUsers(from: self.league.memberIds)
+            league.members = await User.fetchMultipleUsers(from: league.memberIds)
+            finishedFetchingUsers = true
+            
+            // Dismiss the loading indicator if we've finished fetching tournament data as well
+            if finishedFetchingTournaments {
+                dismissLoadingIndicator(animated: true)
+            }
+            
             updateTableView()
         }
     }
@@ -64,8 +74,15 @@ class LeagueDetailTableViewController: UITableViewController {
         
         Task {
             // Fetch initial tournament data and update the table view
-            minimalTournaments = (await MinimalTournament.fetchMultipleTournaments(from: self.league.tournamentIds)).sorted(by: { $0.name < $1.name})
-            self.updateTableView()
+            minimalTournaments = (await MinimalTournament.fetchMultipleTournaments(from: league.tournamentIds)).sorted(by: { $0.name < $1.name})
+            finishedFetchingTournaments = true
+            
+            // Dismiss the loading indicator if we've finished fetching user data as well
+            if finishedFetchingUsers {
+                dismissLoadingIndicator(animated: true)
+            }
+            
+            updateTableView()
         }
     }
     
@@ -81,17 +98,21 @@ class LeagueDetailTableViewController: UITableViewController {
             // Dismiss the current alert
             deleteLeagueAlert.dismiss(animated: true)
             
-            // Remove the league from each user's leagues
-            for user in self.league.members {
-                user.databaseReference.child("leagues").child(self.league.id).removeValue()
+            self.displayLoadingIndicator(animated: true)
+            
+            Task {
+                // Remove the league from each user's leagues
+                for user in self.league.members {
+                    try await user.databaseReference.child("leagues").child(self.league.id).removeValue()
+                }
+                
+                // Remove the league data from the leagues and leagueIds trees
+                try await self.league.databaseReference.removeValue()
+                try await Database.database().reference().child("leagueIds").child(self.league.id).removeValue()
+                
+                // Return to LeaguesTableViewController
+                _ = self.navigationController?.popViewController(animated: true)
             }
-            
-            // Remove the league data from the leagues and leagueIds trees
-            self.league.databaseReference.removeValue()
-            Database.database().reference().child("leagueIds").child(self.league.id).removeValue()
-            
-            // Return to LeaguesTableViewController
-            self.navigationController?.popViewController(animated: true)
         }
         
         deleteLeagueAlert.addAction(cancel)
@@ -117,6 +138,8 @@ class LeagueDetailTableViewController: UITableViewController {
     // Segue to TournamentDetailViewController with full tournament data
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        displayLoadingIndicator(animated: true)
+        
         // Fetch the stored tournament data from firebase
         Task {
             guard let minimalTournament = dataSource.itemIdentifier(for: indexPath),
@@ -127,7 +150,7 @@ class LeagueDetailTableViewController: UITableViewController {
             
             // Deselect the row and push the league details view controller while passing the full league data
             tableView.deselectRow(at: indexPath, animated: true)
-            navigationController?.pushViewController(destinationViewController, animated: true)
+            self.navigationController?.pushViewController(destinationViewController, animated: true)
         }
     }
     
@@ -139,27 +162,31 @@ class LeagueDetailTableViewController: UITableViewController {
               let sourceViewController = segue.source as? CreateTournamentTableViewController,
               let newTournament = sourceViewController.tournament else { return }
         
-        // Save the tournament to the local data source
-        league.tournamentIds.append(newTournament.id)
-        league.tournaments.append(newTournament)
-        
-        // Save the minimal tournament to the local data source and sort
-        let minimalTournament = MinimalTournament(tournament: newTournament)
-        minimalTournaments.append(minimalTournament)
-        minimalTournaments = minimalTournaments.sorted(by: { $0.name < $1.name})
-        
-        // Save the tournament to Firebase
-        
-        // League tournament Ids
-        league.databaseReference.child("tournamentIds").child(newTournament.id).setValue(true)
-        
-        // Tournaments tree
-        newTournament.databaseReference.setValue(newTournament.toAnyObject())
-        
-        // TournamentIds tree
-        tournamentIdsRef.child(newTournament.id).setValue(minimalTournament.toAnyObject())
-        
-        updateTableView()
+        Task {
+            // Save the tournament to the local data source
+            league.tournamentIds.append(newTournament.id)
+            league.tournaments.append(newTournament)
+            
+            // Save the minimal tournament to the local data source and sort
+            let minimalTournament = MinimalTournament(tournament: newTournament)
+            minimalTournaments.append(minimalTournament)
+            minimalTournaments = minimalTournaments.sorted(by: { $0.name < $1.name})
+            
+            // Save the tournament to Firebase
+            
+            // League tournament Ids
+            try await league.databaseReference.child("tournamentIds").child(newTournament.id).setValue(true)
+            
+            // Tournaments tree
+            try await newTournament.databaseReference.setValue(newTournament.toAnyObject())
+            
+            // TournamentIds tree
+            try await tournamentIdsRef.child(newTournament.id).setValue(minimalTournament.toAnyObject())
+            
+            dismissLoadingIndicator(animated: true)
+            
+            updateTableView()
+        }
     }
 }
 

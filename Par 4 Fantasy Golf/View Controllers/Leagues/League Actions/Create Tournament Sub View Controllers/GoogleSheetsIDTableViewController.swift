@@ -54,11 +54,7 @@ class GoogleSheetsIDTableViewController: UITableViewController {
     }
     
     // Fetch the athlete bet data from the Google sheet
-    func fetchGoogleSheetData() async -> String? {
-        
-        // Construct URL using the provided Google sheet id
-        let url = URL(string: "https://docs.google.com/spreadsheets/d/\(googleSheetIdTextField.text!)/export?format=tsv")!
-        
+    func fetchGoogleSheetData(url: URL) async -> String? {
         var athleteBetData: String?
         
         let downloadTask = Task { () -> String? in
@@ -91,21 +87,31 @@ class GoogleSheetsIDTableViewController: UITableViewController {
     // MARK: - Navigation
     
     @IBAction func saveButtonPressed(_ sender: Any) {
-        saveButton.isEnabled = false
+        
+        // Create alert in case we have an invalid URL or Google Sheet ID
+        let invalidSheetIdAlert = UIAlertController(title: "Invalid Google Sheet ID", message: "The ID you provided did not return a valid Google Sheet. Please double-check your input and try again.", preferredStyle: .alert)
+        invalidSheetIdAlert.addAction(UIAlertAction(title: "OK", style: .default))
+        
+        // Construct URL using the provided Google sheet id
+        guard let url = URL(string: "https://docs.google.com/spreadsheets/d/\(googleSheetIdTextField.text!)/export?format=tsv") else {
+            present(invalidSheetIdAlert, animated: true)
+            return
+        }
+        
+        displayLoadingIndicator(animated: true)
         
         Task {
             
             // Check if we received valid data from the Google sheet id
-            if let athleteBetData = await fetchGoogleSheetData() {
+            if let athleteBetData = await fetchGoogleSheetData(url: url) {
                 self.athleteBetData = athleteBetData
                 self.sheetId = googleSheetIdTextField.text!
+                
+                dismissLoadingIndicator(animated: false)
                 performSegue(withIdentifier: "unwindSaveSheetId", sender: nil)
             } else {
-                saveButton.isEnabled = true
-                
-                let alert = UIAlertController(title: "Invalid Google Sheet ID", message: "The ID you provided did not return a valid Google Sheet. Please double-check your input and try again.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self.present(alert, animated: true)
+                dismissLoadingIndicator(animated: true)
+                self.present(invalidSheetIdAlert, animated: true)
             }
         }
     }

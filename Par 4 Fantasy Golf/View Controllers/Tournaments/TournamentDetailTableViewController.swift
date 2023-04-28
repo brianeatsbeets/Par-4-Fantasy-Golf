@@ -58,6 +58,8 @@ class TournamentDetailTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        dismissLoadingIndicator(animated: false)
+        
         // Set timer label text depending on tournament status
         if Date.now.timeIntervalSince1970 < tournament.startDate {
             // Tournament hasn't started yet
@@ -245,28 +247,26 @@ class TournamentDetailTableViewController: UITableViewController {
             // Dismiss the current alert
             deleteTournamentAlert.dismiss(animated: true)
             
-            // Remove the tournament data from the tournaments and tournamentIds trees
-            self.tournament.databaseReference.removeValue()
-            Database.database().reference().child("tournamentIds").child(self.tournament.id).removeValue()
+            self.displayLoadingIndicator(animated: true)
+            self.updateTimer.invalidate()
             
-            // Remove the tournament data from the league tournamentIds tree
-            self.league.databaseReference.child("tournamentIds").child(self.tournament.id).removeValue()
-            
-            // Return to TournamentsTableViewController
-            self.navigationController?.popViewController(animated: true)
+            Task {
+                // Remove the tournament data from the tournaments and tournamentIds trees
+                try await self.tournament.databaseReference.removeValue()
+                try await Database.database().reference().child("tournamentIds").child(self.tournament.id).removeValue()
+                
+                // Remove the tournament data from the league tournamentIds tree
+                try await self.league.databaseReference.child("tournamentIds").child(self.tournament.id).removeValue()
+                
+                // Return to TournamentsTableViewController
+                _ = self.navigationController?.popViewController(animated: true)
+            }
         }
         
         deleteTournamentAlert.addAction(cancel)
         deleteTournamentAlert.addAction(confirm)
         
         present(deleteTournamentAlert, animated: true)
-    }
-    
-    // Temporary physical switch to set if tournament has started
-    @IBAction func tournamentStartedSwitchToggled() {
-        makePicksButton.isEnabled.toggle()
-        //tournament.tournamentHasStarted.toggle()
-        //tournament.databaseReference.child("tournamentHasStarted").setValue(tournament.tournamentHasStarted)
     }
     
     // MARK: - Navigation

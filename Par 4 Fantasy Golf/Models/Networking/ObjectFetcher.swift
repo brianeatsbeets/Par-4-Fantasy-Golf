@@ -5,8 +5,8 @@
 //  Created by Aguirre, Brian P. on 3/30/23.
 //
 
-// TODO: This file contains test implementations for generic protocols/functions for the fetchSingle/fetchMultiple model functions
-// TODO: This works by calling via ClassType.fetch____; need to update to work with calling ObjectFetcher.fetch____
+// This file contains test implementations for generic protocols/functions for the fetchSingle/fetchMultiple model functions
+// This works by calling via ClassType.fetch____; need to update to work with calling ObjectFetcher.fetch____
 
 import FirebaseDatabase
 
