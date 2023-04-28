@@ -10,6 +10,8 @@ import UIKit
 // This extension contains functions to display and hide loading indicators
 extension UIViewController {
     
+    // MARK: - Loading Indicator
+    
     // Display an alert with a spinning loading indicator and a message
     func displayLoadingIndicator(animated: Bool) {
         
@@ -58,5 +60,32 @@ extension UIViewController {
         } else {
             loadingIndicatorView.removeFromSuperview()
         }
+    }
+    
+    // MARK: - Alert
+    
+    // This enum describes alert types for the displayAlert method
+    enum AlertType {
+        case ok, okCancel
+    }
+    
+    // Display a standard alert with the provided paramaters
+    func displayAlert(title: String = "", message: String, alertType: AlertType) {
+        
+        // Create the UIAlertController
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        // Create and add the OK action
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        
+        // Create and add the Cancel action if required
+        if alertType == .okCancel {
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(cancelAction)
+        }
+        
+        // Present the alert
+        present(alert, animated: true, completion: nil)
     }
 }
