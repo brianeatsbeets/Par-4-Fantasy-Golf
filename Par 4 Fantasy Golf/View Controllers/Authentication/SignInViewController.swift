@@ -30,32 +30,30 @@ class SignInViewController: UIViewController {
     
     // Attempt to sign the user in
     @IBAction func signInTapped() {
-        
         displayLoadingIndicator(animated: true)
         
-        Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!) { [weak self] authResult, error in
-            guard let strongSelf = self else { return }
+        Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!) { authResult, error in
             
             // If there was an error, present it to the user. Otherwise, transition to the Leagues view
             if let error = error as NSError? {
                 
-                strongSelf.dismissLoadingIndicator(animated: true)
+                self.dismissLoadingIndicator(animated: true)
                 
                 guard let errorCode = AuthErrorCode.Code(rawValue: error.code) else {
-                    strongSelf.displayAlert(title: "Sign In Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.", alertType: .ok)
+                    self.displayAlert(title: "Sign In Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
                     return
                 }
                 
                 switch errorCode {
                 case .invalidEmail, .userNotFound, .wrongPassword:
-                    strongSelf.displayAlert(title: "Sign In Error", message: "We can't find an account with the credentials you provided.", alertType: .ok)
+                    self.displayAlert(title: "Sign In Error", message: "We can't find an account with the credentials you provided.")
                 case .networkError:
-                    strongSelf.displayAlert(title: "Sign In Error", message: "Looks like there was a network issue. Your connection could be slow, it may have been interrupted, or the server could be temporarily unreachable.", alertType: .ok)
+                    self.displayAlert(title: "Sign In Error", message: "Looks like there was a network issue. Your connection could be slow, it may have been interrupted, or the server could be temporarily unreachable.")
                 default:
-                    strongSelf.displayAlert(title: "Sign In Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.", alertType: .ok)
+                    self.displayAlert(title: "Sign In Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
                 }
             } else {
-                strongSelf.transitionToTabBarController()
+                self.transitionToTabBarController()
             }
         }
     }

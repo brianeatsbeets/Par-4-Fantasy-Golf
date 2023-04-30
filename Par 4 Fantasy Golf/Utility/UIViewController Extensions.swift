@@ -62,7 +62,7 @@ extension UIViewController {
         }
     }
     
-    // MARK: - Alert
+    // MARK: - Generic Alert
     
     // This enum describes alert types for the displayAlert method
     enum AlertType {
@@ -70,7 +70,7 @@ extension UIViewController {
     }
     
     // Display a standard alert with the provided paramaters
-    func displayAlert(title: String = "", message: String, alertType: AlertType) {
+    func displayAlert(title: String = "", message: String, alertType: AlertType = .ok) {
         
         // Create the UIAlertController
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)

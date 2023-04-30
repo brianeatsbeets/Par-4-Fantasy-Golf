@@ -33,17 +33,33 @@ class RegistrationViewController: UIViewController {
     
     // Attempt to create a new account
     @IBAction func registerButtonPressed() {
+        displayLoadingIndicator(animated: true)
+        
         Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { authResult, error in
             
             // If there was an error, present it to the user. Otherwise, transition to the Leagues view
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            } else if authResult == nil {
-                print("Error: authResult is nil")
-                return
+            if let error = error as NSError? {
+                
+                self.dismissLoadingIndicator(animated: true)
+                
+                guard let errorCode = AuthErrorCode.Code(rawValue: error.code) else {
+                    self.displayAlert(title: "Registration Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
+                    return
+                }
+                
+                switch errorCode {
+                case .invalidEmail:
+                    self.displayAlert(title: "Registration Error", message: "That email address isn't valid. Double-check it and try registering again.")
+                case .emailAlreadyInUse:
+                    self.displayAlert(title: "Registration Error", message: "Looks like there's already an account with that email address.")
+                case .networkError:
+                    self.displayAlert(title: "Registration Error", message: "Looks like there was a network issue. Your connection could be slow, it may have been interrupted, or the server could be temporarily unreachable.")
+                case .weakPassword:
+                    self.displayAlert(title: "Registration Error", message: "Your password must have at least six characters.")
+                default:
+                    self.displayAlert(title: "Registration Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
+                }
             } else {
-                print("Registration successful!")
                 
                 // Get user data
                 let userId = authResult!.user.uid
