@@ -20,6 +20,7 @@ class RegistrationViewController: UIViewController {
     
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
+    @IBOutlet var registerButton: UIButton!
     
     let ref = Database.database().reference(withPath: "users")
     
@@ -27,6 +28,8 @@ class RegistrationViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        registerButton.isEnabled = false
     }
     
     // MARK: - Other functions
@@ -63,7 +66,7 @@ class RegistrationViewController: UIViewController {
                 
                 // Get user data
                 let userId = authResult!.user.uid
-                let user = User(id: userId, email: self.emailTextField.text ?? "")
+                let user = User(id: userId, email: self.emailTextField.text!)
                 
                 // Save the user to Firebase
                 user.databaseReference.setValue(user.toAnyObject())
@@ -71,6 +74,13 @@ class RegistrationViewController: UIViewController {
                 self.transitionToTabBarController()
             }
         }
+    }
+    
+    // Toggle enabled state of sign in button
+    @IBAction func textEditingChanged() {
+        let emailText = emailTextField.text ?? ""
+        let passwordText = passwordTextField.text ?? ""
+        registerButton.isEnabled = !emailText.isEmpty && !passwordText.isEmpty
     }
     
     // MARK: - Navigation

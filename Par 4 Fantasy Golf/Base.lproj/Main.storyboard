@@ -28,12 +28,18 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no"/>
+                                <connections>
+                                    <action selector="textEditingChanged" destination="BYZ-38-t0r" eventType="editingChanged" id="oNI-T6-99B"/>
+                                </connections>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Pnb-fK-rKp">
                                 <rect key="frame" x="16" y="215" width="358" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                <connections>
+                                    <action selector="textEditingChanged" destination="BYZ-38-t0r" eventType="editingChanged" id="oQ1-uV-zeO"/>
+                                </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UTB-zB-wEb">
                                 <rect key="frame" x="152" y="358" width="87" height="35"/>
@@ -68,6 +74,7 @@
                     <connections>
                         <outlet property="emailTextField" destination="U8g-yM-e04" id="BkV-xL-Njl"/>
                         <outlet property="passwordTextField" destination="Pnb-fK-rKp" id="Jfh-zt-ZoM"/>
+                        <outlet property="signInButton" destination="KQY-bv-aun" id="Pi8-jF-GPA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -772,12 +779,18 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no"/>
+                                <connections>
+                                    <action selector="textEditingChanged" destination="VgN-6T-cKO" eventType="editingChanged" id="PQ3-h5-aBS"/>
+                                </connections>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Tcv-7c-Fuy">
                                 <rect key="frame" x="16" y="210" width="358" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                <connections>
+                                    <action selector="textEditingChanged" destination="VgN-6T-cKO" eventType="editingChanged" id="pmF-95-0rf"/>
+                                </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ez5-sS-Byn">
                                 <rect key="frame" x="152" y="270" width="87" height="35"/>
@@ -796,6 +809,7 @@
                     <connections>
                         <outlet property="emailTextField" destination="FF4-Ej-HiJ" id="eqZ-uU-MoC"/>
                         <outlet property="passwordTextField" destination="Tcv-7c-Fuy" id="kMI-7H-fnH"/>
+                        <outlet property="registerButton" destination="Ez5-sS-Byn" id="8o1-4C-f1z"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CN6-Aa-Hsp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

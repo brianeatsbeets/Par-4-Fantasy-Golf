@@ -19,11 +19,14 @@ class SignInViewController: UIViewController {
     
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
+    @IBOutlet var signInButton: UIButton!
     
     // MARK: - View life cycle functions
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        signInButton.isEnabled = false
     }
     
     // MARK: - Other functions
@@ -56,6 +59,13 @@ class SignInViewController: UIViewController {
                 self.transitionToTabBarController()
             }
         }
+    }
+    
+    // Toggle enabled state of sign in button
+    @IBAction func textEditingChanged() {
+        let emailText = emailTextField.text ?? ""
+        let passwordText = passwordTextField.text ?? ""
+        signInButton.isEnabled = !emailText.isEmpty && !passwordText.isEmpty
     }
     
     // MARK: - Navigation
