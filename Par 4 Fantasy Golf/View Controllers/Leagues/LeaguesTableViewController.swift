@@ -52,7 +52,11 @@ class LeaguesTableViewController: UITableViewController {
         
         // Fetch user league Ids
         userLeaguesRef.observeSingleEvent(of: .value) { snapshot in
-            guard let userLeagueIdValues = snapshot.value as? [String: Bool] else { print("Boo"); return }
+            guard let userLeagueIdValues = snapshot.value as? [String: Bool] else {
+                completion()
+                return
+            }
+            
             let userLeagueIds = userLeagueIdValues.map { $0.key }
             
             // Fetch minimal leagues from user league Ids

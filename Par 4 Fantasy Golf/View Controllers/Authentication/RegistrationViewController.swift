@@ -87,12 +87,16 @@ class RegistrationViewController: UIViewController {
 
      // Transition to the main tab bar controller
      // Is there a better way to do this? Seems a little wonky
-     func transitionToTabBarController() {
-         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-         let mainTabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarRoot")
-         
-         // Set a new root view controller
-         (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(to: mainTabBarController)
-     }
+    func transitionToTabBarController() {
+        guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let mainTabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarRoot")
+        
+        dismissLoadingIndicator(animated: false)
+        
+        // Set a new root view controller
+        sceneDelegate.setRootViewController(to: mainTabBarController)
+    }
 
 }
