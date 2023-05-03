@@ -20,6 +20,7 @@ class RegistrationViewController: UIViewController {
     
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
+    @IBOutlet var confirmPasswordTextField: UITextField!
     @IBOutlet var registerButton: UIButton!
     
     let ref = Database.database().reference(withPath: "users")
@@ -36,6 +37,12 @@ class RegistrationViewController: UIViewController {
     
     // Attempt to create a new account
     @IBAction func registerButtonPressed() {
+        
+        if passwordTextField.text! != confirmPasswordTextField.text! {
+            displayAlert(title: "Registration Error", message: "Looks like the passwords you entered don't match.")
+            return
+        }
+        
         displayLoadingIndicator(animated: true)
         
         Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { authResult, error in
@@ -76,11 +83,12 @@ class RegistrationViewController: UIViewController {
         }
     }
     
-    // Toggle enabled state of sign in button
+    // Toggle enabled state of register button
     @IBAction func textEditingChanged() {
         let emailText = emailTextField.text ?? ""
         let passwordText = passwordTextField.text ?? ""
-        registerButton.isEnabled = !emailText.isEmpty && !passwordText.isEmpty
+        let confirmPasswordText = confirmPasswordTextField.text ?? ""
+        registerButton.isEnabled = !emailText.isEmpty && !passwordText.isEmpty && !confirmPasswordText.isEmpty
     }
     
     // MARK: - Navigation

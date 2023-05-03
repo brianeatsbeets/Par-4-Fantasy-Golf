@@ -21,6 +21,23 @@ class CreateLeagueTableViewController: UITableViewController {
     let currentFirebaseUser = Auth.auth().currentUser!
     
     @IBOutlet var nameTextField: UITextField!
+    @IBOutlet var saveButton: UIBarButtonItem!
+    
+    // MARK: - View life cycle functions
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        saveButton.isEnabled = false
+    }
+    
+    // MARK: - Other functions
+    
+    // Toggle enabled state of save button
+    @IBAction func textEditingChanged() {
+        let nameText = nameTextField.text ?? ""
+        saveButton.isEnabled = !nameText.isEmpty
+    }
     
     // MARK: - Navigation
     
@@ -29,6 +46,6 @@ class CreateLeagueTableViewController: UITableViewController {
         guard segue.identifier == "createLeagueUnwind" else { return }
         
         displayLoadingIndicator(animated: true)
-        league = League(name: nameTextField.text ?? "", creator: currentFirebaseUser.uid)
+        league = League(name: nameTextField.text!, creator: currentFirebaseUser.uid)
     }
 }

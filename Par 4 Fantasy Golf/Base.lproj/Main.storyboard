@@ -723,6 +723,9 @@
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="textEditingChanged" destination="mL8-7X-6yZ" eventType="editingChanged" id="xR6-cq-f6w"/>
+                                                    </connections>
                                                 </textField>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -749,6 +752,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="nameTextField" destination="Ngi-Ue-kdf" id="D5y-30-h3K"/>
+                        <outlet property="saveButton" destination="J0Q-5U-gQd" id="pop-Yv-ef4"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TMG-Ml-bV5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -802,7 +806,7 @@
                                 </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ez5-sS-Byn">
-                                <rect key="frame" x="152" y="270" width="87" height="35"/>
+                                <rect key="frame" x="152" y="310" width="87" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Register"/>
@@ -810,12 +814,22 @@
                                     <action selector="registerButtonPressed" destination="VgN-6T-cKO" eventType="touchUpInside" id="bHw-4G-Uu8"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirm Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3aQ-7e-mMo">
+                                <rect key="frame" x="16" y="252" width="358" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                <connections>
+                                    <action selector="textEditingChanged" destination="VgN-6T-cKO" eventType="editingChanged" id="6ca-rJ-LvX"/>
+                                </connections>
+                            </textField>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="mDb-gu-5pz"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" title="Registration" id="3aO-MX-gjX"/>
                     <connections>
+                        <outlet property="confirmPasswordTextField" destination="3aQ-7e-mMo" id="ckv-uH-I06"/>
                         <outlet property="emailTextField" destination="FF4-Ej-HiJ" id="eqZ-uU-MoC"/>
                         <outlet property="passwordTextField" destination="Tcv-7c-Fuy" id="kMI-7H-fnH"/>
                         <outlet property="registerButton" destination="Ez5-sS-Byn" id="8o1-4C-f1z"/>
