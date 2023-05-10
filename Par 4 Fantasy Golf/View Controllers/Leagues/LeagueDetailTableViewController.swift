@@ -28,9 +28,6 @@ class LeagueDetailTableViewController: UITableViewController {
     var minimalTournaments = [MinimalTournament]()
     let tournamentIdsRef = Database.database().reference(withPath: "tournamentIds")
     
-    var finishedFetchingUsers = false
-    var finishedFetchingTournaments = false
-    
     // MARK: - Initializers
     
     init?(coder: NSCoder, league: League) {
@@ -54,19 +51,6 @@ class LeagueDetailTableViewController: UITableViewController {
         if league.creator != currentFirebaseUser.uid {
             leagueActionsBarButtonItemGroup.isHidden = true
         }
-        
-        // Fetch league member data
-        Task {
-            league.members = await User.fetchMultipleUsers(from: league.memberIds)
-            finishedFetchingUsers = true
-            
-            // Dismiss the loading indicator if we've finished fetching tournament data as well
-            if finishedFetchingTournaments {
-                dismissLoadingIndicator(animated: true)
-            }
-            
-            updateTableView()
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -75,13 +59,8 @@ class LeagueDetailTableViewController: UITableViewController {
         Task {
             // Fetch initial tournament data and update the table view
             minimalTournaments = (await MinimalTournament.fetchMultipleTournaments(from: league.tournamentIds)).sorted(by: { $0.name < $1.name})
-            finishedFetchingTournaments = true
             
-            // Dismiss the loading indicator if we've finished fetching user data as well
-            if finishedFetchingUsers {
-                dismissLoadingIndicator(animated: true)
-            }
-            
+            dismissLoadingIndicator(animated: true)
             updateTableView()
         }
     }

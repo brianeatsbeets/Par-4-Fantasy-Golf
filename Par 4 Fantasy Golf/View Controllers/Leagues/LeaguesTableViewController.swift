@@ -113,10 +113,13 @@ class LeaguesTableViewController: UITableViewController {
         // Fetch the league data from the tapped league's id
         Task {
             guard let minimalLeague = dataSource.itemIdentifier(for: indexPath),
-                  let league = await League.fetchSingleLeague(from: minimalLeague.id),
+                  var league = await League.fetchSingleLeague(from: minimalLeague.id),
                   let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
                       LeagueDetailTableViewController(coder: coder, league: league)
                   }) else { return }
+            
+            // Fetch the league members
+            league.members = await User.fetchMultipleUsers(from: league.memberIds)
             
             // Deselect the row and push the league details view controller while passing the full league data
             tableView.deselectRow(at: indexPath, animated: true)
