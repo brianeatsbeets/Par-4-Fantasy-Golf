@@ -140,11 +140,23 @@ class TournamentDetailTableViewController: UITableViewController {
             Task {
 
                 // Attempt to fetch updated athlete info
-                self.tournament.athletes = await Tournament.fetchEventAthleteData(eventId: self.tournament.espnId)
+                do {
+                    self.tournament.athletes = try await Tournament.fetchEventAthleteData(eventId: self.tournament.espnId)
+                } catch EventAthleteDataError.dataTaskError {
+                    self.displayAlert(title: "Update Tournament Error", message: "Looks like there was a network issue when fetching updated tournament data. Your connection could be slow, or it may have been interrupted.")
+                } catch EventAthleteDataError.invalidHttpResponse {
+                    self.displayAlert(title: "Update Tournament Error", message: "Looks like there was an issue when fetching updated tournament data. The server might be temporarily unreachable.")
+                } catch EventAthleteDataError.decodingError {
+                    self.displayAlert(title: "Update Tournament Error", message: "Looks like there was an issue when decoding the updated tournament data. If you see this message, please reach out to the developer.")
+                } catch EventAthleteDataError.noCompetitorData {
+                    self.displayAlert(title: "Update Tournament Error", message: "It doesn't look like there is any player data for this tournament right now.")
+                } catch {
+                    self.displayAlert(title: "Update Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
+                }
                 self.calculateTournamentStandings()
                 self.updateTableView()
 
-                // Update athlete data in forebase
+                // Update athlete data in firebase
                 try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
             }
         }

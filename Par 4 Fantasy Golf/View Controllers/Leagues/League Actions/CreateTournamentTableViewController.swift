@@ -147,7 +147,28 @@ class CreateTournamentTableViewController: UITableViewController {
             displayLoadingIndicator(animated: true)
             
             // Fetch tournament athletes
-            var athletes = await Tournament.fetchEventAthleteData(eventId: eventId)
+            var athletes = [Athlete]()
+            do {
+                athletes = try await Tournament.fetchEventAthleteData(eventId: eventId)
+            } catch EventAthleteDataError.dataTaskError {
+                self.displayAlert(title: "Save Tournament Error", message: "Looks like there was a network issue when fetching tournament data. Your connection could be slow, or it may have been interrupted.")
+                dismissLoadingIndicator(animated: true)
+                return
+            } catch EventAthleteDataError.invalidHttpResponse {
+                self.displayAlert(title: "Save Tournament Error", message: "Looks like there was an issue when fetching tournament data. The server might be temporarily unreachable.")
+                dismissLoadingIndicator(animated: true)
+                return
+            } catch EventAthleteDataError.decodingError {
+                self.displayAlert(title: "Save Tournament Error", message: "Looks like there was an issue when decoding the tournament data. If you see this message, please reach out to the developer.")
+                dismissLoadingIndicator(animated: true)
+                return
+            } catch EventAthleteDataError.noCompetitorData {
+                self.displayAlert(title: "No Player Data", message: "Just as a heads up, it doesn't look like there is any player data in ESPN for this tournament right now. You can enter your own player data by re-creating this tournament and providing a Google Sheet ID.")
+            } catch {
+                self.displayAlert(title: "Save Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
+                dismissLoadingIndicator(animated: true)
+                return
+            }
             
             // Parse bet data if it was provided
             if athleteBetTsv != nil {
@@ -186,7 +207,6 @@ class CreateTournamentTableViewController: UITableViewController {
                 
                 // Assign the fields and check for a matching athlete
                 let espnId = columns[0]
-                let name = columns[1]
                 guard let odds = Int(columns[2]),
                       let value = Int(columns[3]),
                       let index = athletes.firstIndex(where: { $0.espnId == espnId }) else {

@@ -53,35 +53,58 @@ class GoogleSheetsIDTableViewController: UITableViewController {
         updateSaveButtonState()
     }
     
+    // This enum provides error cases for fetching Google sheet data
+    enum GoogleSheetError: Error {
+        case dataTaskError
+        case invalidHttpResponse
+        case decodingError
+    }
+    
     // Fetch the athlete bet data from the Google sheet
     func fetchGoogleSheetData(url: URL) async -> String? {
-        var athleteBetData: String?
         
-        let downloadTask = Task { () -> String? in
+        let downloadTask = Task { () -> String in
+            let data: Data
+            let response: URLResponse
+            
             do {
                 // Request data from the URL
-                let (data, response) = try await URLSession.shared.data(from: url)
-                
-                // Make sure we have a valid HTTP response and that the data can be decoded into a string
-                guard let httpResponse = response as? HTTPURLResponse,
-                   httpResponse.statusCode == 200,
-                      let tsvResponse = String(data: data, encoding: .utf8) else { return nil }
-                
-                // Assign the response
-                athleteBetData = tsvResponse
+                (data, response) = try await URLSession.shared.data(from: url)
             } catch {
                 print("Caught error from URLSession.shared.data function")
+                throw GoogleSheetError.dataTaskError
             }
             
-            return athleteBetData
+            // Make sure we have a valid HTTP response
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else { throw GoogleSheetError.invalidHttpResponse }
+            
+            // Make sure that the data can be decoded into a string
+            if let tsvResponse = String(data: data, encoding: .utf8) {
+                // Return the response
+                return tsvResponse
+            } else {
+                throw GoogleSheetError.decodingError
+            }
         }
+        
+        let result = await downloadTask.result
+        var athleteBetData: String? = nil
         
         do {
             // Attempt to return the resulting string
-            return try await downloadTask.result.get()
-        }  catch {
-            return nil
+            athleteBetData = try result.get()
+        } catch GoogleSheetError.dataTaskError {
+            self.displayAlert(title: "Google Sheets Error", message: "Looks like there was a network issue when fetching the Google Sheet data. Your connection could be slow, or it may have been interrupted.")
+        } catch GoogleSheetError.invalidHttpResponse {
+            self.displayAlert(title: "Google Sheets Error", message: "Looks like there was an issue when fetching the Google Sheet data. The server might be temporarily unreachable.")
+        } catch GoogleSheetError.decodingError {
+            self.displayAlert(title: "Google Sheets Error", message: "Looks like there was an issue when decoding the Google Sheet data. If you see this message, please reach out to the developer.")
+        } catch {
+            self.displayAlert(title: "Google Sheets Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
         }
+        
+        return athleteBetData
     }
     
     // MARK: - Navigation

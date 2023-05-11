@@ -189,67 +189,66 @@ struct Tournament: Hashable {
     }
     
     // Fetch updated athlete data
-    static func fetchEventAthleteData(eventId: String) async -> [Athlete] {
+    static func fetchEventAthleteData(eventId: String) async throws -> [Athlete] {
         
         print("Fetching athlete data from ESPN api")
         
         var athletes = [Athlete]()
+        let data: Data
+        let response: URLResponse
         
         // Construct URL
         let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?event=\(eventId)")!
         
         do {
             // Request data from the URL
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            // Make sure we have a valid HTTP response
-            if let httpResponse = response as? HTTPURLResponse,
-               httpResponse.statusCode == 200,
-               let apiResponse = try? JSONDecoder().decode(EventApiResponse.self, from: data) {
-                
-                // Get the competitors
-                let competitors = apiResponse.events[0].competitions[0].competitors
-                
-                // If there are no competitors, exit early
-                if competitors.isEmpty {
-                    print("No competitors found")
-                    return []
-                }
-                
-                // Parse each competitor and create an Athlete from each one
-                for competitor in competitors {
-                    let scoreString = competitor.score.displayValue
-                    let id = competitor.id
-                    var isCut = false
-                    var score = 0
-                    
-                    // Convert score string to int
-                    if scoreString != "E",
-                       Int(scoreString) != nil {
-                        score = Int(scoreString)!
-                    }
-                    
-                    let name = competitor.athlete.displayName
-                    if competitor.status.displayValue == "CUT" {
-                        isCut = true
-                    }
-                    
-                    athletes.append(Athlete(espnId: id, name: name, score: score, isCut: isCut))
-                }
-                
-                // Sort the athletes
-                athletes = athletes.sorted { $0.name < $1.name }
-                
-                return athletes
-                
-            } else {
-                print("HTTP request error: \(response.description)")
-                return []
-            }
+            (data, response) = try await URLSession.shared.data(from: url)
         } catch {
             print("Caught error from URLSession.shared.data function")
-            return []
+            throw EventAthleteDataError.dataTaskError
         }
+            
+        // Make sure we have a valid HTTP response
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else { throw EventAthleteDataError.invalidHttpResponse }
+        
+        // Make sure we can decode the data
+        guard let apiResponse = try? JSONDecoder().decode(EventApiResponse.self, from: data) else { throw EventAthleteDataError.decodingError }
+            
+        // Get the competitors
+        let competitors = apiResponse.events[0].competitions[0].competitors
+        
+        // If there are no competitors, exit early
+        if competitors.isEmpty {
+            print("No competitors found")
+            throw EventAthleteDataError.noCompetitorData
+        }
+        
+        // Parse each competitor and create an Athlete from each one
+        for competitor in competitors {
+            let scoreString = competitor.score.displayValue
+            let id = competitor.id
+            var isCut = false
+            var score = 0
+            
+            // Convert score string to int
+            if scoreString != "E",
+               Int(scoreString) != nil {
+                score = Int(scoreString)!
+            }
+            
+            let name = competitor.athlete.displayName
+            if competitor.status.displayValue == "CUT" {
+                isCut = true
+            }
+            
+            athletes.append(Athlete(espnId: id, name: name, score: score, isCut: isCut))
+        }
+        
+        // Sort the athletes
+        athletes = athletes.sorted { $0.name < $1.name }
+        
+        return athletes
     }
 }
 
@@ -275,4 +274,14 @@ extension String {
         }
         return date.timeIntervalSince1970
     }
+}
+
+// MARK: - Extensions
+
+// This enum provides error cases for fetching event athlete data
+enum EventAthleteDataError: Error {
+    case dataTaskError
+    case invalidHttpResponse
+    case decodingError
+    case noCompetitorData
 }
