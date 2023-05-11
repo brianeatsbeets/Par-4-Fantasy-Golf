@@ -58,7 +58,7 @@ class LeagueDetailTableViewController: UITableViewController {
         
         Task {
             // Fetch initial tournament data and update the table view
-            minimalTournaments = (await MinimalTournament.fetchMultipleTournaments(from: league.tournamentIds)).sorted(by: { $0.name < $1.name})
+            minimalTournaments = (await MinimalTournament.fetchMultipleTournaments(from: league.tournamentIds)).sorted(by: { $0.startDate > $1.startDate})
             
             dismissLoadingIndicator(animated: true)
             updateTableView()
