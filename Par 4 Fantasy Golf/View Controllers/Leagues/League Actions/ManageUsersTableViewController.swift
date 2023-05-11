@@ -157,9 +157,11 @@ extension ManageUsersTableViewController {
         
         var leagueUsersRef = DatabaseReference()
         var usersRef = DatabaseReference()
+        var tournamentsRef = DatabaseReference()
         var selectedLeague: League!
         var delegate: ManageUsersDelegate?
         var swipeToDeleteDelegate: ManageUsersSwipeToDeleteDelegate?
+        var manageUsersViewController: ManageUsersTableViewController?
         
         // MARK: - Other functions
         
@@ -180,17 +182,35 @@ extension ManageUsersTableViewController {
             guard let user = itemIdentifier(for: indexPath),
                   editingStyle == .delete else { return }
             
-            // Alert delegates of removed user
-            delegate?.removeUser(user: user)
-            swipeToDeleteDelegate?.removeUser(user: user)
+            let removeUserAlert = UIAlertController(title: "Are you sure?", message: "This user and their records for this league will be permanently deleted.", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            let okAction = UIAlertAction(title: "Delete User", style: .destructive) { _ in
+                
+                removeUserAlert.dismiss(animated: true)
+                
+                // Alert delegates of removed user
+                self.delegate?.removeUser(user: user)
+                self.swipeToDeleteDelegate?.removeUser(user: user)
+                
+                // Remove the user's picks from the local data source and Firebase
+                for tournamentId in self.selectedLeague.tournamentIds {
+                    if let index = self.selectedLeague.tournaments.firstIndex(where: { $0.id == tournamentId }) {
+                        self.selectedLeague.tournaments[index].pickIds.removeValue(forKey: user.id)
+                    }
+                    self.tournamentsRef.child(tournamentId).child("pickIds").child(user.id).removeValue()
+                }
+                
+                // Remove the user's id from the league's memberIds and remove the league's id from the user's league ids
+                self.leagueUsersRef.child(user.id).removeValue()
+                self.usersRef.child(user.id).child("leagues").child(self.selectedLeague.id).removeValue()
+            }
             
-            // Remove the user's picks from the local data source and Firebase
-            //selectedLeague.pickIds.removeValue(forKey: user.id)
-            selectedLeague.databaseReference.child("pickIds").child(user.id).removeValue()
+            removeUserAlert.addAction(cancelAction)
+            removeUserAlert.addAction(okAction)
             
-            // Remove the user's id from the league's memberIds and remove the league's id from the user's league ids
-            leagueUsersRef.child(user.id).removeValue()
-            usersRef.child(user.id).child("leagues").child(selectedLeague.id).removeValue()
+            if let manageUsersViewController = manageUsersViewController {
+                manageUsersViewController.present(removeUserAlert, animated: true)
+            }
         }
     }
     
@@ -224,9 +244,11 @@ extension ManageUsersTableViewController {
         // Variables that allow the custom data source to access the current league's firebase database reference to delete data
         dataSource.leagueUsersRef = leagueUsersRef
         dataSource.usersRef = Database.database().reference(withPath: "users")
+        dataSource.tournamentsRef = Database.database().reference(withPath: "tournaments")
         dataSource.selectedLeague = league
         dataSource.delegate = delegate // LeagueDetailTableViewController
         dataSource.swipeToDeleteDelegate = self
+        dataSource.manageUsersViewController = self
         
         return dataSource
     }
