@@ -99,9 +99,9 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Set make picks button text and state
         if tournament.athletes.isEmpty {
-            makePicksButton.title = "Make Picks (Players not yet available)"
+            //makePicksButton.title = "Make Picks (Players not yet available)"
         } else if Date.now.timeIntervalSince1970 >= tournament.startDate {
-            makePicksButton.title = "Make Picks (Tournament has started)"
+            //makePicksButton.title = "Make Picks (Tournament has started)"
         } else {
             makePicksButton.isEnabled = true
         }
