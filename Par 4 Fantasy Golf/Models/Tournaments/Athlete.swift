@@ -87,7 +87,7 @@ struct Athlete: Hashable, Codable {
             "value": value,
             "score": score,
             "isCut": isCut
-        ]
+        ] as [String : Any]
     }
     
     // Helper function to fetch a user object from a user id

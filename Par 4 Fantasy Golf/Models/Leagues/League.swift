@@ -99,7 +99,7 @@ struct League: Hashable {
             "creator": creator,
             "memberIds": memberDict,
             "tournamenIds": tourneyDict
-        ]
+        ] as [String : Any]
     }
     
     // Helper function to fetch a league object from a league id

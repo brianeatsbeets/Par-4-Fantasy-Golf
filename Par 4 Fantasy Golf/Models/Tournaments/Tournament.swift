@@ -131,7 +131,7 @@ struct Tournament: Hashable {
             "budget": budget,
             "espnId": espnId,
             "lastUpdateTime": lastUpdateTime
-        ]
+        ] as [String : Any]
     }
     
     // Helper function to fetch a tournament object from a tournament id

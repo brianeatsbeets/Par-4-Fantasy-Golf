@@ -51,7 +51,7 @@ struct MinimalTournament: Hashable {
             "name": name,
             "startDate": startDate,
             "endDate": endDate
-        ]
+        ] as [String : Any]
     }
     
     // Helper function to fetch a tournament object from a tournament id

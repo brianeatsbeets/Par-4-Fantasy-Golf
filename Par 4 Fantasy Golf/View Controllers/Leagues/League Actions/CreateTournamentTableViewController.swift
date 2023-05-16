@@ -163,7 +163,24 @@ class CreateTournamentTableViewController: UITableViewController {
                 dismissLoadingIndicator(animated: true)
                 return
             } catch EventAthleteDataError.noCompetitorData {
-                self.displayAlert(title: "No Player Data", message: "Just as a heads up, it doesn't look like there is any player data in ESPN for this tournament right now. You can enter your own player data by re-creating this tournament and providing a Google Sheet ID.")
+                
+                // Create a custom alert with a completion handler in order to wait for user interaction before beginning segue
+                let noCompetitorDataAlert = UIAlertController(title: "No Player Data", message: "Just as a heads up, it doesn't look like there is any player data in ESPN for this tournament right now. You can enter your own player data by re-creating this tournament and providing a Google Sheet ID, or you can manually enter player information in the Manage Athletes page.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                    noCompetitorDataAlert.dismiss(animated: true)
+                    
+                    // Create new tournament object
+                    self.tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget, athletes: athletes, espnId: eventId)
+                    
+                    // Segue back to LeagueDetailTableViewController
+                    self.performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
+                }
+                
+                noCompetitorDataAlert.addAction(okAction)
+                present(noCompetitorDataAlert, animated: true)
+                return
+                
             } catch {
                 self.displayAlert(title: "Save Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
                 dismissLoadingIndicator(animated: true)
