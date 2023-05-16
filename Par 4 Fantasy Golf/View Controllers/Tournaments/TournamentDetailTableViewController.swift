@@ -95,16 +95,8 @@ class TournamentDetailTableViewController: UITableViewController {
     // Initialize UI elements
     func setupUI() {
         title = tournament.name
-        makePicksButton.isEnabled = false
         
-        // Set make picks button text and state
-        if tournament.athletes.isEmpty {
-            //makePicksButton.title = "Make Picks (Players not yet available)"
-        } else if Date.now.timeIntervalSince1970 >= tournament.startDate {
-            //makePicksButton.title = "Make Picks (Tournament has started)"
-        } else {
-            makePicksButton.isEnabled = true
-        }
+        setMakePicksButtonState()
         
         // If the current user is not the tournament owner, hide administrative actions
         if tournament.creator != currentFirebaseUser.email {
@@ -115,6 +107,20 @@ class TournamentDetailTableViewController: UITableViewController {
         // Calculate the standings and update the table view
         calculateTournamentStandings()
         updateTableView()
+    }
+    
+    // Set the state of the Make Picks button
+    func setMakePicksButtonState() {
+        makePicksButton.isEnabled = false
+        
+        // Set make picks button text and state
+        if tournament.athletes.isEmpty {
+            //makePicksButton.title = "Make Picks (Players not yet available)"
+        } else if Date.now.timeIntervalSince1970 >= tournament.startDate {
+            //makePicksButton.title = "Make Picks (Tournament has started)"
+        } else {
+            makePicksButton.isEnabled = true
+        }
     }
     
     // Set up the update countdown timer
@@ -398,11 +404,13 @@ extension TournamentDetailTableViewController: ManageAthletesDelegate {
     // Add a new athlete
     func addAthlete(athlete: Athlete) {
         tournament.athletes.append(athlete)
+        setMakePicksButtonState()
     }
     
     // Remove an existing athlete
     func removeAthlete(athlete: Athlete) {
         tournament.athletes.removeAll { $0.id == athlete.id }
+        setMakePicksButtonState()
     }
     
     // Update an existing athlete
