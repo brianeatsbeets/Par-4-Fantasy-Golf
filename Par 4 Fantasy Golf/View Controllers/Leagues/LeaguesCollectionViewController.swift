@@ -11,8 +11,6 @@ import UIKit
 import FirebaseAuth
 import FirebaseDatabase
 
-private let reuseIdentifier = "CollectionLeagueCell"
-
 // MARK: - Main class
 
 // This class/view controller displays available leagues
@@ -34,7 +32,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
         collectionView.collectionViewLayout = createLayout()
 
         // Register cell classes
-        collectionView.register(LeagueCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        //collectionView.register(LeagueCollectionViewCell.self, forCellWithReuseIdentifier: LeagueCollectionViewCell.reuseIdentifier)
 
         collectionView.dataSource = dataSource
     }
@@ -275,7 +273,7 @@ extension LeaguesCollectionViewController {
         return .init(collectionView: collectionView, cellProvider: { (collectionView, indexPath, league) -> LeagueCollectionViewCell? in
             
             // Configure the cell
-            let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! LeagueCollectionViewCell
+            let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: LeagueCollectionViewCell.reuseIdentifier, for: indexPath) as! LeagueCollectionViewCell
             cell.configure(with: league)
             
             return cell

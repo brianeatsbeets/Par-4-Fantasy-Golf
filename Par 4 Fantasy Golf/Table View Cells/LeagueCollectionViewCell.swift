@@ -16,51 +16,23 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     
-    static let reuseIdentifier = "LeagueCollectionCell"
+    static let reuseIdentifier = "CollectionLeagueCell"
     
-    let stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 0
-        stackView.distribution = .fill
-        stackView.alignment = .fill
-        
-        return stackView
-    }()
+    @IBOutlet var titleLabel: UILabel!
     
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 24, weight: .regular)
-        label.textColor = UIColor.label
-        label.setContentHuggingPriority(.required, for: .vertical)
-        
-        return label
-    }()
+    @IBOutlet var mainContentView: UIView!
     
-    let imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = 20.0
-        return imageView
-    }()
+    @IBOutlet var leagueStangingFirstLabel: UILabel!
+    @IBOutlet var leagueStandingSecondLabel: UILabel!
+    @IBOutlet var leagueStandingThirdLabel: UILabel!
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        stackView.addArrangedSubview(titleLabel)
-        stackView.setCustomSpacing(10, after: titleLabel)
-        stackView.addArrangedSubview(imageView)
-        addSubview(stackView)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor)
-        ])
-    }
+    @IBOutlet var recentTournamentFirstLabel: UILabel!
+    @IBOutlet var recentTournamentSecondLabel: UILabel!
+    @IBOutlet var recentTournamentThirdLabel: UILabel!
+
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override func awakeFromNib() {
+        mainContentView.layer.cornerRadius = 12.0
     }
     
     // MARK: - Functions
@@ -74,7 +46,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
 //        backgroundColor = .cyan
         
         titleLabel.text = league.name
-        imageView.backgroundColor = .cyan
+        
     }
 
 }
