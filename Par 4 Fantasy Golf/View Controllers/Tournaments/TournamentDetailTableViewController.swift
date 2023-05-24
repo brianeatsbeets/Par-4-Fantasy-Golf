@@ -53,6 +53,11 @@ class TournamentDetailTableViewController: UITableViewController {
         tableView.dataSource = dataSource
         
         setupUI()
+        
+        // Print out athletes and ESPN Ids for import
+        for athlete in tournament.athletes {
+            print(athlete.espnId + "," + athlete.name)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

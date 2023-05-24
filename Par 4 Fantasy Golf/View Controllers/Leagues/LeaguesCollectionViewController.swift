@@ -97,32 +97,11 @@ class LeaguesCollectionViewController: UICollectionViewController {
             // TODO: Send out league fetch request concurrently
             Task {
                 for var league in await League.fetchMultipleLeagues(from: userLeagueIds) {
-                    print("Fetched league \(league.name)")
                     league.members = await User.fetchMultipleUsers(from: league.memberIds)
-                    print("Fetched users")
                     league.tournaments = await Tournament.fetchMultipleTournaments(from: league.tournamentIds)
-                    print("Fetched tournaments")
 
                     self.leagues.append(league)
                 }
-                
-//                let group = DispatchGroup()
-//                self.leagues = await League.fetchMultipleLeagues(from: userLeagueIds)
-//
-//                for i in 0...self.leagues.count - 1 {
-//                    group.enter()
-//                    let memberIds = self.leagues[i].memberIds
-//                    let tournamentIds = self.leagues[i].tournamentIds
-//                    self.leagues[i].members = await User.fetchMultipleUsers(from: memberIds)
-//                    print("Fetched users for \(self.leagues[i].name)")
-//                    self.leagues[i].tournaments = await Tournament.fetchMultipleTournaments(from: tournamentIds)
-//                    print("Fetched tournaments for \(self.leagues[i].name)")
-//                    group.leave()
-//                }
-//
-//                group.notify(queue: DispatchQueue.main) {
-//                    print("All done!")
-//                }
                 
                 // Sort leagues
                 self.leagues = self.leagues.sorted(by: { $0.name > $1.name})
