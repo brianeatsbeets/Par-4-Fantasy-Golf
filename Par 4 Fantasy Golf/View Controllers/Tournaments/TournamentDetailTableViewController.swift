@@ -80,7 +80,8 @@ class TournamentDetailTableViewController: UITableViewController {
         if firstLoad {
             firstLoad = false
         } else {
-            calculateTournamentStandings()
+            //calculateTournamentStandings()
+            standings = tournament.calculateStandings(league: league)
             updateTableView()
         }
     }
@@ -105,7 +106,8 @@ class TournamentDetailTableViewController: UITableViewController {
         }
         
         // Calculate the standings and update the table view
-        calculateTournamentStandings()
+        //calculateTournamentStandings()
+        standings = tournament.calculateStandings(league: league)
         updateTableView()
     }
     
@@ -159,7 +161,8 @@ class TournamentDetailTableViewController: UITableViewController {
                 } catch {
                     self.displayAlert(title: "Update Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
                 }
-                self.calculateTournamentStandings()
+                //self.calculateTournamentStandings()
+                self.standings = self.tournament.calculateStandings(league: self.league)
                 self.updateTableView()
 
                 // Update athlete data in firebase
@@ -193,66 +196,6 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Add the timer to the .common runloop so it will update during user interaction
         RunLoop.current.add(updateTimer, forMode: .common)
-    }
-    
-    // Calculate the tournament standings
-    func calculateTournamentStandings() {
-        
-        var newStandings = [TournamentStanding]()
-        
-        // Create a tournament standing object for each user
-        for user in league.members {
-            
-            var topAthletes = [Athlete]()
-            var cutAthleteCount = 0
-            
-            // If user has picked at least one athlete, calculate the top athletes
-            if let userPicks = tournament.pickIds[user.id] {
-                
-                // Fetch the picked athletes
-                var athletes = tournament.athletes.filter { userPicks.contains([$0.id]) }
-                
-                // Filter out and count cut athletes
-                cutAthleteCount = athletes.filter { $0.isCut }.count
-                athletes = athletes.filter { !$0.isCut }
-                
-                // Sort and copy the top athletes to a new array
-                if !athletes.isEmpty {
-                    let sortedAthletes = athletes.sorted { $0.score < $1.score }
-                    let athleteCount = sortedAthletes.count >= 4 ? 3 : sortedAthletes.count - 1
-                    topAthletes = Array(sortedAthletes[0...athleteCount])
-                }
-            }
-            
-            // Create and append a new tournament standing to the temporary container
-            let userStanding = TournamentStanding(tournamentId: tournament.id, user: user, topAthletes: topAthletes, penalties: cutAthleteCount)
-            newStandings.append(userStanding)
-        }
-        
-        // Sort the standings
-        newStandings = newStandings.sorted(by: <)
-        
-        //  Format and assign placements
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .ordinal
-        newStandings.indices.forEach { newStandings[$0].place = formatter.string(for: $0+1)! }
-        
-        // Account for ties
-        var i = 0
-        while i < newStandings.count-1 {
-            if newStandings[i].score == newStandings[i+1].score {
-                
-                // Don't add a 'T' if the place already has one
-                if !newStandings[i].place.hasPrefix("T") {
-                    newStandings[i].place = "T" + newStandings[i].place
-                }
-                newStandings[i+1].place = newStandings[i].place
-            }
-            i += 1
-        }
-        
-        // Save the standings
-        standings = newStandings
     }
     
     // Remove tournament data and user associations
@@ -357,7 +300,8 @@ class TournamentDetailTableViewController: UITableViewController {
         tournament.pickIds[currentFirebaseUser.uid] = pickArray
         
         // Update the tournament standings and refresh the table view
-        calculateTournamentStandings()
+        //calculateTournamentStandings()
+        standings = tournament.calculateStandings(league: league)
         updateTableView()
     }
 }

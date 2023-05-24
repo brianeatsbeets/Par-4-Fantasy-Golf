@@ -47,6 +47,15 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         
         titleLabel.text = league.name
         
+        let sortedTournaments = league.tournaments.sorted { $0.endDate > $1.endDate }
+        
+        if let recentTournament = sortedTournaments.first {
+            print(recentTournament.name)
+            let standings = recentTournament.calculateStandings(league: league)
+            recentTournamentFirstLabel.text = standings.indices.contains(0) ? "1st: \(standings[0].user.email) - \(standings[0].formattedScore)" : ""
+            recentTournamentSecondLabel.text = standings.indices.contains(1) ? "2nd: \(standings[1].user.email) - \(standings[1].formattedScore)" : ""
+            recentTournamentThirdLabel.text = standings.indices.contains(2) ? "3rd: \(standings[2].user.email) - \(standings[2].formattedScore)" : ""
+        }
     }
 
 }

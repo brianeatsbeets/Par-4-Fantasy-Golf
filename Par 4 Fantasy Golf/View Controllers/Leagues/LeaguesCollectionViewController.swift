@@ -91,9 +91,38 @@ class LeaguesCollectionViewController: UICollectionViewController {
             
             let userLeagueIds = userLeagueIdValues.map { $0.key }
             
-            // Fetch minimal leagues from user league Ids
+            self.leagues = [League]()
+            
+            // Fetch leagues from user league Ids
+            // TODO: Send out league fetch request concurrently
             Task {
-                self.leagues = await League.fetchMultipleLeagues(from: userLeagueIds)
+                for var league in await League.fetchMultipleLeagues(from: userLeagueIds) {
+                    print("Fetched league \(league.name)")
+                    league.members = await User.fetchMultipleUsers(from: league.memberIds)
+                    print("Fetched users")
+                    league.tournaments = await Tournament.fetchMultipleTournaments(from: league.tournamentIds)
+                    print("Fetched tournaments")
+
+                    self.leagues.append(league)
+                }
+                
+//                let group = DispatchGroup()
+//                self.leagues = await League.fetchMultipleLeagues(from: userLeagueIds)
+//
+//                for i in 0...self.leagues.count - 1 {
+//                    group.enter()
+//                    let memberIds = self.leagues[i].memberIds
+//                    let tournamentIds = self.leagues[i].tournamentIds
+//                    self.leagues[i].members = await User.fetchMultipleUsers(from: memberIds)
+//                    print("Fetched users for \(self.leagues[i].name)")
+//                    self.leagues[i].tournaments = await Tournament.fetchMultipleTournaments(from: tournamentIds)
+//                    print("Fetched tournaments for \(self.leagues[i].name)")
+//                    group.leave()
+//                }
+//
+//                group.notify(queue: DispatchQueue.main) {
+//                    print("All done!")
+//                }
                 
                 // Sort leagues
                 self.leagues = self.leagues.sorted(by: { $0.name > $1.name})
@@ -185,7 +214,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
             guard var league = dataSource.itemIdentifier(for: indexPath) else { return }
             
             // Fetch the league members
-            league.members = await User.fetchMultipleUsers(from: league.memberIds)
+            //league.members = await User.fetchMultipleUsers(from: league.memberIds)
             
             guard let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
                 LeagueDetailTableViewController(coder: coder, league: league)
