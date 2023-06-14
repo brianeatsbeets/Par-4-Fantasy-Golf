@@ -21,8 +21,9 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     @IBOutlet var titleLabel: UILabel!
     
     @IBOutlet var mainContentView: UIView!
-    @IBOutlet var leagueStandingsView: UIView!
-    @IBOutlet var recentTournamentView: UIView!
+    
+    @IBOutlet var leagueDetailsStackView: UIStackView!
+    @IBOutlet var noDataLabel: UILabel!
     
     @IBOutlet var leagueStangingFirstLabel: UILabel!
     @IBOutlet var leagueStandingSecondLabel: UILabel!
@@ -37,20 +38,18 @@ class LeagueCollectionViewCell: UICollectionViewCell {
 
     override func awakeFromNib() {
         mainContentView.layer.cornerRadius = 12.0
-        leagueStandingsView.layer.cornerRadius = 12.0
-        recentTournamentView.layer.cornerRadius = 12.0
     }
     
     // MARK: - Functions
 
     // Set up the cell UI elements
-    //func configure(with league: MinimalLeague) {
     func configure(with league: League) {
         
         titleLabel.text = league.name
         
         let sortedTournaments = league.tournaments.sorted { $0.endDate > $1.endDate }
         
+        // Calculate and display most recent tournament data
         if let recentTournament = sortedTournaments.first {
             recentTournamentNameLabel.text = recentTournament.name
             recentTournamentStatusLabel.text = recentTournament.endDate < Date.now.timeIntervalSince1970 ? "Ended \(recentTournament.endDate.formattedDate())" : "LIVE"
@@ -66,6 +65,9 @@ class LeagueCollectionViewCell: UICollectionViewCell {
             recentTournamentFirstLabel.text = standings.indices.contains(0) ? "1st: \(standings[0].user.email) - \(standings[0].formattedScore)" : ""
             recentTournamentSecondLabel.text = standings.indices.contains(1) ? "2nd: \(standings[1].user.email) - \(standings[1].formattedScore)" : ""
             recentTournamentThirdLabel.text = standings.indices.contains(2) ? "3rd: \(standings[2].user.email) - \(standings[2].formattedScore)" : ""
+        } else {
+            leagueDetailsStackView.isHidden = true
+            noDataLabel.isHidden = false
         }
     }
 

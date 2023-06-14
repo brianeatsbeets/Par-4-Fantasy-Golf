@@ -31,6 +31,7 @@ struct Tournament: Hashable {
     var pickIds = [String: [String]]()
     var budget: Int
     var lastUpdateTime: Double
+    var winner: String?
     
     // MARK: - Initializers
     
@@ -79,6 +80,8 @@ struct Tournament: Hashable {
         self.espnId = espnId
         self.lastUpdateTime = lastUpdateTime
         
+        // Assign properties that may or may not have values
+        
         self.athletes = []
         if let athletes = value["athletes"] as? [String: [String: AnyObject]] {
             for athlete in athletes {
@@ -97,6 +100,10 @@ struct Tournament: Hashable {
             self.pickIds = pickIds.reduce(into: [String: [String]]()) {
                 $0[$1.key] = $1.value.map { $0.key }
             }
+        }
+        
+        if let winner = value["winner"] as? String {
+            self.winner = winner
         }
     }
     

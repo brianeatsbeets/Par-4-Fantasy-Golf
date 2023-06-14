@@ -30,10 +30,6 @@ class LeaguesCollectionViewController: UICollectionViewController {
         super.viewDidLoad()
         
         collectionView.collectionViewLayout = createLayout()
-
-        // Register cell classes
-        //collectionView.register(LeagueCollectionViewCell.self, forCellWithReuseIdentifier: LeagueCollectionViewCell.reuseIdentifier)
-
         collectionView.dataSource = dataSource
     }
     
@@ -43,11 +39,6 @@ class LeaguesCollectionViewController: UICollectionViewController {
         displayLoadingIndicator(animated: false)
         
         // Fetch initial league data and update the collection view
-//        fetchMinimalLeagueData() {
-//            self.dismissLoadingIndicator(animated: true)
-//            self.updateCollectionView()
-//        }
-        
         fetchLeagueData() {
             self.dismissLoadingIndicator(animated: true)
             self.updateCollectionView()
@@ -55,29 +46,6 @@ class LeaguesCollectionViewController: UICollectionViewController {
     }
     
     // MARK: - Other functions
-    
-    // Fetch league data from the leagueIds tree and store it
-    func fetchMinimalLeagueData(completion: @escaping () -> Void) {
-        
-        // Fetch user league Ids
-        userLeaguesRef.observeSingleEvent(of: .value) { snapshot in
-            guard let userLeagueIdValues = snapshot.value as? [String: Bool] else {
-                completion()
-                return
-            }
-            
-            let userLeagueIds = userLeagueIdValues.map { $0.key }
-            
-            // Fetch minimal leagues from user league Ids
-            Task {
-                self.minimalLeagues = await MinimalLeague.fetchMultipleLeagues(from: userLeagueIds)
-                
-                // Sort leagues
-                self.minimalLeagues = self.minimalLeagues.sorted(by: { $0.name > $1.name})
-                completion()
-            }
-        }
-    }
     
     // Fetch league data from the leagueIds tree and store it
     func fetchLeagueData(completion: @escaping () -> Void) {
@@ -110,15 +78,10 @@ class LeaguesCollectionViewController: UICollectionViewController {
         }
     }
     
+    // Initialize the collection view layout
     func createLayout() -> UICollectionViewLayout {
         
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-            
-            // Define header item
-            //let headerItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92), heightDimension: .estimated(44))
-            //let headerItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerItemSize, elementKind: SupplementaryViewKind.header, alignment: .top)
-            
-            // MARK: Promoted Section Layout
             
             // Define item
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
@@ -135,9 +98,6 @@ class LeaguesCollectionViewController: UICollectionViewController {
             let section = NSCollectionLayoutSection(group: group)
             // Set horizontal scroll behavior
             section.orthogonalScrollingBehavior = .groupPagingCentered
-            // Set content insets (affects boundary supplementaty items)
-            //section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 0, bottom: 20, trailing: 0)
-            
             
             return section
         }
@@ -170,9 +130,9 @@ class LeaguesCollectionViewController: UICollectionViewController {
                 try await Database.database().reference(withPath: "users").child(id).child("leagues").child(league.id).setValue(true)
             }
             
-            // Save the minimal league to the local data source
-            minimalLeagues.append(minimalLeague)
-            minimalLeagues = minimalLeagues.sorted(by: { $0.name > $1.name})
+            // Save the league to the local data source
+            leagues.append(league)
+            leagues = leagues.sorted(by: { $0.name > $1.name})
             
             updateCollectionView()
             
@@ -183,69 +143,15 @@ class LeaguesCollectionViewController: UICollectionViewController {
     // Segue to LeagueDetailViewController with full league data
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        displayLoadingIndicator(animated: true)
+        guard let league = dataSource.itemIdentifier(for: indexPath),
+              let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
+                  LeagueDetailTableViewController(coder: coder, league: league)
+              }) else { return }
         
-        // Fetch the league data from the tapped league's id
-        Task {
-            //guard let minimalLeague = dataSource.itemIdentifier(for: indexPath),
-            //      var league = await League.fetchSingleLeague(from: minimalLeague.id) else { return }
-            
-            guard var league = dataSource.itemIdentifier(for: indexPath) else { return }
-            
-            // Fetch the league members
-            //league.members = await User.fetchMultipleUsers(from: league.memberIds)
-            
-            guard let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
-                LeagueDetailTableViewController(coder: coder, league: league)
-            }) else { return }
-            
-            // Deselect the row and push the league details view controller while passing the full league data
-            collectionView.deselectItem(at: indexPath, animated: true)
-            self.navigationController?.pushViewController(destinationViewController, animated: true)
-        }
+        // Deselect the row and push the league details view controller while passing the full league data
+        collectionView.deselectItem(at: indexPath, animated: true)
+        navigationController?.pushViewController(destinationViewController, animated: true)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-    
-    }
-    */
-
 }
 
 // MARK: - Extensions
@@ -263,19 +169,6 @@ extension LeaguesCollectionViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    //func createDataSource() -> UICollectionViewDiffableDataSource<Section, MinimalLeague> {
-//    func createDataSource() -> UICollectionViewDiffableDataSource<Section, League> {
-//
-//        return UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, league in
-//
-//            // Configure the cell
-//            let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! LeagueCollectionViewCell
-//            cell.configure(with: league)
-//
-//            return cell
-//        }
-//    }
-    
     func createDataSource() -> UICollectionViewDiffableDataSource<Section, League> {
         
         return .init(collectionView: collectionView, cellProvider: { (collectionView, indexPath, league) -> LeagueCollectionViewCell? in

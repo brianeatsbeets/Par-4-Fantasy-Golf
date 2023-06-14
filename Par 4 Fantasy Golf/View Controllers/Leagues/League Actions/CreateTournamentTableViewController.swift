@@ -141,62 +141,70 @@ class CreateTournamentTableViewController: UITableViewController {
         
         let budget = Int(budgetTextField.text ?? "") ?? 0
         let eventId = selectedEvent.eventId
+        var athletes = [Athlete]()
         
-        Task {
-            
-            displayLoadingIndicator(animated: true)
-            
-            // Fetch tournament athletes
-            var athletes = [Athlete]()
-            do {
-                athletes = try await Tournament.fetchEventAthleteData(eventId: eventId)
-            } catch EventAthleteDataError.dataTaskError {
-                self.displayAlert(title: "Save Tournament Error", message: "Looks like there was a network issue when fetching tournament data. Your connection could be slow, or it may have been interrupted.")
-                dismissLoadingIndicator(animated: true)
-                return
-            } catch EventAthleteDataError.invalidHttpResponse {
-                self.displayAlert(title: "Save Tournament Error", message: "Looks like there was an issue when fetching tournament data. The server might be temporarily unreachable.")
-                dismissLoadingIndicator(animated: true)
-                return
-            } catch EventAthleteDataError.decodingError {
-                self.displayAlert(title: "Save Tournament Error", message: "Looks like there was an issue when decoding the tournament data. If you see this message, please reach out to the developer.")
-                dismissLoadingIndicator(animated: true)
-                return
-            } catch EventAthleteDataError.noCompetitorData {
-                
-                // Create a custom alert with a completion handler in order to wait for user interaction before beginning segue
-                let noCompetitorDataAlert = UIAlertController(title: "No Player Data", message: "Just as a heads up, it doesn't look like there is any player data in ESPN for this tournament right now. You can enter your own player data by re-creating this tournament and providing a Google Sheet ID, or you can manually enter player information in the Manage Athletes page.", preferredStyle: .alert)
-                
-                let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                    noCompetitorDataAlert.dismiss(animated: true)
-                    
-                    // Create new tournament object
-                    self.tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget, athletes: athletes, espnId: eventId)
-                    
-                    // Segue back to LeagueDetailTableViewController
-                    self.performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
-                }
-                
-                noCompetitorDataAlert.addAction(okAction)
-                present(noCompetitorDataAlert, animated: true)
-                return
-                
-            } catch {
-                self.displayAlert(title: "Save Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
-                dismissLoadingIndicator(animated: true)
-                return
-            }
-            
-            // Parse bet data if it was provided
-            if athleteBetTsv != nil {
-                athletes = parseAthleteBetData(athletes: athletes, tsvString: athleteBetTsv!)
-            }
+        displayLoadingIndicator(animated: true)
+        
+        // Parse bet data if it was provided; otherwise, fetch athlete data from ESPN
+        if athleteBetTsv != nil {
+            athletes = parseAthleteBetData(athletes: athletes, tsvString: athleteBetTsv!)
             
             // Create new tournament object
             tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget, athletes: athletes, espnId: eventId)
             
             // Segue back to LeagueDetailTableViewController
             performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
+            
+        } else {
+            Task {
+                
+                // Fetch tournament athletes
+                var athletes = [Athlete]()
+                do {
+                    athletes = try await Tournament.fetchEventAthleteData(eventId: eventId)
+                } catch EventAthleteDataError.dataTaskError {
+                    self.displayAlert(title: "Save Tournament Error", message: "Looks like there was a network issue when fetching tournament data. Your connection could be slow, or it may have been interrupted.")
+                    dismissLoadingIndicator(animated: true)
+                    return
+                } catch EventAthleteDataError.invalidHttpResponse {
+                    self.displayAlert(title: "Save Tournament Error", message: "Looks like there was an issue when fetching tournament data. The server might be temporarily unreachable.")
+                    dismissLoadingIndicator(animated: true)
+                    return
+                } catch EventAthleteDataError.decodingError {
+                    self.displayAlert(title: "Save Tournament Error", message: "Looks like there was an issue when decoding the tournament data. If you see this message, please reach out to the developer.")
+                    dismissLoadingIndicator(animated: true)
+                    return
+                } catch EventAthleteDataError.noCompetitorData {
+                    
+                    // Create a custom alert with a completion handler in order to wait for user interaction before beginning segue
+                    let noCompetitorDataAlert = UIAlertController(title: "No Player Data", message: "Just as a heads up, it doesn't look like there is any player data in ESPN for this tournament right now. You can enter your own player data by re-creating this tournament and providing a Google Sheet ID, or you can manually enter player information in the Manage Athletes page.", preferredStyle: .alert)
+                    
+                    let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                        noCompetitorDataAlert.dismiss(animated: true)
+                        
+                        // Create new tournament object
+                        self.tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget, athletes: athletes, espnId: eventId)
+                        
+                        // Segue back to LeagueDetailTableViewController
+                        self.performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
+                    }
+                    
+                    noCompetitorDataAlert.addAction(okAction)
+                    present(noCompetitorDataAlert, animated: true)
+                    return
+                    
+                } catch {
+                    self.displayAlert(title: "Save Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
+                    dismissLoadingIndicator(animated: true)
+                    return
+                }
+                
+                // Create new tournament object
+                tournament = Tournament(name: selectedEvent.name, startDate: startDate, endDate: endDate, budget: budget, athletes: athletes, espnId: eventId)
+                
+                // Segue back to LeagueDetailTableViewController
+                performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
+            }
         }
     }
     
@@ -224,11 +232,13 @@ class CreateTournamentTableViewController: UITableViewController {
                 
                 // Assign the fields and check for a matching athlete
                 let espnId = columns[0]
-                guard let odds = Int(columns[2]),
-                      let value = Int(columns[3]),
-                      let index = athletes.firstIndex(where: { $0.espnId == espnId }) else {
-                    
-                    print("Couldn't cast odds/value to Int or couldn't find matching athlete")
+                let filteredOdds = columns[2].filter("0123456789".contains)
+                let filteredValue = columns[3].filter("0123456789".contains)
+                
+                guard let odds = Int(filteredOdds) else { print("Odds cast fail"); continue }
+                guard let value = Int(filteredValue) else { print("Value cast fail"); continue }
+                guard let index = athletes.firstIndex(where: { $0.espnId == espnId }) else {
+                    print("Couldn't find matching athlete for \(columns[1])")
                     continue
                 }
                 
@@ -246,8 +256,11 @@ class CreateTournamentTableViewController: UITableViewController {
                 // Assign the fields and check for a matching athlete
                 let espnId = columns[0]
                 let name = columns[1]
-                guard let odds = Int(columns[2]),
-                      let value = Int(columns[3]) else {
+                let filteredOdds = columns[2].filter("0123456789".contains)
+                let filteredValue = columns[3].filter("0123456789".contains)
+                
+                guard let odds = Int(filteredOdds),
+                      let value = Int(filteredValue) else {
                     print("Couldn't cast odds/value to Int")
                     continue
                 }
