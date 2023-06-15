@@ -151,10 +151,11 @@ class TournamentDetailTableViewController: UITableViewController {
             
             // Fetch updated tournament data and update UI
             Task {
+                var updatedAthleteData = [Athlete]()
 
-                // Attempt to fetch updated athlete info
+                // Attempt to fetch updated athlete data
                 do {
-                    self.tournament.athletes = try await Tournament.fetchEventAthleteData(eventId: self.tournament.espnId)
+                    updatedAthleteData = try await Tournament.fetchEventAthleteData(eventId: self.tournament.espnId)
                 } catch EventAthleteDataError.dataTaskError {
                     self.displayAlert(title: "Update Tournament Error", message: "Looks like there was a network issue when fetching updated tournament data. Your connection could be slow, or it may have been interrupted.")
                 } catch EventAthleteDataError.invalidHttpResponse {
@@ -166,7 +167,24 @@ class TournamentDetailTableViewController: UITableViewController {
                 } catch {
                     self.displayAlert(title: "Update Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
                 }
-                //self.calculateTournamentStandings()
+                
+                // Merge the new athlete data with the current data
+                self.tournament.athletes = self.tournament.athletes.map({ athlete in
+                    
+                    // Find the matching athlete
+                    guard var updatedAthlete = updatedAthleteData.first(where: { athleteToFind in
+                        athleteToFind.espnId == athlete.espnId
+                    }) else {
+                        print("Couldn't find matching athlete to update")
+                        return athlete
+                    }
+                    
+                    // Re-apply the value and odds data
+                    updatedAthlete.value = athlete.value
+                    updatedAthlete.odds = athlete.odds
+                    return updatedAthlete
+                })
+                
                 self.standings = self.tournament.calculateStandings(league: self.league)
                 self.updateTableView()
 
@@ -262,7 +280,7 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Grab the athlete object for each athlete Id
         for athleteId in userPicks {
-            if let athlete = tournament.athletes.first(where: { $0.id == athleteId }) {
+            if let athlete = tournament.athletes.first(where: { $0.espnId == athleteId }) {
                 selectedUserPicks.append(athlete)
             } else {
                 print("Error finding athlete from pick: No matching athlete ID found")
@@ -293,7 +311,8 @@ class TournamentDetailTableViewController: UITableViewController {
         var pickDict = [String: Bool]()
         for pick in pickItems {
             if pick.isSelected {
-                pickDict[pick.athlete.id] = true
+                //pickDict[pick.athlete.id] = true
+                pickDict[pick.athlete.espnId] = true
             }
         }
         

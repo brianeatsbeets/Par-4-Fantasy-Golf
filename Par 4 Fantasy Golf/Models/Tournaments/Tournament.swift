@@ -124,7 +124,7 @@ struct Tournament: Hashable {
             if let userPicks = pickIds[user.id] {
                 
                 // Fetch the picked athletes
-                var athletes = athletes.filter { userPicks.contains([$0.id]) }
+                var athletes = athletes.filter { userPicks.contains([$0.espnId]) }
                 
                 // Filter out and count cut athletes
                 cutAthleteCount = athletes.filter { $0.isCut }.count
