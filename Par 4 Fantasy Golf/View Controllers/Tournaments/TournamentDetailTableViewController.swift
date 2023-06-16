@@ -196,8 +196,8 @@ class TournamentDetailTableViewController: UITableViewController {
                 
                 // If there are non-matching athletes, display an alert containing them to the league owner
                 if !nonMatchingAthletes.isEmpty && self.tournament.creator == self.currentFirebaseUser.email {
-                    let nonMatchingAthletesString = nonMatchingAthletes.map{ "\($0.name) (ESPN ID: \($0.espnId))" }.joined(separator: ", ")
-                    self.displayAlert(title: "Mismatched Athlete IDs", message: "One or more athletes have incorrect ESPN IDs, so score data for those athletes could not be updated. Please correct their ESPN IDs in the Manage Athletes view. Affected athletes: \(nonMatchingAthletesString)")
+                    let nonMatchingAthletesString = nonMatchingAthletes.map{ "\($0.name) (ESPN ID: \($0.espnId))" }.joined(separator: "\n")
+                    self.displayAlert(title: "Mismatched Athlete IDs", message: "One or more athletes have incorrect ESPN IDs, so score data for those athletes could not be updated. Please correct their ESPN IDs in the Manage Athletes view.\n\nAffected athletes:\n\(nonMatchingAthletesString)")
                 }
             }
         }
