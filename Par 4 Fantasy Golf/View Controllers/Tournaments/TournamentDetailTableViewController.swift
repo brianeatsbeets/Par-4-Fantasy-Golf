@@ -168,6 +168,8 @@ class TournamentDetailTableViewController: UITableViewController {
                     self.displayAlert(title: "Update Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
                 }
                 
+                var nonMatchingAthletes = [Athlete]()
+                
                 // Merge the new athlete data with the current data
                 self.tournament.athletes = self.tournament.athletes.map({ athlete in
                     
@@ -175,7 +177,8 @@ class TournamentDetailTableViewController: UITableViewController {
                     guard var updatedAthlete = updatedAthleteData.first(where: { athleteToFind in
                         athleteToFind.espnId == athlete.espnId
                     }) else {
-                        print("Couldn't find matching athlete to update")
+                        print("Couldn't find new data for \(athlete.name) (ID \(athlete.espnId))")
+                        nonMatchingAthletes.append(athlete)
                         return athlete
                     }
                     
@@ -190,6 +193,12 @@ class TournamentDetailTableViewController: UITableViewController {
 
                 // Update athlete data in firebase
                 try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
+                
+                // If there are non-matching athletes, display an alert containing them to the league owner
+                if !nonMatchingAthletes.isEmpty && self.tournament.creator == self.currentFirebaseUser.email {
+                    let nonMatchingAthletesString = nonMatchingAthletes.map{ "\($0.name) (ESPN ID: \($0.espnId))" }.joined(separator: ", ")
+                    self.displayAlert(title: "Mismatched Athlete IDs", message: "One or more athletes have incorrect ESPN IDs, so score data for those athletes could not be updated. Please correct their ESPN IDs in the Manage Athletes view. Affected athletes: \(nonMatchingAthletesString)")
+                }
             }
         }
         

@@ -18,6 +18,7 @@ class AddEditAthleteTableViewController: UITableViewController {
     // MARK: - Properties
 
     @IBOutlet var nameTextField: UITextField!
+    @IBOutlet var espnIdTextField: UITextField!
     @IBOutlet var valueTextField: UITextField!
     @IBOutlet var oddsTextField: UITextField!
     @IBOutlet var scoreTextField: UITextField!
@@ -46,10 +47,11 @@ class AddEditAthleteTableViewController: UITableViewController {
         // Pre-populate data if we're editing an existing athlete
         if let athlete = athlete {
             nameTextField.text = athlete.name
+            espnIdTextField.text = athlete.espnId
             valueTextField.text = athlete.value.description
             oddsTextField.text = athlete.odds.description
             scoreTextField.text = athlete.score.description
-            title = "Edit Athlete"
+            title = athlete.name
         } else {
             title = "New Athlete"
             updateSaveButtonState()
@@ -61,10 +63,11 @@ class AddEditAthleteTableViewController: UITableViewController {
     // Toggle enabled state of save button based on text field validation
     func updateSaveButtonState() {
         let nameText = nameTextField.text ?? ""
+        let espnIdText = espnIdTextField.text ?? ""
         let valueText = valueTextField.text ?? ""
         let oddsText = oddsTextField.text ?? ""
         let scoreText = scoreTextField.text ?? ""
-        saveButton.isEnabled = !nameText.isEmpty && !valueText.isEmpty && !oddsText.isEmpty && !scoreText.isEmpty && (Int(valueText) != nil) && (Int(oddsText) != nil) && (Int(scoreText) != nil)
+        saveButton.isEnabled = !nameText.isEmpty && !espnIdText.isEmpty && !valueText.isEmpty && !oddsText.isEmpty && !scoreText.isEmpty && (Int(valueText) != nil) && (Int(oddsText) != nil) && (Int(scoreText) != nil)
     }
     
     // Detect when text field editing state has changed
@@ -79,6 +82,7 @@ class AddEditAthleteTableViewController: UITableViewController {
         guard segue.identifier == "unwindSaveAthlete" else { return }
         
         let name = nameTextField.text ?? ""
+        let espnId = espnIdTextField.text ?? ""
         let odds = Int(oddsTextField.text ?? "") ?? 0
         let value = Int(valueTextField.text ?? "") ?? 0
         let score = Int(scoreTextField.text ?? "") ?? 0
@@ -86,6 +90,7 @@ class AddEditAthleteTableViewController: UITableViewController {
         // Create new athlete object or update values to existing athlete
         if athlete != nil {
             athlete!.name = name
+            athlete!.espnId = espnId
             athlete!.odds = odds
             athlete!.value = value
             athlete!.score = score
