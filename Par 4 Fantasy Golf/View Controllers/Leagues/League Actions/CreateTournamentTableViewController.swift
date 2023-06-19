@@ -64,6 +64,7 @@ class CreateTournamentTableViewController: UITableViewController {
                 // Filter the calendar events to those whose end date is later than now
                 calendarEvents = apiResponse.activeLeagues[0].calendar.filter({ event in
                     let formatter = ISO8601DateFormatter()
+                    formatter.timeZone = TimeZone.current
                     formatter.formatOptions = [.withFullDate]
                     guard let eventEndDate = formatter.date(from: event.endDate) else { print("AAA"); return false }
                     

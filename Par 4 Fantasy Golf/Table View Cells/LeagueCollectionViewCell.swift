@@ -31,11 +31,19 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet var recentTournamentNameLabel: UILabel!
     @IBOutlet var recentTournamentStatusLabel: UILabel!
+    @IBOutlet var recentTournamentTimerLabel: UILabel!
     
     @IBOutlet var recentTournamentFirstLabel: UILabel!
     @IBOutlet var recentTournamentSecondLabel: UILabel!
     @IBOutlet var recentTournamentThirdLabel: UILabel!
+    
+    var updateTimer = Timer()
+    
+    weak var delegate: TournamentTimerDelegate?
 
+    // Timer update interval in seconds
+    let updateInterval: Double = 15
+    
     override func awakeFromNib() {
         mainContentView.layer.cornerRadius = 12.0
     }
@@ -52,23 +60,78 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         // Calculate and display most recent tournament data
         if let recentTournament = sortedTournaments.first {
             recentTournamentNameLabel.text = recentTournament.name
-            recentTournamentStatusLabel.text = recentTournament.endDate < Date.now.timeIntervalSince1970 ? "Ended \(recentTournament.endDate.formattedDate())" : "LIVE"
             
             if recentTournament.endDate < Date.now.timeIntervalSince1970 {
                 recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
+                recentTournamentTimerLabel.isHidden = true
             } else {
                 recentTournamentStatusLabel.text = "LIVE"
                 recentTournamentStatusLabel.textColor = .red
+                initializeUpdateTimer(league: league, tournament: recentTournament)
             }
             
+            // TODO: Hide text fields if not in use
             let standings = recentTournament.calculateStandings(league: league)
-            recentTournamentFirstLabel.text = standings.indices.contains(0) ? "1st: \(standings[0].user.email) - \(standings[0].formattedScore)" : ""
-            recentTournamentSecondLabel.text = standings.indices.contains(1) ? "2nd: \(standings[1].user.email) - \(standings[1].formattedScore)" : ""
-            recentTournamentThirdLabel.text = standings.indices.contains(2) ? "3rd: \(standings[2].user.email) - \(standings[2].formattedScore)" : ""
+            recentTournamentFirstLabel.text = standings.indices.contains(0) ? "1st: \(standings[0].user.email) (\(standings[0].formattedScore))" : ""
+            recentTournamentSecondLabel.text = standings.indices.contains(1) ? "2nd: \(standings[1].user.email) (\(standings[1].formattedScore))" : ""
+            recentTournamentThirdLabel.text = standings.indices.contains(2) ? "3rd: \(standings[2].user.email) (\(standings[2].formattedScore))" : ""
         } else {
             leagueDetailsStackView.isHidden = true
             noDataLabel.isHidden = false
         }
+    }
+    
+    // Set up the update countdown timer
+    func initializeUpdateTimer(league: League, tournament: Tournament) {
+        
+        // Create a string formatter to display the time how we want
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.minute, .second]
+        formatter.unitsStyle = .abbreviated
+        
+        var nextUpdateTime = Date.now.addingTimeInterval(updateInterval).timeIntervalSince1970
+        var timeLeft: Int {
+            Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
+        }
+        
+        // Check if we're past due for an update
+        if tournament.lastUpdateTime < Date.now.addingTimeInterval(-updateInterval).timeIntervalSince1970 {
+            
+            self.recentTournamentTimerLabel.text = "Updating..."
+            
+            // Call the delegate function
+            self.delegate?.timerDidReset(league: league, tournament: tournament)
+            
+            return
+        } else {
+            nextUpdateTime = tournament.lastUpdateTime + (updateInterval)
+        }
+        
+        // Update countdown with initial value before timer starts
+        var formattedTime = formatter.string(from: TimeInterval(timeLeft))!
+        recentTournamentTimerLabel.text = "Next update in \(formattedTime)"
+        
+        // Create the timer
+        updateTimer = Timer(timeInterval: 1, repeats: true) { timer in
+            
+            // Check if the countdown has completed
+            if timeLeft < 1 {
+                //nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval*60).timeIntervalSince1970
+                timer.invalidate()
+                self.recentTournamentTimerLabel.text = "Updating..."
+                
+                // Call the delegate function
+                self.delegate?.timerDidReset(league: league, tournament: tournament)
+            } else {
+                
+                // Format and present the time remaining until the next update
+                formattedTime = formatter.string(from: TimeInterval(timeLeft))!
+                self.recentTournamentTimerLabel.text = "Next update in \(formattedTime)"
+            }
+        }
+        
+        // Add the timer to the .common runloop so it will update during user interaction
+        RunLoop.current.add(updateTimer, forMode: .common)
     }
 
 }

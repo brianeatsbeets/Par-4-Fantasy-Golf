@@ -71,7 +71,7 @@ class TournamentDetailTableViewController: UITableViewController {
             lastUpdateTimeLabel.text = "Tournament begins on \(tournament.startDate.formattedDate())"
         } else if Date.now.timeIntervalSince1970 <= tournament.endDate {
             // Tournament is active
-            initializeUpdateTimer()
+            //initializeUpdateTimer()
         } else {
             // Tournament has ended
             lastUpdateTimeLabel.text = "Tournament ended on \(tournament.endDate.formattedDate())"
@@ -130,6 +130,52 @@ class TournamentDetailTableViewController: UITableViewController {
         }
     }
     
+    // Fetch the updated score data
+    func fetchScoreData() async throws {
+        var updatedAthleteData = [Athlete]()
+        
+        // Attempt to fetch updated athlete data
+        do {
+            updatedAthleteData = try await Tournament.fetchEventAthleteData(eventId: self.tournament.espnId)
+        } catch EventAthleteDataError.dataTaskError {
+            self.displayAlert(title: "Update Tournament Error", message: "Looks like there was a network issue when fetching updated tournament data. Your connection could be slow, or it may have been interrupted.")
+        } catch EventAthleteDataError.invalidHttpResponse {
+            self.displayAlert(title: "Update Tournament Error", message: "Looks like there was an issue when fetching updated tournament data. The server might be temporarily unreachable.")
+        } catch EventAthleteDataError.decodingError {
+            self.displayAlert(title: "Update Tournament Error", message: "Looks like there was an issue when decoding the updated tournament data. If you see this message, please reach out to the developer.")
+        } catch EventAthleteDataError.noCompetitorData {
+            self.displayAlert(title: "Update Tournament Error", message: "It doesn't look like there is any player data for this tournament right now.")
+        } catch {
+            self.displayAlert(title: "Update Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
+        }
+        
+        var nonMatchingAthletes = [Athlete]()
+        
+        // Merge the new athlete data with the current data
+        self.tournament.athletes = self.tournament.athletes.map({ athlete in
+            
+            // Find the matching athlete
+            guard var updatedAthlete = updatedAthleteData.first(where: { athleteToFind in
+                athleteToFind.espnId == athlete.espnId
+            }) else {
+                print("Couldn't find new data for \(athlete.name) (ID \(athlete.espnId))")
+                nonMatchingAthletes.append(athlete)
+                return athlete
+            }
+            
+            // Re-apply the value and odds data
+            updatedAthlete.value = athlete.value
+            updatedAthlete.odds = athlete.odds
+            return updatedAthlete
+        })
+        
+        // If there are non-matching athletes, display an alert containing them to the league owner
+        if !nonMatchingAthletes.isEmpty && self.tournament.creator == self.currentFirebaseUser.email {
+            let nonMatchingAthletesString = nonMatchingAthletes.map{ "\($0.name) (ESPN ID: \($0.espnId))" }.joined(separator: "\n")
+            self.displayAlert(title: "Mismatched Athlete IDs", message: "One or more athletes have incorrect ESPN IDs, so score data for those athletes could not be updated. Please correct their ESPN IDs in the Manage Athletes view.\n\nAffected athletes:\n\(nonMatchingAthletesString)")
+        }
+    }
+    
     // Set up the update countdown timer
     func initializeUpdateTimer() {
         
@@ -151,54 +197,13 @@ class TournamentDetailTableViewController: UITableViewController {
             
             // Fetch updated tournament data and update UI
             Task {
-                var updatedAthleteData = [Athlete]()
-
-                // Attempt to fetch updated athlete data
-                do {
-                    updatedAthleteData = try await Tournament.fetchEventAthleteData(eventId: self.tournament.espnId)
-                } catch EventAthleteDataError.dataTaskError {
-                    self.displayAlert(title: "Update Tournament Error", message: "Looks like there was a network issue when fetching updated tournament data. Your connection could be slow, or it may have been interrupted.")
-                } catch EventAthleteDataError.invalidHttpResponse {
-                    self.displayAlert(title: "Update Tournament Error", message: "Looks like there was an issue when fetching updated tournament data. The server might be temporarily unreachable.")
-                } catch EventAthleteDataError.decodingError {
-                    self.displayAlert(title: "Update Tournament Error", message: "Looks like there was an issue when decoding the updated tournament data. If you see this message, please reach out to the developer.")
-                } catch EventAthleteDataError.noCompetitorData {
-                    self.displayAlert(title: "Update Tournament Error", message: "It doesn't look like there is any player data for this tournament right now.")
-                } catch {
-                    self.displayAlert(title: "Update Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
-                }
-                
-                var nonMatchingAthletes = [Athlete]()
-                
-                // Merge the new athlete data with the current data
-                self.tournament.athletes = self.tournament.athletes.map({ athlete in
-                    
-                    // Find the matching athlete
-                    guard var updatedAthlete = updatedAthleteData.first(where: { athleteToFind in
-                        athleteToFind.espnId == athlete.espnId
-                    }) else {
-                        print("Couldn't find new data for \(athlete.name) (ID \(athlete.espnId))")
-                        nonMatchingAthletes.append(athlete)
-                        return athlete
-                    }
-                    
-                    // Re-apply the value and odds data
-                    updatedAthlete.value = athlete.value
-                    updatedAthlete.odds = athlete.odds
-                    return updatedAthlete
-                })
+                try await self.fetchScoreData()
                 
                 self.standings = self.tournament.calculateStandings(league: self.league)
                 self.updateTableView()
-
+                
                 // Update athlete data in firebase
                 try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
-                
-                // If there are non-matching athletes, display an alert containing them to the league owner
-                if !nonMatchingAthletes.isEmpty && self.tournament.creator == self.currentFirebaseUser.email {
-                    let nonMatchingAthletesString = nonMatchingAthletes.map{ "\($0.name) (ESPN ID: \($0.espnId))" }.joined(separator: "\n")
-                    self.displayAlert(title: "Mismatched Athlete IDs", message: "One or more athletes have incorrect ESPN IDs, so score data for those athletes could not be updated. Please correct their ESPN IDs in the Manage Athletes view.\n\nAffected athletes:\n\(nonMatchingAthletesString)")
-                }
             }
         }
         
