@@ -5,6 +5,8 @@
 //  Created by Aguirre, Brian P. on 3/1/23.
 //
 
+// TODO: Remove this class and view controller
+
 // MARK: - Imported libraries
 
 import UIKit
@@ -106,24 +108,24 @@ class LeaguesTableViewController: UITableViewController {
     // Segue to LeagueDetailViewController with full league data
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        displayLoadingIndicator(animated: true)
-        
-        // Fetch the league data from the tapped league's id
-        Task {
-            guard let minimalLeague = dataSource.itemIdentifier(for: indexPath),
-                  var league = await League.fetchSingleLeague(from: minimalLeague.id) else { return }
-            
-            // Fetch the league members
-            league.members = await User.fetchMultipleUsers(from: league.memberIds)
-            
-            guard let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
-                LeagueDetailTableViewController(coder: coder, league: league)
-            }) else { return }
-            
-            // Deselect the row and push the league details view controller while passing the full league data
-            tableView.deselectRow(at: indexPath, animated: true)
-            self.navigationController?.pushViewController(destinationViewController, animated: true)
-        }
+//        displayLoadingIndicator(animated: true)
+//        
+//        // Fetch the league data from the tapped league's id
+//        Task {
+//            guard let minimalLeague = dataSource.itemIdentifier(for: indexPath),
+//                  var league = await League.fetchSingleLeague(from: minimalLeague.id) else { return }
+//            
+//            // Fetch the league members
+//            league.members = await User.fetchMultipleUsers(from: league.memberIds)
+//            
+//            guard let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
+//                LeagueDetailTableViewController(coder: coder, league: league)
+//            }) else { return }
+//            
+//            // Deselect the row and push the league details view controller while passing the full league data
+//            tableView.deselectRow(at: indexPath, animated: true)
+//            self.navigationController?.pushViewController(destinationViewController, animated: true)
+//        }
     }
 }
 

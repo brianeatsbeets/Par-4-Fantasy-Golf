@@ -42,10 +42,11 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     weak var delegate: TournamentTimerDelegate?
 
     // Timer update interval in seconds
-    let updateInterval: Double = 15
+    let updateInterval: Double = 15*60
     
     override func awakeFromNib() {
         mainContentView.layer.cornerRadius = 12.0
+        recentTournamentTimerLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
     }
     
     // MARK: - Functions
@@ -55,30 +56,35 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         
         titleLabel.text = league.name
         
-        let sortedTournaments = league.tournaments.sorted { $0.endDate > $1.endDate }
-        
-        // Calculate and display most recent tournament data
-        if let recentTournament = sortedTournaments.first {
-            recentTournamentNameLabel.text = recentTournament.name
-            
-            if recentTournament.endDate < Date.now.timeIntervalSince1970 {
-                recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
-                recentTournamentTimerLabel.isHidden = true
-            } else {
-                recentTournamentStatusLabel.text = "LIVE"
-                recentTournamentStatusLabel.textColor = .red
-                initializeUpdateTimer(league: league, tournament: recentTournament)
-            }
-            
-            // TODO: Hide text fields if not in use
-            let standings = recentTournament.calculateStandings(league: league)
-            recentTournamentFirstLabel.text = standings.indices.contains(0) ? "1st: \(standings[0].user.email) (\(standings[0].formattedScore))" : ""
-            recentTournamentSecondLabel.text = standings.indices.contains(1) ? "2nd: \(standings[1].user.email) (\(standings[1].formattedScore))" : ""
-            recentTournamentThirdLabel.text = standings.indices.contains(2) ? "3rd: \(standings[2].user.email) (\(standings[2].formattedScore))" : ""
-        } else {
+        // Make sure we have a tournament to display; otherwise, display the 'No data' message
+        guard !league.tournaments.isEmpty else {
             leagueDetailsStackView.isHidden = true
             noDataLabel.isHidden = false
+            return
         }
+        
+        // Set default UI values
+        leagueDetailsStackView.isHidden = false
+        noDataLabel.isHidden = true
+        
+        // Calculate and display most recent tournament data
+        let recentTournament = league.tournaments.sorted { $0.endDate > $1.endDate }.first!
+        recentTournamentNameLabel.text = recentTournament.name
+        
+        if recentTournament.endDate < Date.now.timeIntervalSince1970 {
+            recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
+            recentTournamentTimerLabel.isHidden = true
+        } else {
+            recentTournamentStatusLabel.text = "LIVE"
+            recentTournamentStatusLabel.textColor = .red
+            initializeUpdateTimer(league: league, tournament: recentTournament)
+        }
+        
+        // TODO: Hide text fields if not in use
+        let standings = recentTournament.calculateStandings(league: league)
+        recentTournamentFirstLabel.text = standings.indices.contains(0) ? "1st: \(standings[0].user.email) (\(standings[0].formattedScore))" : ""
+        recentTournamentSecondLabel.text = standings.indices.contains(1) ? "2nd: \(standings[1].user.email) (\(standings[1].formattedScore))" : ""
+        recentTournamentThirdLabel.text = standings.indices.contains(2) ? "3rd: \(standings[2].user.email) (\(standings[2].formattedScore))" : ""
     }
     
     // Set up the update countdown timer

@@ -241,9 +241,11 @@
                     </navigationItem>
                     <connections>
                         <outlet property="leagueActionsBarButtonItemGroup" destination="nfS-Kz-hPk" id="dKK-u3-qm4"/>
+                        <segue destination="l0B-vF-Rlm" kind="unwind" identifier="deleteLeagueUnwind" unwindAction="unwindFromDeleteLeagueWithSegue:" id="MPu-7n-FUJ"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wJ8-qC-FQs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="l0B-vF-Rlm" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="8232" y="-28"/>
         </scene>
@@ -316,9 +318,11 @@
                         <outlet property="lastUpdateTimeLabel" destination="qmy-Il-ff4" id="jBg-ey-GrN"/>
                         <outlet property="makePicksButton" destination="nRR-j2-5FW" id="9Ns-8w-CZJ"/>
                         <outlet property="tournamentActionBarButtonItemGroup" destination="Sb5-6h-Dd8" id="jhT-rp-Ed2"/>
+                        <segue destination="a4l-UY-yC7" kind="unwind" identifier="unwindDeleteTournament" unwindAction="unwindFromDeleteTournamentWithSegue:" id="WHb-Qb-Nu3"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Idz-HM-wJR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="a4l-UY-yC7" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="15113.846153846152" y="-26.303317535545023"/>
         </scene>
@@ -456,14 +460,14 @@
                             <tableViewSection headerTitle="Event" id="DvC-6g-KPe">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="I55-QS-hS6">
-                                        <rect key="frame" x="0.0" y="50" width="390" height="42.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="50" width="390" height="43.333332061767578"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="I55-QS-hS6" id="Zrg-1v-3Lw">
-                                            <rect key="frame" x="0.0" y="0.0" width="359.66666666666669" height="42.666667938232422"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="359.66666666666669" height="43.333332061767578"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading events..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IIg-dv-2Z5">
-                                                    <rect key="frame" x="20" y="11.000000000000002" width="319.66666666666669" height="20.666666666666671"/>
+                                                    <rect key="frame" x="20" y="10.999999999999998" width="319.66666666666669" height="21.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -485,14 +489,14 @@
                             <tableViewSection headerTitle="Google Sheets ID" id="N3a-TO-x3I">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="HYb-PO-rwd">
-                                        <rect key="frame" x="0.0" y="170.66666793823242" width="390" height="43.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="171.33333206176758" width="390" height="43"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HYb-PO-rwd" id="2N8-Qb-kn2">
-                                            <rect key="frame" x="0.0" y="0.0" width="359.66666666666669" height="43.666667938232422"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="359.66666666666669" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No ID provided" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BhE-fE-Ajy">
-                                                    <rect key="frame" x="20" y="11.000000000000002" width="319.66666666666669" height="21.666666666666671"/>
+                                                    <rect key="frame" x="20" y="11" width="319.66666666666669" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -514,7 +518,7 @@
                             <tableViewSection headerTitle="Budget" id="hpP-bI-Eq1">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="FZN-4D-SGU">
-                                        <rect key="frame" x="0.0" y="292.33333587646484" width="390" height="44.333332061767578"/>
+                                        <rect key="frame" x="0.0" y="292.33333206176758" width="390" height="44.333332061767578"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FZN-4D-SGU" id="EDL-ri-m2r">
                                             <rect key="frame" x="0.0" y="0.0" width="390" height="44.333332061767578"/>

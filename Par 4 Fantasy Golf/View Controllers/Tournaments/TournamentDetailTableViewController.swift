@@ -245,7 +245,6 @@ class TournamentDetailTableViewController: UITableViewController {
             // Dismiss the current alert
             deleteTournamentAlert.dismiss(animated: true)
             
-            self.displayLoadingIndicator(animated: true)
             self.updateTimer.invalidate()
             
             Task {
@@ -256,8 +255,8 @@ class TournamentDetailTableViewController: UITableViewController {
                 // Remove the tournament data from the league tournamentIds tree
                 try await self.league.databaseReference.child("tournamentIds").child(self.tournament.id).removeValue()
                 
-                // Return to TournamentsTableViewController
-                _ = self.navigationController?.popViewController(animated: true)
+                // Return to LeagueDetailTableViewController
+                self.performSegue(withIdentifier: "unwindDeleteTournament", sender: nil)
             }
         }
         

@@ -10,10 +10,23 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import Combine
 
 // MARK: - Protocols
+
+// This protocol allows conformers to be notified when a tournament update timer has reset (hit zero)
 protocol TournamentTimerDelegate: AnyObject {
     func timerDidReset(league: League, tournament: Tournament)
+}
+
+// This protocol allows conformers to notify the LeaguesCollectionViewController of any league updates
+// TODO: Remove this
+protocol LeagueDataSourceDelegate: AnyObject {
+    func createTournament(leagueId: String, tournament: Tournament)
+    func updateTournament(leagueId: String, tournament: Tournament)
+    func deleteTournament(leagueId: String, tournament: Tournament)
+    func addUser(leagueId: String, user: User)
+    func removeUser(leagueId: String, user: User)
 }
 
 // MARK: - Main class
@@ -25,9 +38,14 @@ class LeaguesCollectionViewController: UICollectionViewController {
     
     lazy var dataSource = createDataSource()
     var minimalLeagues = [MinimalLeague]()
+    
     var leagues = [League]()
+    var dataStore = DataStore()
+    
     let leagueIdsRef = Database.database().reference(withPath: "leagueIds")
     let userLeaguesRef = Database.database().reference(withPath: "users/\(Auth.auth().currentUser!.uid)/leagues")
+    
+    var subscription: AnyCancellable?
     
     // MARK: - View life cycle functions
 
@@ -38,6 +56,8 @@ class LeaguesCollectionViewController: UICollectionViewController {
         collectionView.dataSource = dataSource
         
         displayLoadingIndicator(animated: false)
+        
+        subscribe()
 
         // Fetch initial league data and update the collection view
         fetchLeagueData() {
@@ -48,9 +68,24 @@ class LeaguesCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        updateCollectionView(animated: false)
     }
     
     // MARK: - Other functions
+    
+    // Create a subscription for the datastore
+    func subscribe() {
+
+        // Assign a subscription to the variable
+        subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
+            print("Completion")
+        }, receiveValue: { leagues in
+            print("LeaguesCollectionVC received updated value for leagues")
+            
+            // Upddate VC local leagues variable
+            self.leagues = leagues
+        })
+    }
     
     // Initialize the collection view layout
     func createLayout() -> UICollectionViewLayout {
@@ -91,7 +126,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
             
             let userLeagueIds = userLeagueIdValues.map { $0.key }
             
-            self.leagues = [League]()
+            var newLeagues = [League]()
             
             // Fetch leagues from user league Ids
             // TODO: Send out league fetch request concurrently
@@ -99,11 +134,11 @@ class LeaguesCollectionViewController: UICollectionViewController {
                 for var league in await League.fetchMultipleLeagues(from: userLeagueIds) {
                     league.members = await User.fetchMultipleUsers(from: league.memberIds)
                     league.tournaments = await Tournament.fetchMultipleTournaments(from: league.tournamentIds)
-                    self.leagues.append(league)
+                    newLeagues.append(league)
                 }
                 
                 // Sort leagues
-                self.leagues = self.leagues.sorted(by: { $0.name > $1.name})
+                self.dataStore.leagues = newLeagues.sorted(by: { $0.name > $1.name})
                 completion()
             }
         }
@@ -166,7 +201,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
         // Check that we have new league data to parse
         guard segue.identifier == "createLeagueUnwind",
               let sourceViewController = segue.source as? CreateLeagueTableViewController,
-              let league = sourceViewController.league
+              var league = sourceViewController.league
         else { return }
         
         let minimalLeague = MinimalLeague(league: league)
@@ -183,9 +218,12 @@ class LeaguesCollectionViewController: UICollectionViewController {
                 try await Database.database().reference(withPath: "users").child(id).child("leagues").child(league.id).setValue(true)
             }
             
+            // Create league users
+            league.members = await User.fetchMultipleUsers(from: league.memberIds)
+            
             // Save the league to the local data source
-            leagues.append(league)
-            leagues = leagues.sorted(by: { $0.name > $1.name})
+            dataStore.leagues.append(league)
+            dataStore.leagues = dataStore.leagues.sorted(by: { $0.name > $1.name})
             
             updateCollectionView()
             
@@ -193,12 +231,37 @@ class LeaguesCollectionViewController: UICollectionViewController {
         }
     }
     
+    // Handle the league that was deleted
+    @IBAction func unwindFromDeleteLeague(segue: UIStoryboardSegue) {
+        
+        // Check that we have league data to delete
+        guard segue.identifier == "deleteLeagueUnwind",
+              let sourceViewController = segue.source as? LeagueDetailTableViewController else { return }
+        
+        let league = sourceViewController.league
+        
+        // Remove the league from the dataStore
+        dataStore.leagues.removeAll { $0.id == league.id }
+        
+        // Remove the league from each user's leagues
+        for user in league.members {
+            user.databaseReference.child("leagues").child(league.id).removeValue()
+        }
+        
+        // Remove the league data from the leagues tree
+        league.databaseReference.removeValue()
+        
+        updateCollectionView()
+    }
+    
     // Segue to LeagueDetailViewController with full league data
+    // TODO: Revert back to segue action instead of manually pushing
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         guard let league = dataSource.itemIdentifier(for: indexPath),
+              let leagueIndex = self.dataStore.leagues.firstIndex(where: { $0.id == league.id }),
               let destinationViewController = storyboard?.instantiateViewController(identifier: "LeagueDetail", creator: { coder in
-                  LeagueDetailTableViewController(coder: coder, league: league)
+                  LeagueDetailTableViewController(coder: coder, dataStore: self.dataStore, leagueIndex: leagueIndex)
               }) else { return }
         
         // Deselect the row and push the league details view controller while passing the full league data
@@ -253,29 +316,113 @@ extension LeaguesCollectionViewController: TournamentTimerDelegate {
         let sortedTournaments = league.tournaments.sorted { $0.endDate > $1.endDate }
 
         // Calculate the indexes of the provided league and tournament
-        guard let leagueIndex = leagues.firstIndex(of: league),
+        guard let leagueIndex = dataStore.leagues.firstIndex(of: league),
               let recentTournament = sortedTournaments.first,
               let tournamentIndex = league.tournaments.firstIndex(of: recentTournament) else {
             print("Couldn't determine most recent tournament to update timer")
             return
         }
         
-        // Create value (not reference) copies to minimize array lookups when referencing tournament data, but not updating it
+        // Create value (not reference) copies to minimize array lookups and clean up code when referencing tournament data, but not updating it
         let leagueRef = leagues[leagueIndex]
         let tournamentRef = leagueRef.tournaments[tournamentIndex]
         
         // Update tournament's last update time
-        self.leagues[leagueIndex].tournaments[tournamentIndex].lastUpdateTime = Date.now.timeIntervalSince1970
+        self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex].lastUpdateTime = Date.now.timeIntervalSince1970
         tournamentRef.databaseReference.child("lastUpdateTime").setValue(Date.now.timeIntervalSince1970)
         
         // Fetch updated tournament data and update UI
         Task {
-            self.leagues[leagueIndex].tournaments[tournamentIndex].athletes = try await self.fetchScoreData(tournament: tournamentRef)
+            self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes = try await self.fetchScoreData(tournament: tournamentRef)
             
             self.updateCollectionView()
             
             // Update athlete data in firebase
-            try await tournamentRef.databaseReference.setValue(self.leagues[leagueIndex].tournaments[tournamentIndex].toAnyObject())
+            try await tournamentRef.databaseReference.setValue(leagues[leagueIndex].tournaments[tournamentIndex].toAnyObject())
         }
     }
 }
+
+// TODO: Remove this
+
+//// This extention conforms to the LeagueDataSourceDelegate protocol
+//extension LeaguesCollectionViewController: LeagueDataSourceDelegate {
+//
+//    // Create a tournament in the specified league
+//    func createTournament(leagueId: String, tournament: Tournament) {
+//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }) else {
+//            print("Couldn't find league to create tournament")
+//            return
+//        }
+//
+//        leagues[leagueIndex].tournaments.append(tournament)
+//
+//        print("Created tournament")
+//        leagues[leagueIndex].tournaments.forEach { tournament in
+//            print(tournament.name)
+//        }
+//    }
+//
+//    // Update a tournament in the specified league
+//    func updateTournament(leagueId: String, tournament: Tournament) {
+//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }),
+//              let tournamentIndex = leagues[leagueIndex].tournaments.firstIndex(where: { $0.id == tournament.id }) else {
+//            print("Couldn't find league or league tournament to update tournament")
+//            return
+//        }
+//
+//        leagues[leagueIndex].tournaments[tournamentIndex] = tournament
+//
+//        print("Updated tournament")
+//        leagues[leagueIndex].tournaments.forEach { tournament in
+//            print(tournament.name)
+//        }
+//    }
+//
+//    // Remove a tournament from the specified league
+//    func deleteTournament(leagueId: String, tournament: Tournament) {
+//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }),
+//              let tournamentIndex = leagues[leagueIndex].tournaments.firstIndex(where: { $0.id == tournament.id }) else {
+//            print("Couldn't find league or league tournament to remove tournament")
+//            return
+//        }
+//
+//        leagues[leagueIndex].tournaments.remove(at: tournamentIndex)
+//
+//        print("Removed tournament")
+//        leagues[leagueIndex].tournaments.forEach { tournament in
+//            print(tournament.name)
+//        }
+//    }
+//
+//    // Add a user in the specified league
+//    func addUser(leagueId: String, user: User) {
+//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }) else {
+//            print("Couldn't find league to add user")
+//            return
+//        }
+//
+//        leagues[leagueIndex].members.append(user)
+//
+//        print("Added user")
+//        leagues[leagueIndex].members.forEach { user in
+//            print(user.email)
+//        }
+//    }
+//
+//    // Remove a user from the specified league
+//    func removeUser(leagueId: String, user: User) {
+//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }),
+//              let userIndex = leagues[leagueIndex].members.firstIndex(where: { $0.id == user.id }) else {
+//            print("Couldn't find league or league user to remove user")
+//            return
+//        }
+//
+//        leagues[leagueIndex].members.remove(at: userIndex)
+//
+//        print("Removed User")
+//        leagues[leagueIndex].members.forEach { user in
+//            print(user.email)
+//        }
+//    }
+//}

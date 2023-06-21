@@ -10,6 +10,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import Combine
 
 // MARK: - Main class
 
@@ -21,17 +22,33 @@ class LeagueDetailTableViewController: UITableViewController {
     @IBOutlet var leagueActionsBarButtonItemGroup: UIBarButtonItemGroup!
     
     lazy var dataSource = createDataSource()
+    
+    /*
+     * General data workflow:
+     * - Pass and subscribe to dataStore
+     * - Create VC local copy of applicable data (properties of dataStore are structs, so copies are value copies, not reference)
+     * - When referencing applicable data, use local copy
+     * - When modifying applicable data, use dataStore
+     * -- The subscription will update the local copy to match the dataStore
+     */
+    var dataStore: DataStore
+    let leagueIndex: Int
     var league: League
+    
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
     var calendarEvents = [CalendarEvent]()
-    var minimalTournaments = [MinimalTournament]()
-    let tournamentIdsRef = Database.database().reference(withPath: "tournamentIds")
+    var subscription: AnyCancellable?
+    
+    // TODO: Remove this
+    weak var delegate: LeagueDataSourceDelegate?
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, league: League) {
-        self.league = league
+    init?(coder: NSCoder, dataStore: DataStore, leagueIndex: Int) {
+        self.dataStore = dataStore
+        self.leagueIndex = leagueIndex
+        league = dataStore.leagues[leagueIndex]
         super.init(coder: coder)
     }
     
@@ -44,28 +61,38 @@ class LeagueDetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = dataSource
         title = league.name + " Tournaments"
         
         // If the current user is not the league owner, hide administrative actions
         if league.creator != currentFirebaseUser.uid {
             leagueActionsBarButtonItemGroup.isHidden = true
         }
+        
+        tableView.dataSource = dataSource
+        updateTableView()
+        
+        subscribe()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        Task {
-            // Fetch initial tournament data and update the table view
-            minimalTournaments = (await MinimalTournament.fetchMultipleTournaments(from: league.tournamentIds)).sorted(by: { $0.startDate > $1.startDate})
-            
-            dismissLoadingIndicator(animated: true)
-            updateTableView()
-        }
+    // TODO: Can we use viewWillAppear?
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateTableView(animated: false)
     }
     
     // MARK: - Other functions
+    
+    // Create a subscription for the datastore
+    func subscribe() {
+        subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
+            print("Completion")
+        }, receiveValue: { leagues in
+            print("LeagueDetailTableVC received updated value for leagues")
+            
+            // Update VC local league variable
+            self.league = leagues[self.leagueIndex]
+        })
+    }
     
     // Remove league data and user associations
     @IBAction func deleteLeaguePressed(_ sender: Any) {
@@ -77,21 +104,11 @@ class LeagueDetailTableViewController: UITableViewController {
             // Dismiss the current alert
             deleteLeagueAlert.dismiss(animated: true)
             
-            self.displayLoadingIndicator(animated: true)
+            // Cancel the subscription early to prevent updating the local league variable with league data that no longer exists
+            self.subscription?.cancel()
             
-            Task {
-                // Remove the league from each user's leagues
-                for user in self.league.members {
-                    try await user.databaseReference.child("leagues").child(self.league.id).removeValue()
-                }
-                
-                // Remove the league data from the leagues and leagueIds trees
-                try await self.league.databaseReference.removeValue()
-                try await Database.database().reference().child("leagueIds").child(self.league.id).removeValue()
-                
-                // Return to LeaguesTableViewController
-                _ = self.navigationController?.popViewController(animated: true)
-            }
+            // Return to LeaguesTableViewController
+            self.performSegue(withIdentifier: "deleteLeagueUnwind", sender: nil)
         }
         
         deleteLeagueAlert.addAction(cancel)
@@ -109,28 +126,22 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // Pass league data to ManageUsersTableViewController
     @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
-        guard let manageUsersViewController = ManageUsersTableViewController(coder: coder, league: league) else { return nil }
+        guard let manageUsersViewController = ManageUsersTableViewController(coder: coder, league: dataStore.leagues[leagueIndex]) else { return nil }
         manageUsersViewController.delegate = self
         return manageUsersViewController
     }
     
     // Segue to TournamentDetailViewController with full tournament data
+    // TODO: Revert back to segue action instead of manually pushing
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let tournament = dataSource.itemIdentifier(for: indexPath),
+              let destinationViewController = storyboard?.instantiateViewController(identifier: "TournamentDetail", creator: { coder in
+                  TournamentDetailTableViewController(coder: coder, league: self.league, tournament: tournament)
+              }) else { return }
         
-        displayLoadingIndicator(animated: true)
-        
-        // Fetch the stored tournament data from firebase
-        Task {
-            guard let minimalTournament = dataSource.itemIdentifier(for: indexPath),
-                  let tournament = await Tournament.fetchSingleTournament(from: minimalTournament.id),
-                  let destinationViewController = storyboard?.instantiateViewController(identifier: "TournamentDetail", creator: { coder in
-                      TournamentDetailTableViewController(coder: coder, league: self.league, tournament: tournament)
-                  }) else { return }
-            
-            // Deselect the row and push the league details view controller while passing the full league data
-            tableView.deselectRow(at: indexPath, animated: true)
-            self.navigationController?.pushViewController(destinationViewController, animated: true)
-        }
+        // Deselect the row and push the league details view controller while passing the full league data
+        tableView.deselectRow(at: indexPath, animated: true)
+        self.navigationController?.pushViewController(destinationViewController, animated: true)
     }
     
     // Handle the incoming new tournament data
@@ -141,31 +152,30 @@ class LeagueDetailTableViewController: UITableViewController {
               let sourceViewController = segue.source as? CreateTournamentTableViewController,
               let newTournament = sourceViewController.tournament else { return }
         
-        Task {
-            // Save the tournament to the local data source
-            league.tournamentIds.append(newTournament.id)
-            league.tournaments.append(newTournament)
-            
-            // Save the minimal tournament to the local data source and sort
-            let minimalTournament = MinimalTournament(tournament: newTournament)
-            minimalTournaments.append(minimalTournament)
-            minimalTournaments = minimalTournaments.sorted(by: { $0.name < $1.name})
-            
-            // Save the tournament to Firebase
-            
-            // League tournament Ids
-            try await league.databaseReference.child("tournamentIds").child(newTournament.id).setValue(true)
-            
-            // Tournaments tree
-            try await newTournament.databaseReference.setValue(newTournament.toAnyObject())
-            
-            // TournamentIds tree
-            try await tournamentIdsRef.child(newTournament.id).setValue(minimalTournament.toAnyObject())
-            
-            dismissLoadingIndicator(animated: true)
-            
-            updateTableView()
-        }
+        // Save the tournament to the data store
+        dataStore.leagues[leagueIndex].tournaments.append(newTournament)
+        
+        // Save the tournament to Firebase
+        
+        // League tournament Ids
+        league.databaseReference.child("tournamentIds").child(newTournament.id).setValue(true)
+        
+        // Tournaments tree
+        newTournament.databaseReference.setValue(newTournament.toAnyObject())
+        
+        dismissLoadingIndicator(animated: true)
+        
+        updateTableView()
+    }
+    
+    // Handle the incoming new tournament data
+    @IBAction func unwindFromDeleteTournament(segue: UIStoryboardSegue) {
+        guard segue.identifier == "unwindDeleteTournament",
+              let sourceViewController = segue.source as? TournamentDetailTableViewController else { return }
+        
+        let tournament = sourceViewController.tournament
+        //TODO: Pull tournament removal code into here from TournamentDetailTableViewController
+        //updateTableView()
     }
 }
 
@@ -184,13 +194,13 @@ extension LeagueDetailTableViewController {
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, MinimalTournament> {
+    func createDataSource() -> UITableViewDiffableDataSource<Section, Tournament> {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, minimalTournament in
+        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, tournament in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! TournamentTableViewCell
-            cell.configure(with: minimalTournament)
+            cell.configure(with: tournament)
 
             return cell
         }
@@ -198,9 +208,9 @@ extension LeagueDetailTableViewController {
     
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, MinimalTournament>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Tournament>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(minimalTournaments)
+        snapshot.appendItems(league.tournaments)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
@@ -210,13 +220,13 @@ extension LeagueDetailTableViewController: ManageUsersDelegate {
     
     // Add a new user
     func addUser(user: User) {
-        league.members.append(user)
-        league.memberIds.append(user.id)
+        dataStore.leagues[leagueIndex].members.append(user)
+        dataStore.leagues[leagueIndex].memberIds.append(user.id)
     }
     
     // Remove an existing user
     func removeUser(user: User) {
-        league.members.removeAll { $0.id == user.id }
-        league.memberIds.removeAll { $0 == user.id }
+        dataStore.leagues[leagueIndex].members.removeAll { $0.id == user.id }
+        dataStore.leagues[leagueIndex].memberIds.removeAll { $0 == user.id }
     }
 }
