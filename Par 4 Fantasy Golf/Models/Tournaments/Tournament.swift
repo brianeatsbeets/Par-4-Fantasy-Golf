@@ -319,32 +319,7 @@ struct Tournament: Hashable {
     }
 }
 
-// MARK: - Extensions
-
-// This extension houses a date formatting helper function
-extension Double {
-    func formattedDate() -> String {
-        return Date(timeIntervalSince1970: self).formatted(date: .numeric, time: .omitted)
-    }
-}
-
-// This extension converts the ESPN date string into more usable formats
-extension String {
-    
-    // Return a since-epoch double
-    func espnDateStringToDouble() -> Double? {
-        let formatter = ISO8601DateFormatter()
-        formatter.timeZone = TimeZone.current
-        formatter.formatOptions = [.withFullDate]
-        guard let date = formatter.date(from: self) else {
-            print("Couldn't convert ESPN date string to date")
-            return nil
-        }
-        return date.timeIntervalSince1970
-    }
-}
-
-// MARK: - Extensions
+// MARK: - Enums
 
 // This enum provides error cases for fetching event athlete data
 enum EventAthleteDataError: Error {

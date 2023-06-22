@@ -74,9 +74,8 @@ class LeagueDetailTableViewController: UITableViewController {
         subscribe()
     }
     
-    // TODO: Can we use viewWillAppear?
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         updateTableView(animated: false)
     }
     
@@ -135,8 +134,9 @@ class LeagueDetailTableViewController: UITableViewController {
     // TODO: Revert back to segue action instead of manually pushing
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let tournament = dataSource.itemIdentifier(for: indexPath),
+              let tournamentIndex = self.dataStore.leagues[self.leagueIndex].tournaments.firstIndex(where: { $0.id == tournament.id }),
               let destinationViewController = storyboard?.instantiateViewController(identifier: "TournamentDetail", creator: { coder in
-                  TournamentDetailTableViewController(coder: coder, league: self.league, tournament: tournament)
+                  TournamentDetailTableViewController(coder: coder, dataStore: self.dataStore, leagueIndex: self.leagueIndex, tournamentIndex: tournamentIndex)
               }) else { return }
         
         // Deselect the row and push the league details view controller while passing the full league data
@@ -174,8 +174,19 @@ class LeagueDetailTableViewController: UITableViewController {
               let sourceViewController = segue.source as? TournamentDetailTableViewController else { return }
         
         let tournament = sourceViewController.tournament
-        //TODO: Pull tournament removal code into here from TournamentDetailTableViewController
-        //updateTableView()
+        
+        // Remove the tournament from the data store
+        dataStore.leagues[leagueIndex].tournaments.removeAll { $0.id == tournament.id }
+        
+        // Remove the tournament data from the tournaments and tournamentIds trees
+        tournament.databaseReference.removeValue()
+        Database.database().reference().child("tournamentIds").child(tournament.id).removeValue()
+        
+        // Remove the tournament data from the league tournamentIds tree
+        league.databaseReference.child("tournamentIds").child(tournament.id).removeValue()
+        
+        // TODO: Throws warning if animated parameter is true: UITableView was told to layout its visible cells and other contents without being in the view hierarchy
+        updateTableView()
     }
 }
 

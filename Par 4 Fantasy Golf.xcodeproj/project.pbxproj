@@ -11,7 +11,7 @@
 		E138DE5C29AE88D300BBE47F /* CreateLeagueTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138DE5B29AE88D300BBE47F /* CreateLeagueTableViewController.swift */; };
 		E138DE5F29AE89E400BBE47F /* League.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138DE5E29AE89E400BBE47F /* League.swift */; };
 		E138DE6129AE940000BBE47F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E138DE6029AE940000BBE47F /* GoogleService-Info.plist */; };
-		E147320629F99A9D009C000A /* UIViewController Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E147320529F99A9D009C000A /* UIViewController Extensions.swift */; };
+		E147320629F99A9D009C000A /* UIViewController+Indications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E147320529F99A9D009C000A /* UIViewController+Indications.swift */; };
 		E149793229D4DAFC00ADEE60 /* TournamentUserDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793129D4DAFC00ADEE60 /* TournamentUserDetailTableViewController.swift */; };
 		E149793429D5BCE700ADEE60 /* ObjectFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793329D5BCE700ADEE60 /* ObjectFetcher.swift */; };
 		E149793829D86E8C00ADEE60 /* CalendarApiResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793729D86E8C00ADEE60 /* CalendarApiResponse.swift */; };
@@ -20,6 +20,8 @@
 		E149794029DE305200ADEE60 /* TournamentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149793F29DE305200ADEE60 /* TournamentTableViewCell.swift */; };
 		E149794429DF712A00ADEE60 /* SelectEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149794329DF712A00ADEE60 /* SelectEventTableViewController.swift */; };
 		E149794929E0A41F00ADEE60 /* MinimalTournament.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149794829E0A41F00ADEE60 /* MinimalTournament.swift */; };
+		E160CB7E2A44E7A8000E5116 /* Double+FormattedDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E160CB7D2A44E7A8000E5116 /* Double+FormattedDate.swift */; };
+		E160CB802A44E7EF000E5116 /* String+ESPNDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E160CB7F2A44E7EF000E5116 /* String+ESPNDate.swift */; };
 		E16C1B8929E1EC1B0034762C /* CreateTournamentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C1B8829E1EC1B0034762C /* CreateTournamentTableViewController.swift */; };
 		E16C1B8B29E5D3640034762C /* EventApiResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C1B8A29E5D3640034762C /* EventApiResponse.swift */; };
 		E16C1B8D29E9EC090034762C /* AthleteBetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C1B8C29E9EC090034762C /* AthleteBetData.swift */; };
@@ -57,7 +59,7 @@
 		E138DE5B29AE88D300BBE47F /* CreateLeagueTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateLeagueTableViewController.swift; sourceTree = "<group>"; };
 		E138DE5E29AE89E400BBE47F /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
 		E138DE6029AE940000BBE47F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		E147320529F99A9D009C000A /* UIViewController Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController Extensions.swift"; sourceTree = "<group>"; };
+		E147320529F99A9D009C000A /* UIViewController+Indications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Indications.swift"; sourceTree = "<group>"; };
 		E149793129D4DAFC00ADEE60 /* TournamentUserDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentUserDetailTableViewController.swift; sourceTree = "<group>"; };
 		E149793329D5BCE700ADEE60 /* ObjectFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectFetcher.swift; sourceTree = "<group>"; };
 		E149793729D86E8C00ADEE60 /* CalendarApiResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarApiResponse.swift; sourceTree = "<group>"; };
@@ -66,6 +68,8 @@
 		E149793F29DE305200ADEE60 /* TournamentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentTableViewCell.swift; sourceTree = "<group>"; };
 		E149794329DF712A00ADEE60 /* SelectEventTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectEventTableViewController.swift; sourceTree = "<group>"; };
 		E149794829E0A41F00ADEE60 /* MinimalTournament.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinimalTournament.swift; sourceTree = "<group>"; };
+		E160CB7D2A44E7A8000E5116 /* Double+FormattedDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+FormattedDate.swift"; sourceTree = "<group>"; };
+		E160CB7F2A44E7EF000E5116 /* String+ESPNDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+ESPNDate.swift"; sourceTree = "<group>"; };
 		E16C1B8829E1EC1B0034762C /* CreateTournamentTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTournamentTableViewController.swift; sourceTree = "<group>"; };
 		E16C1B8A29E5D3640034762C /* EventApiResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventApiResponse.swift; sourceTree = "<group>"; };
 		E16C1B8C29E9EC090034762C /* AthleteBetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AthleteBetData.swift; sourceTree = "<group>"; };
@@ -123,12 +127,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		E147320729FBE8A4009C000A /* Utility */ = {
+		E147320729FBE8A4009C000A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				E147320529F99A9D009C000A /* UIViewController Extensions.swift */,
+				E147320529F99A9D009C000A /* UIViewController+Indications.swift */,
+				E160CB7D2A44E7A8000E5116 /* Double+FormattedDate.swift */,
+				E160CB7F2A44E7EF000E5116 /* String+ESPNDate.swift */,
 			);
-			path = Utility;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		E149793B29DE2CEE00ADEE60 /* Tournaments */ = {
@@ -237,7 +243,7 @@
 				E138DE5D29AE89CE00BBE47F /* Models */,
 				E1C4B12229A6C16600F0DF67 /* View Controllers */,
 				E1C4B12029A6C14700F0DF67 /* App_Scene Delegate */,
-				E147320729FBE8A4009C000A /* Utility */,
+				E147320729FBE8A4009C000A /* Extensions */,
 				E1C4B11229A560DF00F0DF67 /* Main.storyboard */,
 				E1C4B11729A560E300F0DF67 /* LaunchScreen.storyboard */,
 				E1C4B11529A560E300F0DF67 /* Assets.xcassets */,
@@ -390,6 +396,7 @@
 				E149793829D86E8C00ADEE60 /* CalendarApiResponse.swift in Sources */,
 				E16C1B8D29E9EC090034762C /* AthleteBetData.swift in Sources */,
 				E1E0179E29CFD17A00A5A546 /* PickItem.swift in Sources */,
+				E160CB7E2A44E7A8000E5116 /* Double+FormattedDate.swift in Sources */,
 				E1C4B12829A6C89C00F0DF67 /* AccountViewController.swift in Sources */,
 				E19E3EA829CC897D008A7D2E /* PickTableViewCell.swift in Sources */,
 				E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */,
@@ -403,7 +410,7 @@
 				E1AB1C3A29B29F9E002A354B /* User.swift in Sources */,
 				E149794029DE305200ADEE60 /* TournamentTableViewCell.swift in Sources */,
 				E1EC0BDC2A16BBAA00D9EF1D /* LeaguesCollectionViewController.swift in Sources */,
-				E147320629F99A9D009C000A /* UIViewController Extensions.swift in Sources */,
+				E147320629F99A9D009C000A /* UIViewController+Indications.swift in Sources */,
 				E19E3EAA29CD33DC008A7D2E /* ManageAthletesTableViewController.swift in Sources */,
 				E149794429DF712A00ADEE60 /* SelectEventTableViewController.swift in Sources */,
 				E1E824B329D26EEA0094903D /* MinimalLeague.swift in Sources */,
@@ -411,6 +418,7 @@
 				E19E3EAC29CD33F2008A7D2E /* Athlete.swift in Sources */,
 				E1C4B12629A6C1DD00F0DF67 /* SignInViewController.swift in Sources */,
 				E1AB1C3629B2828B002A354B /* TournamentDetailTableViewController.swift in Sources */,
+				E160CB802A44E7EF000E5116 /* String+ESPNDate.swift in Sources */,
 				E19E3EAE29CD419B008A7D2E /* AddEditAthleteTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

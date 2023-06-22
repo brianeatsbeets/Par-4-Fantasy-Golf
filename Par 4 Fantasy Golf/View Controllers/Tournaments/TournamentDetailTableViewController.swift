@@ -10,6 +10,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import Combine
 
 // MARK: - Main class
 
@@ -23,21 +24,30 @@ class TournamentDetailTableViewController: UITableViewController {
     @IBOutlet var lastUpdateTimeLabel: UILabel!
     
     lazy var dataSource = createDataSource()
+    
+    var dataStore: DataStore
+    let leagueIndex: Int
+    let tournamentIndex: Int
     var league: League
     var tournament: Tournament
     var standings = [TournamentStanding]()
+    var subscription: AnyCancellable?
+    
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
     var updateTimer = Timer()
     
-    // Timer update interval in minutes
-    let updateInterval = 15.0
+    // Timer update interval in seconds
+    let updateInterval: Double = 15*60
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, league: League, tournament: Tournament) {
-        self.league = league
-        self.tournament = tournament
+    init?(coder: NSCoder, dataStore: DataStore, leagueIndex: Int, tournamentIndex: Int) {
+        self.dataStore = dataStore
+        self.leagueIndex = leagueIndex
+        self.tournamentIndex = tournamentIndex
+        league = dataStore.leagues[leagueIndex]
+        tournament = league.tournaments[tournamentIndex]
         super.init(coder: coder)
     }
     
@@ -53,6 +63,8 @@ class TournamentDetailTableViewController: UITableViewController {
         tableView.dataSource = dataSource
         
         setupUI()
+        
+        subscribe()
         
         // Print out athletes and ESPN Ids for import
 //        for athlete in tournament.athletes {
@@ -71,7 +83,7 @@ class TournamentDetailTableViewController: UITableViewController {
             lastUpdateTimeLabel.text = "Tournament begins on \(tournament.startDate.formattedDate())"
         } else if Date.now.timeIntervalSince1970 <= tournament.endDate {
             // Tournament is active
-            //initializeUpdateTimer()
+            initializeUpdateTimer()
         } else {
             // Tournament has ended
             lastUpdateTimeLabel.text = "Tournament ended on \(tournament.endDate.formattedDate())"
@@ -85,10 +97,22 @@ class TournamentDetailTableViewController: UITableViewController {
         if firstLoad {
             firstLoad = false
         } else {
-            //calculateTournamentStandings()
             standings = tournament.calculateStandings(league: league)
             updateTableView()
         }
+    }
+    
+    // Create a subscription for the datastore
+    func subscribe() {
+        subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
+            print("Completion")
+        }, receiveValue: { leagues in
+            print("TournamentDetailTableVC received updated value for leagues")
+            
+            // Update VC local league variable
+            self.league = leagues[self.leagueIndex]
+            self.tournament = leagues[self.leagueIndex].tournaments[self.tournamentIndex]
+        })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -111,7 +135,6 @@ class TournamentDetailTableViewController: UITableViewController {
         }
         
         // Calculate the standings and update the table view
-        //calculateTournamentStandings()
         standings = tournament.calculateStandings(league: league)
         updateTableView()
     }
@@ -152,7 +175,7 @@ class TournamentDetailTableViewController: UITableViewController {
         var nonMatchingAthletes = [Athlete]()
         
         // Merge the new athlete data with the current data
-        self.tournament.athletes = self.tournament.athletes.map({ athlete in
+        self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes = self.tournament.athletes.map({ athlete in
             
             // Find the matching athlete
             guard var updatedAthlete = updatedAthleteData.first(where: { athleteToFind in
@@ -191,7 +214,7 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Helper code to set values when update is needed
         let finishUpdateCycle = {
-            self.tournament.lastUpdateTime = Date.now.timeIntervalSince1970
+            self.dataStore.leagues[self.leagueIndex].tournaments[self.tournamentIndex].lastUpdateTime = Date.now.timeIntervalSince1970
             self.tournament.databaseReference.child("lastUpdateTime").setValue(self.tournament.lastUpdateTime)
             nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval*60).timeIntervalSince1970
             
@@ -208,10 +231,10 @@ class TournamentDetailTableViewController: UITableViewController {
         }
         
         // Calculate the next update timestamp
-        if tournament.lastUpdateTime < Date.now.addingTimeInterval(-updateInterval*60).timeIntervalSince1970 { // 15 minutes ago
+        if tournament.lastUpdateTime < Date.now.addingTimeInterval(-updateInterval).timeIntervalSince1970 { // 15 minutes ago
             finishUpdateCycle()
         } else {
-            nextUpdateTime = tournament.lastUpdateTime + (updateInterval*60) // lastUpdateTime + 15 minutes
+            nextUpdateTime = tournament.lastUpdateTime + (updateInterval) // lastUpdateTime + 15 minutes
         }
         
         // Update countdown with initial value before timer starts
@@ -247,17 +270,11 @@ class TournamentDetailTableViewController: UITableViewController {
             
             self.updateTimer.invalidate()
             
-            Task {
-                // Remove the tournament data from the tournaments and tournamentIds trees
-                try await self.tournament.databaseReference.removeValue()
-                try await Database.database().reference().child("tournamentIds").child(self.tournament.id).removeValue()
-                
-                // Remove the tournament data from the league tournamentIds tree
-                try await self.league.databaseReference.child("tournamentIds").child(self.tournament.id).removeValue()
-                
-                // Return to LeagueDetailTableViewController
-                self.performSegue(withIdentifier: "unwindDeleteTournament", sender: nil)
-            }
+            // Cancel the subscription early to prevent updating the local league variable with league data that no longer exists
+            self.subscription?.cancel()
+            
+            // Return to LeagueDetailTableViewController
+            self.performSegue(withIdentifier: "unwindDeleteTournament", sender: nil)
         }
         
         deleteTournamentAlert.addAction(cancel)
@@ -286,6 +303,7 @@ class TournamentDetailTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         // Make sure we have picks for the selected user
+        // TODO: Make cells not selectable if there are no picks for the user
         guard let tournamentStanding = dataSource.itemIdentifier(for: indexPath),
               let userPicks = tournament.pickIds[tournamentStanding.user.id] else { print("No picks for this user"); return }
         
@@ -324,7 +342,6 @@ class TournamentDetailTableViewController: UITableViewController {
         var pickDict = [String: Bool]()
         for pick in pickItems {
             if pick.isSelected {
-                //pickDict[pick.athlete.id] = true
                 pickDict[pick.athlete.espnId] = true
             }
         }
@@ -334,10 +351,9 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Save the picks to the local data source
         let pickArray = pickDict.map { $0.key }
-        tournament.pickIds[currentFirebaseUser.uid] = pickArray
+        dataStore.leagues[leagueIndex].tournaments[tournamentIndex].pickIds[currentFirebaseUser.uid] = pickArray
         
         // Update the tournament standings and refresh the table view
-        //calculateTournamentStandings()
         standings = tournament.calculateStandings(league: league)
         updateTableView()
     }
