@@ -61,7 +61,7 @@ class TournamentDetailTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
-        subscribe()
+        subscribeToDataStore()
         setupUI()
         
         // Print out athletes and ESPN Ids for import
@@ -108,7 +108,7 @@ class TournamentDetailTableViewController: UITableViewController {
     // MARK: - Other functions
     
     // Create a subscription for the datastore
-    func subscribe() {
+    func subscribeToDataStore() {
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
             print("Completion")
         }, receiveValue: { leagues in
@@ -290,8 +290,7 @@ class TournamentDetailTableViewController: UITableViewController {
     
     // Pass tournament data to ManageAthletesTableViewController
     @IBSegueAction func segueToManageAthletes(_ coder: NSCoder) -> ManageAthletesTableViewController? {
-        guard let manageAthletesViewController = ManageAthletesTableViewController(coder: coder, dataStore: dataStore, leagueIndex: leagueIndex, tournamentIndex: tournamentIndex) else { return nil }
-        return manageAthletesViewController
+        return ManageAthletesTableViewController(coder: coder, dataStore: dataStore, leagueIndex: leagueIndex, tournamentIndex: tournamentIndex)
     }
     
     // Segue to TournamentUserDetailViewController

@@ -66,14 +66,14 @@ class ManageAthletesTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
-        subscribe()
+        subscribeToDataStore()
         updateTableView()
     }
     
     // MARK: - Other functions
     
     // Create a subscription for the datastore
-    func subscribe() {
+    func subscribeToDataStore() {
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
             print("Completion")
         }, receiveValue: { leagues in

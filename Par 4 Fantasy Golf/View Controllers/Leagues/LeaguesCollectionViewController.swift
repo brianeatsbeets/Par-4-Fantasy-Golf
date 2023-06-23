@@ -47,7 +47,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
         
         displayLoadingIndicator(animated: false)
         
-        subscribe()
+        subscribeToDataStore()
 
         // Fetch initial league data and update the collection view
         fetchLeagueData() {
@@ -64,7 +64,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
     // MARK: - Other functions
     
     // Create a subscription for the datastore
-    func subscribe() {
+    func subscribeToDataStore() {
 
         // Assign a subscription to the variable
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in

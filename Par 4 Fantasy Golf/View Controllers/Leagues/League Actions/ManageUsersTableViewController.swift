@@ -9,14 +9,9 @@
 
 import UIKit
 import FirebaseDatabase
+import Combine
 
 // MARK: - Protocols
-
-// This protocol allows conformers to be notified of updates to the athletes managed by this view controller
-protocol ManageUsersDelegate: AnyObject {
-    func addUser(user: User)
-    func removeUser(user: User)
-}
 
 // This protocol allows the ManageUsersTableViewController to be notified when a swipe-to-delete event occurs
 protocol ManageUsersSwipeToDeleteDelegate: AnyObject {
@@ -31,14 +26,20 @@ class ManageUsersTableViewController: UITableViewController {
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
+    
+    var dataStore: DataStore
+    let leagueIndex: Int
     var league: League
-    weak var delegate: ManageUsersDelegate?
+    var subscription: AnyCancellable?
+    
     let leagueUsersRef: DatabaseReference
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, league: League) {
-        self.league = league
+    init?(coder: NSCoder, dataStore: DataStore, leagueIndex: Int) {
+        self.dataStore = dataStore
+        self.leagueIndex = leagueIndex
+        league = dataStore.leagues[leagueIndex]
         leagueUsersRef = league.databaseReference.child("memberIds")
         super.init(coder: coder)
     }
@@ -53,10 +54,23 @@ class ManageUsersTableViewController: UITableViewController {
         super.viewDidLoad()
 
         tableView.dataSource = dataSource
+        subscribeToDataStore()
         updateTableView()
     }
     
     // MARK: - Other functions
+    
+    // Create a subscription for the datastore
+    func subscribeToDataStore() {
+        subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
+            print("Completion")
+        }, receiveValue: { leagues in
+            print("ManageUsersTableVC received updated value for leagues")
+            
+            // Update VC local league variable
+            self.league = leagues[self.leagueIndex]
+        })
+    }
     
     // Display an alert that allows the user to add a new user to the league
     @IBAction func addButtonPressed(_ sender: Any) {
@@ -74,7 +88,12 @@ class ManageUsersTableViewController: UITableViewController {
             // Dismiss the current alert
             addUserAlert.dismiss(animated: true)
             
-            self.searchForUser(with: email)
+            // Search for a user with the provided email
+            if self.league.members.contains(where: { $0.email == email }) {
+                self.displayAlert(title: "User Already Added", message: "The user with the provided email address is already a member of this league.")
+            } else {
+                self.searchForUser(with: email)
+            }
         }
         
         // Add the alert actions
@@ -99,36 +118,28 @@ class ManageUsersTableViewController: UITableViewController {
                 guard let childSnapshot = snapshot.children.nextObject() as? DataSnapshot,
                       let newUser = User(snapshot: childSnapshot) else { return }
                 
-                // Check if the user is already a league member
-                if !self.league.memberIds.contains([newUser.id]) {
+                // Create temporary league copy to avoid updating the data store multiple times
+                var updatedLeague = self.dataStore.leagues[self.leagueIndex]
                     
-                    // Add the user to the local data source
-                    self.league.members.append(newUser)
-                    self.league.memberIds.append(newUser.id)
-                    self.delegate?.addUser(user: newUser)
-                    
-                    // Sort the members and update the table view
-                    self.league.members = self.league.members.sorted(by: { $0.email < $1.email })
-                    self.updateTableView()
-                    
-                    // Add the user's ID to the league and add the league's ID to the user in Firebase
-                    self.leagueUsersRef.child(newUser.id).setValue(true)
-                    usersRef.child(newUser.id).child("leagues").child(self.league.id).setValue(true)
-                } else {
-                    
-                    // If so, alert the user
-                    let userAlreadyAddedAlert = UIAlertController(title: "User Already Added", message: "The user with the provided email address is already a member of this league.", preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .default)
-                    userAlreadyAddedAlert.addAction(ok)
-                    self.present(userAlreadyAddedAlert, animated: true)
-                }
+                // Add the user to the data store
+                updatedLeague.members.append(newUser)
+                updatedLeague.memberIds.append(newUser.id)
+                //self.delegate?.addUser(user: newUser)
+                
+                // Sort the members
+                updatedLeague.members = updatedLeague.members.sorted(by: { $0.email < $1.email })
+                
+                // Save the updated league values to the data store and update the table view
+                self.dataStore.leagues[self.leagueIndex] = updatedLeague
+                self.updateTableView()
+                
+                // Add the user's ID to the league and add the league's ID to the user in Firebase
+                self.leagueUsersRef.child(newUser.id).setValue(true)
+                usersRef.child(newUser.id).child("leagues").child(self.league.id).setValue(true)
             } else {
                 
                 // If no matching user was not found, alert the user
-                let userNotFoundAlert = UIAlertController(title: "User Not Found", message: "No user was found with the provided email address.", preferredStyle: .alert)
-                let ok = UIAlertAction(title: "OK", style: .default)
-                userNotFoundAlert.addAction(ok)
-                self.present(userNotFoundAlert, animated: true)
+                self.displayAlert(title: "User Not Found", message: "No user was found with the provided email address.")
             }
         }
     }
@@ -139,8 +150,13 @@ class ManageUsersTableViewController: UITableViewController {
 // This extension conforms to the ManageUsersSwipeToDeleteDelegate procotol
 extension ManageUsersTableViewController: ManageUsersSwipeToDeleteDelegate {
     func removeUser(user: User) {
-        league.members.removeAll { $0.id == user.id }
-        league.memberIds.removeAll { $0 == user.id }
+        
+        // Create temporary league copy to avoid updating the data store multiple times
+        var updatedLeague = dataStore.leagues[leagueIndex]
+        updatedLeague.members.removeAll { $0.id == user.id }
+        updatedLeague.memberIds.removeAll { $0 == user.id }
+        
+        dataStore.leagues[leagueIndex] = updatedLeague
         updateTableView()
     }
 }
@@ -159,7 +175,6 @@ extension ManageUsersTableViewController {
         var usersRef = DatabaseReference()
         var tournamentsRef = DatabaseReference()
         var selectedLeague: League!
-        var delegate: ManageUsersDelegate?
         var swipeToDeleteDelegate: ManageUsersSwipeToDeleteDelegate?
         var manageUsersViewController: ManageUsersTableViewController?
         
@@ -189,7 +204,6 @@ extension ManageUsersTableViewController {
                 removeUserAlert.dismiss(animated: true)
                 
                 // Alert delegates of removed user
-                self.delegate?.removeUser(user: user)
                 self.swipeToDeleteDelegate?.removeUser(user: user)
                 
                 // Remove the user's picks from the local data source and Firebase
@@ -246,7 +260,6 @@ extension ManageUsersTableViewController {
         dataSource.usersRef = Database.database().reference(withPath: "users")
         dataSource.tournamentsRef = Database.database().reference(withPath: "tournaments")
         dataSource.selectedLeague = league
-        dataSource.delegate = delegate // LeagueDetailTableViewController
         dataSource.swipeToDeleteDelegate = self
         dataSource.manageUsersViewController = self
         

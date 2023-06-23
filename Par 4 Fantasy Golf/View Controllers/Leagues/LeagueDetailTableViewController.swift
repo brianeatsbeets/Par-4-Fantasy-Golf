@@ -34,11 +34,11 @@ class LeagueDetailTableViewController: UITableViewController {
     var dataStore: DataStore
     let leagueIndex: Int
     var league: League
+    var subscription: AnyCancellable?
     
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
     var calendarEvents = [CalendarEvent]()
-    var subscription: AnyCancellable?
     
     // MARK: - Initializers
     
@@ -66,7 +66,7 @@ class LeagueDetailTableViewController: UITableViewController {
         }
         
         tableView.dataSource = dataSource
-        subscribe()
+        subscribeToDataStore()
         updateTableView()
     }
     
@@ -78,7 +78,7 @@ class LeagueDetailTableViewController: UITableViewController {
     // MARK: - Other functions
     
     // Create a subscription for the datastore
-    func subscribe() {
+    func subscribeToDataStore() {
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
             print("Completion")
         }, receiveValue: { leagues in
@@ -121,9 +121,7 @@ class LeagueDetailTableViewController: UITableViewController {
     
     // Pass league data to ManageUsersTableViewController
     @IBSegueAction func segueToManageUsers(_ coder: NSCoder) -> ManageUsersTableViewController? {
-        guard let manageUsersViewController = ManageUsersTableViewController(coder: coder, league: dataStore.leagues[leagueIndex]) else { return nil }
-        manageUsersViewController.delegate = self
-        return manageUsersViewController
+        return ManageUsersTableViewController(coder: coder, dataStore: dataStore, leagueIndex: leagueIndex)
     }
     
     // Segue to TournamentDetailViewController with full tournament data
@@ -223,17 +221,17 @@ extension LeagueDetailTableViewController {
 }
 
 // This extention conforms to the ManageUsersDelegate protocol
-extension LeagueDetailTableViewController: ManageUsersDelegate {
-    
-    // Add a new user
-    func addUser(user: User) {
-        dataStore.leagues[leagueIndex].members.append(user)
-        dataStore.leagues[leagueIndex].memberIds.append(user.id)
-    }
-    
-    // Remove an existing user
-    func removeUser(user: User) {
-        dataStore.leagues[leagueIndex].members.removeAll { $0.id == user.id }
-        dataStore.leagues[leagueIndex].memberIds.removeAll { $0 == user.id }
-    }
-}
+//extension LeagueDetailTableViewController: ManageUsersDelegate {
+//    
+//    // Add a new user
+//    func addUser(user: User) {
+//        dataStore.leagues[leagueIndex].members.append(user)
+//        dataStore.leagues[leagueIndex].memberIds.append(user.id)
+//    }
+//    
+//    // Remove an existing user
+//    func removeUser(user: User) {
+//        dataStore.leagues[leagueIndex].members.removeAll { $0.id == user.id }
+//        dataStore.leagues[leagueIndex].memberIds.removeAll { $0 == user.id }
+//    }
+//}
