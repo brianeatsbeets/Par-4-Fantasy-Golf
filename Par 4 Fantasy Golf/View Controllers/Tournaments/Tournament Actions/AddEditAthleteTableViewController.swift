@@ -95,7 +95,7 @@ class AddEditAthleteTableViewController: UITableViewController {
             athlete!.value = value
             athlete!.score = score
         } else {
-            athlete = Athlete(espnId: "nil", name: name, odds: odds, value: value, score: score)
+            athlete = Athlete(espnId: espnId, name: name, odds: odds, value: value, score: score)
         }
     }
 }

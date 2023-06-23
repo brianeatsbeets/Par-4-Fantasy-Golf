@@ -66,7 +66,10 @@ class CreateTournamentTableViewController: UITableViewController {
                     let formatter = ISO8601DateFormatter()
                     formatter.timeZone = TimeZone.current
                     formatter.formatOptions = [.withFullDate]
-                    guard let eventEndDate = formatter.date(from: event.endDate) else { print("AAA"); return false }
+                    guard let eventEndDate = formatter.date(from: event.endDate) else {
+                        print("Couldn't get formatted date from the event end date")
+                        return false
+                    }
                     
                     return eventEndDate > Date.now
                 })
@@ -108,12 +111,9 @@ class CreateTournamentTableViewController: UITableViewController {
               let event = sourceViewController.selectedEvent
         else { return }
         
-        print(event)
-        
         // Update the selected event
         selectedEvent = event
         eventNameLabel.text = selectedEvent?.name
-        print("Event ID: \(event.eventId)")
         
         // Update save button state
         updateSaveButtonState()

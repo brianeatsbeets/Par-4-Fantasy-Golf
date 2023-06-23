@@ -45,16 +45,12 @@ class MakePicksTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        saveButton.isEnabled = pickCount >= 6
-        pickItems = getPickItems()
         tableView.dataSource = dataSource
+        getPickItems()
+        saveButton.isEnabled = pickCount >= 6
         title = "Picks for \(tournament.name)"
         budgetLabel.text = "Budget: $\(tournament.budget)"
         spentLabel.text = "Total Spent: $\(totalSpent)"
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
         updateTableView(animated: false)
     }
@@ -62,15 +58,14 @@ class MakePicksTableViewController: UITableViewController {
     // MARK: - Other functions
     
     // Populate the list of PickItems to be used in the data source
-    func getPickItems() -> [PickItem] {
-        var pickItems = [PickItem]()
+    func getPickItems() {
         
         // Check if we have existing picks
         if let userPicks = tournament.pickIds[Auth.auth().currentUser!.uid] {
             
             // If so, apply the existing user selections
             for athlete in tournament.athletes {
-                let pickItem = PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.id]))
+                let pickItem = PickItem(athlete: athlete, isSelected: userPicks.contains([athlete.espnId]))
                 if pickItem.isSelected {
                     totalSpent += pickItem.athlete.value
                 }
@@ -86,8 +81,6 @@ class MakePicksTableViewController: UITableViewController {
         
         // Sort picks by odds
         pickItems = pickItems.sorted(by: { $0.athlete.odds < $1.athlete.odds })
-        
-        return pickItems
     }
     
     // Update the data source when a cell is selected

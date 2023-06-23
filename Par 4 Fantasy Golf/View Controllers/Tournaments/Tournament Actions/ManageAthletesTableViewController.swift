@@ -10,6 +10,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import Combine
 
 // MARK: - Protocols
 
@@ -33,14 +34,24 @@ class ManageAthletesTableViewController: UITableViewController {
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    var tournament: Tournament
-    weak var delegate: ManageAthletesDelegate?
     let userPicksRef: DatabaseReference
+    
+    var dataStore: DataStore
+    let leagueIndex: Int
+    let tournamentIndex: Int
+    var league: League
+    var tournament: Tournament
+    var standings = [TournamentStanding]()
+    var subscription: AnyCancellable?
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, tournament: Tournament) {
-        self.tournament = tournament
+    init?(coder: NSCoder, dataStore: DataStore, leagueIndex: Int, tournamentIndex: Int) {
+        self.dataStore = dataStore
+        self.leagueIndex = leagueIndex
+        self.tournamentIndex = tournamentIndex
+        league = dataStore.leagues[leagueIndex]
+        tournament = league.tournaments[tournamentIndex]
         self.userPicksRef = tournament.databaseReference.child("pickIds").child(Auth.auth().currentUser!.uid)
         super.init(coder: coder)
     }
@@ -55,10 +66,24 @@ class ManageAthletesTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
+        subscribe()
         updateTableView()
     }
     
     // MARK: - Other functions
+    
+    // Create a subscription for the datastore
+    func subscribe() {
+        subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
+            print("Completion")
+        }, receiveValue: { leagues in
+            print("ManageAthletesTableVC received updated value for leagues")
+            
+            // Update VC local league variable
+            self.league = leagues[self.leagueIndex]
+            self.tournament = leagues[self.leagueIndex].tournaments[self.tournamentIndex]
+        })
+    }
     
     // Update the data source when a cell is tapped
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -88,21 +113,17 @@ class ManageAthletesTableViewController: UITableViewController {
               let sourceViewController = segue.source as? AddEditAthleteTableViewController,
               let newAthlete = sourceViewController.athlete else { return }
         
-        let tournamentAthletesRef = tournament.databaseReference.child("athletes").child(newAthlete.id)
-        
         // If we have an athlete with a matching ID, replace it; otherwise, append it
-        if let athleteIndex = tournament.athletes.firstIndex(where: { $0.id == newAthlete.id }) {
-            tournament.athletes[athleteIndex] = newAthlete
-            delegate?.updateAthlete(athlete: newAthlete)
+        if let athleteIndex = tournament.athletes.firstIndex(where: { $0.espnId == newAthlete.espnId }) {
+            dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes[athleteIndex] = newAthlete
         } else {
-            tournament.athletes.append(newAthlete)
-            delegate?.addAthlete(athlete: newAthlete)
+            dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes.append(newAthlete)
         }
         
-        tournament.athletes = tournament.athletes.sorted(by: { $0.name < $1.name })
+        dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes = dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes.sorted(by: { $0.name < $1.name })
         
         // Save the athlete to Firebase
-        tournamentAthletesRef.setValue(newAthlete.toAnyObject())
+        tournament.databaseReference.child("athletes").child(newAthlete.id).setValue(newAthlete.toAnyObject())
         
         // Update the table view
         updateTableView()
@@ -114,7 +135,7 @@ class ManageAthletesTableViewController: UITableViewController {
 // This extension conforms to the ManageAthletesSwipeToDeleteDelegate procotol
 extension ManageAthletesTableViewController: ManageAthletesSwipeToDeleteDelegate {
     func removeAthlete(athlete: Athlete) {
-        tournament.athletes.removeAll { $0.id == athlete.id }
+        dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes.removeAll { $0.id == athlete.id }
         updateTableView()
     }
 }
@@ -132,7 +153,6 @@ extension ManageAthletesTableViewController {
         var tournamentAthletesRef = DatabaseReference()
         var tournamentPicksRef = DatabaseReference()
         var selectedTournament: Tournament!
-        weak var delegate: ManageAthletesDelegate?
         weak var swipeToDeleteDelegate: ManageAthletesSwipeToDeleteDelegate?
         
         // MARK: - Other functions
@@ -147,8 +167,7 @@ extension ManageAthletesTableViewController {
             guard let athlete = itemIdentifier(for: indexPath),
                   editingStyle == .delete else { return }
             
-            // Alert delegates of removed user
-            delegate?.removeAthlete(athlete: athlete)
+            // Alert delegate of removed user
             swipeToDeleteDelegate?.removeAthlete(athlete: athlete)
             
             // Remove the athlete from the tournament in firebase
@@ -193,7 +212,6 @@ extension ManageAthletesTableViewController {
         dataSource.tournamentAthletesRef = tournament.databaseReference.child("athletes")
         dataSource.tournamentPicksRef = tournament.databaseReference.child("pickIds")
         dataSource.selectedTournament = tournament
-        dataSource.delegate = delegate // TournamentDetailTableViewController
         dataSource.swipeToDeleteDelegate = self
         
         return dataSource

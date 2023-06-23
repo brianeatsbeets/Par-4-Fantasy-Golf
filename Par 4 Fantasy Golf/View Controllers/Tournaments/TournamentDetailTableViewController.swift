@@ -61,10 +61,8 @@ class TournamentDetailTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.dataSource = dataSource
-        
-        setupUI()
-        
         subscribe()
+        setupUI()
         
         // Print out athletes and ESPN Ids for import
 //        for athlete in tournament.athletes {
@@ -102,6 +100,13 @@ class TournamentDetailTableViewController: UITableViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        updateTimer.invalidate()
+    }
+    
+    // MARK: - Other functions
+    
     // Create a subscription for the datastore
     func subscribe() {
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
@@ -114,13 +119,6 @@ class TournamentDetailTableViewController: UITableViewController {
             self.tournament = leagues[self.leagueIndex].tournaments[self.tournamentIndex]
         })
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        updateTimer.invalidate()
-    }
-    
-    // MARK: - Other functions
     
     // Initialize UI elements
     func setupUI() {
@@ -292,8 +290,7 @@ class TournamentDetailTableViewController: UITableViewController {
     
     // Pass tournament data to ManageAthletesTableViewController
     @IBSegueAction func segueToManageAthletes(_ coder: NSCoder) -> ManageAthletesTableViewController? {
-        guard let manageAthletesViewController = ManageAthletesTableViewController(coder: coder, tournament: tournament) else { return nil }
-        manageAthletesViewController.delegate = self
+        guard let manageAthletesViewController = ManageAthletesTableViewController(coder: coder, dataStore: dataStore, leagueIndex: leagueIndex, tournamentIndex: tournamentIndex) else { return nil }
         return manageAthletesViewController
     }
     
@@ -355,6 +352,8 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Update the tournament standings and refresh the table view
         standings = tournament.calculateStandings(league: league)
+        
+        // TODO: Throwing warning (I think this only happens when it is animated) - UITableView was told to layout its visible cells and other contents without being in the view hierarchy
         updateTableView()
     }
 }
@@ -392,27 +391,5 @@ extension TournamentDetailTableViewController {
         snapshot.appendSections(Section.allCases)
         snapshot.appendItems(standings)
         dataSource.apply(snapshot, animatingDifferences: animated)
-    }
-}
-
-// This extention conforms to the ManageAthletesDelegate protocol
-extension TournamentDetailTableViewController: ManageAthletesDelegate {
-    
-    // Add a new athlete
-    func addAthlete(athlete: Athlete) {
-        tournament.athletes.append(athlete)
-        setMakePicksButtonState()
-    }
-    
-    // Remove an existing athlete
-    func removeAthlete(athlete: Athlete) {
-        tournament.athletes.removeAll { $0.id == athlete.id }
-        setMakePicksButtonState()
-    }
-    
-    // Update an existing athlete
-    func updateAthlete(athlete: Athlete) {
-        guard let index = (tournament.athletes.firstIndex { $0.id == athlete.id }) else { return }
-        tournament.athletes[index] = athlete
     }
 }

@@ -40,9 +40,6 @@ class LeagueDetailTableViewController: UITableViewController {
     var calendarEvents = [CalendarEvent]()
     var subscription: AnyCancellable?
     
-    // TODO: Remove this
-    weak var delegate: LeagueDataSourceDelegate?
-    
     // MARK: - Initializers
     
     init?(coder: NSCoder, dataStore: DataStore, leagueIndex: Int) {
@@ -69,9 +66,8 @@ class LeagueDetailTableViewController: UITableViewController {
         }
         
         tableView.dataSource = dataSource
-        updateTableView()
-        
         subscribe()
+        updateTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {

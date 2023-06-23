@@ -19,16 +19,6 @@ protocol TournamentTimerDelegate: AnyObject {
     func timerDidReset(league: League, tournament: Tournament)
 }
 
-// This protocol allows conformers to notify the LeaguesCollectionViewController of any league updates
-// TODO: Remove this
-protocol LeagueDataSourceDelegate: AnyObject {
-    func createTournament(leagueId: String, tournament: Tournament)
-    func updateTournament(leagueId: String, tournament: Tournament)
-    func deleteTournament(leagueId: String, tournament: Tournament)
-    func addUser(leagueId: String, user: User)
-    func removeUser(leagueId: String, user: User)
-}
-
 // MARK: - Main class
 
 // This class/view controller displays available leagues
@@ -342,87 +332,3 @@ extension LeaguesCollectionViewController: TournamentTimerDelegate {
         }
     }
 }
-
-// TODO: Remove this
-
-//// This extention conforms to the LeagueDataSourceDelegate protocol
-//extension LeaguesCollectionViewController: LeagueDataSourceDelegate {
-//
-//    // Create a tournament in the specified league
-//    func createTournament(leagueId: String, tournament: Tournament) {
-//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }) else {
-//            print("Couldn't find league to create tournament")
-//            return
-//        }
-//
-//        leagues[leagueIndex].tournaments.append(tournament)
-//
-//        print("Created tournament")
-//        leagues[leagueIndex].tournaments.forEach { tournament in
-//            print(tournament.name)
-//        }
-//    }
-//
-//    // Update a tournament in the specified league
-//    func updateTournament(leagueId: String, tournament: Tournament) {
-//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }),
-//              let tournamentIndex = leagues[leagueIndex].tournaments.firstIndex(where: { $0.id == tournament.id }) else {
-//            print("Couldn't find league or league tournament to update tournament")
-//            return
-//        }
-//
-//        leagues[leagueIndex].tournaments[tournamentIndex] = tournament
-//
-//        print("Updated tournament")
-//        leagues[leagueIndex].tournaments.forEach { tournament in
-//            print(tournament.name)
-//        }
-//    }
-//
-//    // Remove a tournament from the specified league
-//    func deleteTournament(leagueId: String, tournament: Tournament) {
-//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }),
-//              let tournamentIndex = leagues[leagueIndex].tournaments.firstIndex(where: { $0.id == tournament.id }) else {
-//            print("Couldn't find league or league tournament to remove tournament")
-//            return
-//        }
-//
-//        leagues[leagueIndex].tournaments.remove(at: tournamentIndex)
-//
-//        print("Removed tournament")
-//        leagues[leagueIndex].tournaments.forEach { tournament in
-//            print(tournament.name)
-//        }
-//    }
-//
-//    // Add a user in the specified league
-//    func addUser(leagueId: String, user: User) {
-//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }) else {
-//            print("Couldn't find league to add user")
-//            return
-//        }
-//
-//        leagues[leagueIndex].members.append(user)
-//
-//        print("Added user")
-//        leagues[leagueIndex].members.forEach { user in
-//            print(user.email)
-//        }
-//    }
-//
-//    // Remove a user from the specified league
-//    func removeUser(leagueId: String, user: User) {
-//        guard let leagueIndex = leagues.firstIndex(where: { $0.id == leagueId }),
-//              let userIndex = leagues[leagueIndex].members.firstIndex(where: { $0.id == user.id }) else {
-//            print("Couldn't find league or league user to remove user")
-//            return
-//        }
-//
-//        leagues[leagueIndex].members.remove(at: userIndex)
-//
-//        print("Removed User")
-//        leagues[leagueIndex].members.forEach { user in
-//            print(user.email)
-//        }
-//    }
-//}
