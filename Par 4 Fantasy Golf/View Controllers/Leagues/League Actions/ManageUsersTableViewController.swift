@@ -64,11 +64,13 @@ class ManageUsersTableViewController: UITableViewController {
     func subscribeToDataStore() {
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
             print("Completion")
-        }, receiveValue: { leagues in
+        }, receiveValue: { [weak self] leagues in
             print("ManageUsersTableVC received updated value for leagues")
-            
+
+            guard let strongSelf = self else { return }
+
             // Update VC local league variable
-            self.league = leagues[self.leagueIndex]
+            strongSelf.league = leagues[strongSelf.leagueIndex]
         })
     }
     
@@ -120,11 +122,10 @@ class ManageUsersTableViewController: UITableViewController {
                 
                 // Create temporary league copy to avoid updating the data store multiple times
                 var updatedLeague = self.dataStore.leagues[self.leagueIndex]
-                    
+                
                 // Add the user to the data store
                 updatedLeague.members.append(newUser)
                 updatedLeague.memberIds.append(newUser.id)
-                //self.delegate?.addUser(user: newUser)
                 
                 // Sort the members
                 updatedLeague.members = updatedLeague.members.sorted(by: { $0.email < $1.email })
@@ -175,8 +176,8 @@ extension ManageUsersTableViewController {
         var usersRef = DatabaseReference()
         var tournamentsRef = DatabaseReference()
         var selectedLeague: League!
-        var swipeToDeleteDelegate: ManageUsersSwipeToDeleteDelegate?
-        var manageUsersViewController: ManageUsersTableViewController?
+        weak var swipeToDeleteDelegate: ManageUsersSwipeToDeleteDelegate?
+        weak var manageUsersViewController: ManageUsersTableViewController?
         
         // MARK: - Other functions
         
@@ -240,14 +241,16 @@ extension ManageUsersTableViewController {
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> SwipeToDeleteDataSource {
         
-        let dataSource = SwipeToDeleteDataSource(tableView: tableView) { tableView, indexPath, user in
+        let dataSource = SwipeToDeleteDataSource(tableView: tableView) { [weak self] tableView, indexPath, user in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath)
             
             var config = cell.defaultContentConfiguration()
             config.text = user.email
-            if user.id == self.league.creator {
+            
+            if let creator = self?.league.creator,
+               user.id == creator {
                 config.text! += " (owner)"
             }
             cell.contentConfiguration = config

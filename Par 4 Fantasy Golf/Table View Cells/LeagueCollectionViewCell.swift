@@ -42,11 +42,18 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     weak var delegate: TournamentTimerDelegate?
 
     // Timer update interval in seconds
-    let updateInterval: Double = 15*60
+    let updateInterval: Double = 15
     
     override func awakeFromNib() {
         mainContentView.layer.cornerRadius = 12.0
         recentTournamentTimerLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        // Invalidate the timer to prevent multiple timers being created for the same cell when the cell gets recycled
+        updateTimer.invalidate()
     }
     
     // MARK: - Functions
@@ -71,6 +78,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         let recentTournament = league.tournaments.sorted { $0.endDate > $1.endDate }.first!
         recentTournamentNameLabel.text = recentTournament.name
         
+        // Check if the tournament is active
         if recentTournament.endDate < Date.now.timeIntervalSince1970 {
             recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
             recentTournamentTimerLabel.isHidden = true
@@ -122,7 +130,6 @@ class LeagueCollectionViewCell: UICollectionViewCell {
             
             // Check if the countdown has completed
             if timeLeft < 1 {
-                //nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval*60).timeIntervalSince1970
                 timer.invalidate()
                 self.recentTournamentTimerLabel.text = "Updating..."
                 
@@ -139,5 +146,4 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         // Add the timer to the .common runloop so it will update during user interaction
         RunLoop.current.add(updateTimer, forMode: .common)
     }
-
 }

@@ -81,11 +81,13 @@ class LeagueDetailTableViewController: UITableViewController {
     func subscribeToDataStore() {
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
             print("Completion")
-        }, receiveValue: { leagues in
+        }, receiveValue: { [weak self] leagues in
             print("LeagueDetailTableVC received updated value for leagues")
             
+            guard let strongSelf = self else { return }
+            
             // Update VC local league variable
-            self.league = leagues[self.leagueIndex]
+            strongSelf.league = leagues[strongSelf.leagueIndex]
         })
     }
     

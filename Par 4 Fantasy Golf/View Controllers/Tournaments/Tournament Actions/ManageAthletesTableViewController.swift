@@ -76,12 +76,14 @@ class ManageAthletesTableViewController: UITableViewController {
     func subscribeToDataStore() {
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
             print("Completion")
-        }, receiveValue: { leagues in
+        }, receiveValue: { [weak self] leagues in
             print("ManageAthletesTableVC received updated value for leagues")
             
+            guard let strongSelf = self else { return }
+            
             // Update VC local league variable
-            self.league = leagues[self.leagueIndex]
-            self.tournament = leagues[self.leagueIndex].tournaments[self.tournamentIndex]
+            strongSelf.league = leagues[strongSelf.leagueIndex]
+            strongSelf.tournament = leagues[strongSelf.leagueIndex].tournaments[strongSelf.tournamentIndex]
         })
     }
     

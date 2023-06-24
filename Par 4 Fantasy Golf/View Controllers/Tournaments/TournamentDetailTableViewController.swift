@@ -38,7 +38,7 @@ class TournamentDetailTableViewController: UITableViewController {
     var updateTimer = Timer()
     
     // Timer update interval in seconds
-    let updateInterval: Double = 15*60
+    let updateInterval: Double = 15
     
     // MARK: - Initializers
     
@@ -111,12 +111,17 @@ class TournamentDetailTableViewController: UITableViewController {
     func subscribeToDataStore() {
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
             print("Completion")
-        }, receiveValue: { leagues in
+        }, receiveValue: { [weak self] leagues in
             print("TournamentDetailTableVC received updated value for leagues")
             
+            guard let strongSelf = self else { return }
+            
             // Update VC local league variable
-            self.league = leagues[self.leagueIndex]
-            self.tournament = leagues[self.leagueIndex].tournaments[self.tournamentIndex]
+            strongSelf.league = leagues[strongSelf.leagueIndex]
+            strongSelf.tournament = leagues[strongSelf.leagueIndex].tournaments[strongSelf.tournamentIndex]
+            strongSelf.standings = strongSelf.tournament.calculateStandings(league: strongSelf.league)
+            
+            strongSelf.updateTableView()
         })
     }
     
@@ -214,18 +219,18 @@ class TournamentDetailTableViewController: UITableViewController {
         let finishUpdateCycle = {
             self.dataStore.leagues[self.leagueIndex].tournaments[self.tournamentIndex].lastUpdateTime = Date.now.timeIntervalSince1970
             self.tournament.databaseReference.child("lastUpdateTime").setValue(self.tournament.lastUpdateTime)
-            nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval*60).timeIntervalSince1970
+            nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval).timeIntervalSince1970
             
             // Fetch updated tournament data and update UI
-            Task {
-                try await self.fetchScoreData()
-                
-                self.standings = self.tournament.calculateStandings(league: self.league)
-                self.updateTableView()
-                
-                // Update athlete data in firebase
-                try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
-            }
+//            Task {
+//                //try await self.fetchScoreData()
+//
+//                //self.standings = self.tournament.calculateStandings(league: self.league)
+//                self.updateTableView()
+//
+//                // Update athlete data in firebase
+//                //try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
+//            }
         }
         
         // Calculate the next update timestamp

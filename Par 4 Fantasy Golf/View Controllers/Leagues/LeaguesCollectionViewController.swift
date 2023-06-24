@@ -69,11 +69,13 @@ class LeaguesCollectionViewController: UICollectionViewController {
         // Assign a subscription to the variable
         subscription = dataStore.$leagues.sink(receiveCompletion: { _ in
             print("Completion")
-        }, receiveValue: { leagues in
+        }, receiveValue: { [weak self] leagues in
             print("LeaguesCollectionVC received updated value for leagues")
             
+            guard let strongSelf = self else { return }
+            
             // Upddate VC local leagues variable
-            self.leagues = leagues
+            strongSelf.leagues = leagues
         })
     }
     
@@ -304,31 +306,38 @@ extension LeaguesCollectionViewController: TournamentTimerDelegate {
     func timerDidReset(league: League, tournament: Tournament) {
         
         let sortedTournaments = league.tournaments.sorted { $0.endDate > $1.endDate }
+        
+        print("League name: \(league.name)")
+        print("Tournament name: \(tournament.name)")
 
         // Calculate the indexes of the provided league and tournament
-        guard let leagueIndex = dataStore.leagues.firstIndex(of: league),
+        guard let leagueIndex = leagues.firstIndex(of: league),
               let recentTournament = sortedTournaments.first,
               let tournamentIndex = league.tournaments.firstIndex(of: recentTournament) else {
             print("Couldn't determine most recent tournament to update timer")
             return
         }
         
-        // Create value (not reference) copies to minimize array lookups and clean up code when referencing tournament data, but not updating it
-        let leagueRef = leagues[leagueIndex]
-        let tournamentRef = leagueRef.tournaments[tournamentIndex]
+        // Update a copy of the tournament to avoid updating the data store multiple times
+        var tournament = leagues[leagueIndex].tournaments[tournamentIndex]
         
         // Update tournament's last update time
-        self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex].lastUpdateTime = Date.now.timeIntervalSince1970
-        tournamentRef.databaseReference.child("lastUpdateTime").setValue(Date.now.timeIntervalSince1970)
+        tournament.lastUpdateTime = Date.now.timeIntervalSince1970
+        tournament.databaseReference.child("lastUpdateTime").setValue(Date.now.timeIntervalSince1970)
         
-        // Fetch updated tournament data and update UI
         Task {
-            self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes = try await self.fetchScoreData(tournament: tournamentRef)
             
+            // Fetch updated tournament data
+            tournament.athletes = try await self.fetchScoreData(tournament: tournament)
+            
+            // Update the data store
+            self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex] = tournament
+            
+            // Update the UI
             self.updateCollectionView()
             
             // Update athlete data in firebase
-            try await tournamentRef.databaseReference.setValue(leagues[leagueIndex].tournaments[tournamentIndex].toAnyObject())
+            try await tournament.databaseReference.setValue(tournament.toAnyObject())
         }
     }
 }
