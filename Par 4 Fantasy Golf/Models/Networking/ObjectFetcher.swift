@@ -22,7 +22,7 @@ protocol CanFetch {
 
 enum ObjectType: String {
     case league = "leagues"
-    case minimalLeague = "leagueIds"
+    //case minimalLeague = "leagueIds"
     case user = "users"
     //case athlete = Athlete
     
@@ -30,8 +30,8 @@ enum ObjectType: String {
         switch type.self {
         case is League.Type:
             self = .league
-        case is MinimalLeague.Type:
-            self = .minimalLeague
+        //case is MinimalLeague.Type:
+            //self = .minimalLeague
         case is User.Type:
             self = .user
         default:

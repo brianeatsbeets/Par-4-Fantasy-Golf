@@ -164,35 +164,6 @@
             </objects>
             <point key="canvasLocation" x="3956.9230769230767" y="303.55450236966823"/>
         </scene>
-        <!--Leagues-->
-        <scene sceneID="ZDR-ca-3bt">
-            <objects>
-                <tableViewController id="HXs-Ek-aEB" customClass="LeaguesTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="e5V-n6-Zvm">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LeagueCell" id="EFo-bu-WC6" customClass="LeagueTableViewCell" customModule="Par_4_Fantasy_Golf" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="50" width="390" height="43.666667938232422"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="EFo-bu-WC6" id="c8R-YJ-3iz">
-                                    <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="HXs-Ek-aEB" id="2aw-Hw-jwh"/>
-                            <outlet property="delegate" destination="HXs-Ek-aEB" id="goh-Z6-K4e"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Leagues" id="6Kn-L9-xHR"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dth-SO-4C9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3957" y="-449"/>
-        </scene>
         <!--League Detail-->
         <scene sceneID="PHR-vb-8DS">
             <objects>
@@ -887,7 +858,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TMG-Ml-bV5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="v0p-O2-XaO" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="7669.2307692307686" y="-819.66824644549763"/>
+            <point key="canvasLocation" x="5897" y="-791"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="tR4-9P-5H4">
@@ -901,7 +872,6 @@
                     </tabBar>
                     <connections>
                         <segue destination="fbo-Sd-FGa" kind="relationship" relationship="viewControllers" id="d1T-sp-DKF"/>
-                        <segue destination="6M7-Cx-rPB" kind="relationship" relationship="viewControllers" id="pws-q9-dPZ"/>
                         <segue destination="KeV-us-jim" kind="relationship" relationship="viewControllers" id="AaD-V5-3UY"/>
                     </connections>
                 </tabBarController>
@@ -1218,26 +1188,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Sgm-NU-bWl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3956.9230769230767" y="-1162.3222748815165"/>
-        </scene>
-        <!--Leagues-->
-        <scene sceneID="Dc0-EL-6yL">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="6M7-Cx-rPB" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Leagues" image="square.fill" catalog="system" id="A49-qP-DNX"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="FYp-aM-P2b">
-                        <rect key="frame" x="0.0" y="47" width="390" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="HXs-Ek-aEB" kind="relationship" relationship="rootViewController" id="NAj-8z-Hho"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="z85-Pa-IVY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3029" y="-449"/>
+            <point key="canvasLocation" x="3957" y="-447"/>
         </scene>
         <!--Account-->
         <scene sceneID="yLC-Je-fJU">
@@ -1274,7 +1225,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDM-nv-Lxl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6760" y="-819.66824644549763"/>
+            <point key="canvasLocation" x="4988" y="-791"/>
         </scene>
         <!--Select An Event-->
         <scene sceneID="nZJ-pQ-6lp">
@@ -1524,7 +1475,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vou-jU-v9v" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3028" y="-1162"/>
+            <point key="canvasLocation" x="3028" y="-447"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>

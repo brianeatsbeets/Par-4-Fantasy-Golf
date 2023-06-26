@@ -27,7 +27,6 @@ class LeaguesCollectionViewController: UICollectionViewController {
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    var minimalLeagues = [MinimalLeague]()
     
     var leagues = [League]()
     var dataStore = DataStore()
@@ -195,14 +194,9 @@ class LeaguesCollectionViewController: UICollectionViewController {
               var league = sourceViewController.league
         else { return }
         
-        let minimalLeague = MinimalLeague(league: league)
-        
         Task {
             // Save the league to the leagues tree in Firebase
             try await league.databaseReference.setValue(league.toAnyObject())
-            
-            // Save the league to the leagueIds tree in Firebase
-            try await leagueIdsRef.child(league.id).setValue(minimalLeague.toAnyObject())
             
             // Save the league to the league members' data
             for id in league.memberIds {
