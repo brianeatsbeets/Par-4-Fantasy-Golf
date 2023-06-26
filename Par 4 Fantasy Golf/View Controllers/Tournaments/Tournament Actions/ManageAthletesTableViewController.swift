@@ -79,9 +79,10 @@ class ManageAthletesTableViewController: UITableViewController {
         }, receiveValue: { [weak self] leagues in
             print("ManageAthletesTableVC received updated value for leagues")
             
+            // If this view controller has been dismissed, skip assigning self-referencing values below
             guard let strongSelf = self else { return }
             
-            // Update VC local league variable
+            // Update VC local league and tournament variables
             strongSelf.league = leagues[strongSelf.leagueIndex]
             strongSelf.tournament = leagues[strongSelf.leagueIndex].tournaments[strongSelf.tournamentIndex]
         })

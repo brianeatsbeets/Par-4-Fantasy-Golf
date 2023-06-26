@@ -72,10 +72,9 @@ class LeaguesCollectionViewController: UICollectionViewController {
         }, receiveValue: { [weak self] leagues in
             print("LeaguesCollectionVC received updated value for leagues")
             
-            guard let strongSelf = self else { return }
-            
-            // Upddate VC local leagues variable
-            strongSelf.leagues = leagues
+            // Update VC local leagues variable
+            // Using weak self to avoid strong reference cycle
+            self?.leagues = leagues
         })
     }
     

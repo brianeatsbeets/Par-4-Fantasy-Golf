@@ -114,6 +114,7 @@ class TournamentDetailTableViewController: UITableViewController {
         }, receiveValue: { [weak self] leagues in
             print("TournamentDetailTableVC received updated value for leagues")
             
+            // If this view controller has been dismissed, skip assigning self-referencing values below
             guard let strongSelf = self else { return }
             
             // Update VC local league variable
@@ -121,6 +122,7 @@ class TournamentDetailTableViewController: UITableViewController {
             strongSelf.tournament = leagues[strongSelf.leagueIndex].tournaments[strongSelf.tournamentIndex]
             strongSelf.standings = strongSelf.tournament.calculateStandings(league: strongSelf.league)
             
+            // TODO: Ony update table view when view is visible
             strongSelf.updateTableView()
         })
     }

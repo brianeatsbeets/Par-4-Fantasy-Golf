@@ -66,7 +66,8 @@ class ManageUsersTableViewController: UITableViewController {
             print("Completion")
         }, receiveValue: { [weak self] leagues in
             print("ManageUsersTableVC received updated value for leagues")
-
+            
+            // If this view controller has been dismissed, skip assigning a self-referencing value below
             guard let strongSelf = self else { return }
 
             // Update VC local league variable
