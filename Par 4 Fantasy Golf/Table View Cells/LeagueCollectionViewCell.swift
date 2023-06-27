@@ -25,7 +25,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     @IBOutlet var leagueDetailsStackView: UIStackView!
     @IBOutlet var noDataLabel: UILabel!
     
-    @IBOutlet var leagueStangingFirstLabel: UILabel!
+    @IBOutlet var leagueStandingFirstLabel: UILabel!
     @IBOutlet var leagueStandingSecondLabel: UILabel!
     @IBOutlet var leagueStandingThirdLabel: UILabel!
     
@@ -74,13 +74,24 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         leagueDetailsStackView.isHidden = false
         noDataLabel.isHidden = true
         
+        // Recent Tournament
+        
         // Calculate and display most recent tournament data
-        let recentTournament = league.tournaments.sorted { $0.endDate > $1.endDate }.first!
+        var recentTournament = league.tournaments.sorted { $0.endDate > $1.endDate }.first!
         recentTournamentNameLabel.text = recentTournament.name
         
         // Check if the tournament is active
         if recentTournament.endDate < Date.now.timeIntervalSince1970 {
-            recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
+            
+            // If the tournament ended but the last update was before the end of the tournament, pull the final scores
+            if recentTournament.lastUpdateTime < recentTournament.endDate {
+                delegate?.timerDidReset(league: league, tournament: recentTournament)
+                recentTournamentStatusLabel.text = "Fetching final scores..."
+                print("Fetching final scores...")
+            } else {
+                recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
+            }
+            
             recentTournamentTimerLabel.isHidden = true
         } else {
             recentTournamentStatusLabel.text = "LIVE"
@@ -88,11 +99,25 @@ class LeagueCollectionViewCell: UICollectionViewCell {
             initializeUpdateTimer(league: league, tournament: recentTournament)
         }
         
-        // TODO: Hide text fields if not in use
-        let standings = recentTournament.calculateStandings(league: league)
-        recentTournamentFirstLabel.text = standings.indices.contains(0) ? "1st: \(standings[0].user.email) (\(standings[0].formattedScore))" : ""
-        recentTournamentSecondLabel.text = standings.indices.contains(1) ? "2nd: \(standings[1].user.email) (\(standings[1].formattedScore))" : ""
-        recentTournamentThirdLabel.text = standings.indices.contains(2) ? "3rd: \(standings[2].user.email) (\(standings[2].formattedScore))" : ""
+        // Create a league copy with up-to-date standings for the most recent tournament
+        var updatedLeague = league
+        let recentTournamentIndex = league.tournaments.firstIndex(where: { $0.id == recentTournament.id })!
+        updatedLeague.tournaments[recentTournamentIndex].standings = recentTournament.calculateStandings(league: league)
+        
+        // Display the top 3 in the tournament standings
+        recentTournament.standings = updatedLeague.tournaments[recentTournamentIndex].standings
+        recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "1st: \(recentTournament.standings[0].user.email) (\(recentTournament.standings[0].formattedScore))" : ""
+        recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "2nd: \(recentTournament.standings[1].user.email) (\(recentTournament.standings[1].formattedScore))" : ""
+        recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "3rd: \(recentTournament.standings[2].user.email) (\(recentTournament.standings[2].formattedScore))" : ""
+        
+        // League Standings
+        
+        // Calculate the current league standings and display the top 3
+        let leagueStandings = updatedLeague.calculateLeagueStandings()
+        let standingsKeysSorted = leagueStandings.keys.sorted()
+        leagueStandingFirstLabel.text = standingsKeysSorted.indices.contains(0) ? "1st: \(standingsKeysSorted[0]) - \(leagueStandings[standingsKeysSorted[0]]!) win(s)" : ""
+        leagueStandingSecondLabel.text = standingsKeysSorted.indices.contains(1) ? "2nd: \(standingsKeysSorted[1]) - \(leagueStandings[standingsKeysSorted[1]]!) win(s)" : ""
+        leagueStandingThirdLabel.text = standingsKeysSorted.indices.contains(2) ? "3rd: \(standingsKeysSorted[2]) - \(leagueStandings[standingsKeysSorted[2]]!) win(s)" : ""
     }
     
     // Set up the update countdown timer

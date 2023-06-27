@@ -30,7 +30,6 @@ class TournamentDetailTableViewController: UITableViewController {
     let tournamentIndex: Int
     var league: League
     var tournament: Tournament
-    var standings = [TournamentStanding]()
     var subscription: AnyCancellable?
     
     let currentFirebaseUser = Auth.auth().currentUser!
@@ -48,6 +47,7 @@ class TournamentDetailTableViewController: UITableViewController {
         self.tournamentIndex = tournamentIndex
         league = dataStore.leagues[leagueIndex]
         tournament = league.tournaments[tournamentIndex]
+        tournament.standings = tournament.calculateStandings(league: league)
         super.init(coder: coder)
     }
     
@@ -95,7 +95,8 @@ class TournamentDetailTableViewController: UITableViewController {
         if firstLoad {
             firstLoad = false
         } else {
-            standings = tournament.calculateStandings(league: league)
+            // I feel like the below isn't needed since the standings are updated in LeaguesCollection
+            //dataStore.leagues[leagueIndex].tournaments[tournamentIndex].standings = tournament.calculateStandings(league: league)
             updateTableView()
         }
     }
@@ -120,7 +121,7 @@ class TournamentDetailTableViewController: UITableViewController {
             // Update VC local league variable
             strongSelf.league = leagues[strongSelf.leagueIndex]
             strongSelf.tournament = leagues[strongSelf.leagueIndex].tournaments[strongSelf.tournamentIndex]
-            strongSelf.standings = strongSelf.tournament.calculateStandings(league: strongSelf.league)
+            //strongSelf.standings = strongSelf.tournament.calculateStandings(league: strongSelf.league)
             
             // TODO: Ony update table view when view is visible
             strongSelf.updateTableView()
@@ -140,7 +141,7 @@ class TournamentDetailTableViewController: UITableViewController {
         }
         
         // Calculate the standings and update the table view
-        standings = tournament.calculateStandings(league: league)
+        //standings = tournament.calculateStandings(league: league)
         updateTableView()
     }
     
@@ -352,12 +353,17 @@ class TournamentDetailTableViewController: UITableViewController {
         // Save the picks to Firebase
         tournament.databaseReference.child("pickIds").child(currentFirebaseUser.uid).setValue(pickDict)
         
+        // Temp tournament to avoid writing to the data store multiple times
+        var tempTournament = dataStore.leagues[leagueIndex].tournaments[tournamentIndex]
+        
         // Save the picks to the local data source
         let pickArray = pickDict.map { $0.key }
-        dataStore.leagues[leagueIndex].tournaments[tournamentIndex].pickIds[currentFirebaseUser.uid] = pickArray
+        tempTournament.pickIds[currentFirebaseUser.uid] = pickArray
         
         // Update the tournament standings and refresh the table view
-        standings = tournament.calculateStandings(league: league)
+        tempTournament.standings = tempTournament.calculateStandings(league: league)
+        
+        dataStore.leagues[leagueIndex].tournaments[tournamentIndex] = tempTournament
         
         // TODO: Throwing warning (I think this only happens when it is animated) - UITableView was told to layout its visible cells and other contents without being in the view hierarchy
         updateTableView()
@@ -395,7 +401,7 @@ extension TournamentDetailTableViewController {
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, TournamentStanding>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(standings)
+        snapshot.appendItems(tournament.standings)
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }

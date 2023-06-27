@@ -31,7 +31,10 @@ struct Tournament: Hashable {
     var pickIds = [String: [String]]()
     var budget: Int
     var lastUpdateTime: Double
-    var winner: String?
+    var standings = [TournamentStanding]()
+    var winner: String {
+        return standings[0].user.email
+    }
     
     // MARK: - Initializers
     
@@ -46,13 +49,7 @@ struct Tournament: Hashable {
         self.athletes = athletes
         self.espnId = espnId
         lastUpdateTime = Date.now.timeIntervalSince1970
-        
-        // Set the current user as the creator when creating a new tournament
-        if let user = Auth.auth().currentUser {
-            creator = user.email!
-        } else {
-            creator = "unknown user"
-        }
+        creator = Auth.auth().currentUser!.email!
     }
     
     // Init with snapshot data
@@ -100,10 +97,6 @@ struct Tournament: Hashable {
             self.pickIds = pickIds.reduce(into: [String: [String]]()) {
                 $0[$1.key] = $1.value.map { $0.key }
             }
-        }
-        
-        if let winner = value["winner"] as? String {
-            self.winner = winner
         }
     }
     
@@ -197,7 +190,8 @@ struct Tournament: Hashable {
             "pickIds": pickDict,
             "budget": budget,
             "espnId": espnId,
-            "lastUpdateTime": lastUpdateTime
+            "lastUpdateTime": lastUpdateTime,
+            "winner": winner
         ] as [String : Any]
     }
     

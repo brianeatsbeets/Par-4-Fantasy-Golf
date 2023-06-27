@@ -1029,19 +1029,19 @@
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="fIP-TI-DGf">
                                                                             <rect key="frame" x="0.0" y="41" width="209.66666666666666" height="169.66666666666666"/>
                                                                             <subviews>
-                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1. User" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kp1-sy-e9p">
+                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1. User" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Kp1-sy-e9p">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="209.66666666666666" height="56.666666666666664"/>
                                                                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                                                     <nil key="textColor"/>
                                                                                     <nil key="highlightedColor"/>
                                                                                 </label>
-                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2. User" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oro-OS-xeC">
+                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2. User" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="oro-OS-xeC">
                                                                                     <rect key="frame" x="0.0" y="56.666666666666657" width="209.66666666666666" height="56.333333333333343"/>
                                                                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                                                     <nil key="textColor"/>
                                                                                     <nil key="highlightedColor"/>
                                                                                 </label>
-                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3. User" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aJC-0S-7o4">
+                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3. User" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="aJC-0S-7o4">
                                                                                     <rect key="frame" x="0.0" y="113.00000000000001" width="209.66666666666666" height="56.666666666666671"/>
                                                                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                                                     <nil key="textColor"/>
@@ -1158,9 +1158,9 @@
                                 <size key="customSize" width="381" height="501"/>
                                 <connections>
                                     <outlet property="leagueDetailsStackView" destination="FI5-58-CNe" id="Xae-LW-xaZ"/>
+                                    <outlet property="leagueStandingFirstLabel" destination="Kp1-sy-e9p" id="NBL-mn-wbC"/>
                                     <outlet property="leagueStandingSecondLabel" destination="oro-OS-xeC" id="bGO-gn-iUO"/>
                                     <outlet property="leagueStandingThirdLabel" destination="aJC-0S-7o4" id="hgr-Lj-uLb"/>
-                                    <outlet property="leagueStangingFirstLabel" destination="Kp1-sy-e9p" id="NBL-mn-wbC"/>
                                     <outlet property="mainContentView" destination="Tyv-oT-PVB" id="zJ4-lX-iDw"/>
                                     <outlet property="noDataLabel" destination="0gm-NC-afL" id="bN3-2h-duK"/>
                                     <outlet property="recentTournamentFirstLabel" destination="uT7-fG-TqO" id="ZML-Rf-jtx"/>

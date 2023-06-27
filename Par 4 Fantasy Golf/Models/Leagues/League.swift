@@ -102,6 +102,31 @@ struct League: Hashable {
         ] as [String : Any]
     }
     
+    // Calculate the overall league standings
+    func calculateLeagueStandings() -> [String: Int] {
+        
+        // Create a dictionary pre-filled with the league members' emails and a value of 0
+        var standings: [String: Int] = {
+            var dict = [String: Int]()
+            for member in members {
+                dict[member.email] = 0
+            }
+            return dict
+        }()
+        
+        // Fetch each tournament's winner and add 1 to that member's value
+        for tournament in tournaments {
+            guard standings[tournament.winner] != nil else {
+                print("No standings info found for winner of \(name) - \(tournament.name)")
+                continue
+            }
+            
+            standings[tournament.winner]! += 1
+        }
+        
+        return standings
+    }
+    
     // Helper function to fetch a league object from a league id
     static func fetchSingleLeague(from id: String) async -> League? {
             

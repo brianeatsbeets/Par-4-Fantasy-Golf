@@ -48,8 +48,9 @@ class LeaguesCollectionViewController: UICollectionViewController {
         
         subscribeToDataStore()
 
-        // Fetch initial league data and update the collection view
+        // Fetch league data from firebase and update the collection view
         fetchLeagueData() {
+            
             self.dismissLoadingIndicator(animated: true)
             self.updateCollectionView()
         }
@@ -299,9 +300,6 @@ extension LeaguesCollectionViewController: TournamentTimerDelegate {
     func timerDidReset(league: League, tournament: Tournament) {
         
         let sortedTournaments = league.tournaments.sorted { $0.endDate > $1.endDate }
-        
-        print("League name: \(league.name)")
-        print("Tournament name: \(tournament.name)")
 
         // Calculate the indexes of the provided league and tournament
         guard let leagueIndex = leagues.firstIndex(of: league),
@@ -322,6 +320,9 @@ extension LeaguesCollectionViewController: TournamentTimerDelegate {
             
             // Fetch updated tournament data
             tournament.athletes = try await self.fetchScoreData(tournament: tournament)
+            
+            // Update the tournament standings
+            tournament.standings = tournament.calculateStandings(league: league)
             
             // Update the data store
             self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex] = tournament
