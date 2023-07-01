@@ -125,6 +125,12 @@ class LeaguesCollectionViewController: UICollectionViewController {
                 for var league in await League.fetchMultipleLeagues(from: userLeagueIds) {
                     league.members = await User.fetchMultipleUsers(from: league.memberIds)
                     league.tournaments = await Tournament.fetchMultipleTournaments(from: league.tournamentIds)
+                    
+                    // Calculate tournament standings
+                    league.tournaments.indices.forEach { index in
+                        league.tournaments[index].standings = league.tournaments[index].calculateStandings(league: league)
+                    }
+                    
                     newLeagues.append(league)
                 }
                 

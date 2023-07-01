@@ -26,6 +26,16 @@ struct Tournament: Hashable {
     var name: String
     var startDate: Double
     var endDate: Double
+    var status: TournamentStatus {
+        switch Date.now.timeIntervalSince1970 {
+        case let date where date < startDate:
+            return .scheduled
+        case let date where date > endDate:
+            return .completed
+        default:
+            return .live
+        }
+    }
     let creator: String
     var athletes = [Athlete]()
     var pickIds = [String: [String]]()
@@ -33,7 +43,12 @@ struct Tournament: Hashable {
     var lastUpdateTime: Double
     var standings = [TournamentStanding]()
     var winner: String {
-        return standings[0].user.email
+        if !standings.isEmpty {
+            return standings[0].user.email
+        } else {
+            print("Can't calculate tournament winner because standings are empty")
+            return creator
+        }
     }
     
     // MARK: - Initializers
@@ -321,4 +336,11 @@ enum EventAthleteDataError: Error {
     case invalidHttpResponse
     case decodingError
     case noCompetitorData
+}
+
+// This enum provides cases for the status of the tournament
+enum TournamentStatus {
+    case scheduled
+    case live
+    case completed
 }

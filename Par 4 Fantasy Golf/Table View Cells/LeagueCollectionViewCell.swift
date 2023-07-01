@@ -42,7 +42,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     weak var delegate: TournamentTimerDelegate?
 
     // Timer update interval in seconds
-    let updateInterval: Double = 15
+    let updateInterval: Double = 5*60
     
     override func awakeFromNib() {
         mainContentView.layer.cornerRadius = 12.0
@@ -80,32 +80,31 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         var recentTournament = league.tournaments.sorted { $0.endDate > $1.endDate }.first!
         recentTournamentNameLabel.text = recentTournament.name
         
-        // Check if the tournament is active
-        if recentTournament.endDate < Date.now.timeIntervalSince1970 {
+        // Update UI based on tournament status
+        switch recentTournament.status {
+        case .scheduled:
+            recentTournamentStatusLabel.text = "Begins \(recentTournament.startDate.formattedDate())"
+            recentTournamentStatusLabel.textColor = .black
+            recentTournamentTimerLabel.isHidden = true
+        case .live:
+            recentTournamentStatusLabel.text = "LIVE"
+            recentTournamentStatusLabel.textColor = .red
+            recentTournamentTimerLabel.isHidden = false
+            initializeUpdateTimer(league: league, tournament: recentTournament)
+        case .completed:
+            recentTournamentStatusLabel.textColor = .black
+            recentTournamentTimerLabel.isHidden = true
             
             // If the tournament ended but the last update was before the end of the tournament, pull the final scores
             if recentTournament.lastUpdateTime < recentTournament.endDate {
                 delegate?.timerDidReset(league: league, tournament: recentTournament)
                 recentTournamentStatusLabel.text = "Fetching final scores..."
-                print("Fetching final scores...")
             } else {
                 recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
             }
-            
-            recentTournamentTimerLabel.isHidden = true
-        } else {
-            recentTournamentStatusLabel.text = "LIVE"
-            recentTournamentStatusLabel.textColor = .red
-            initializeUpdateTimer(league: league, tournament: recentTournament)
         }
         
-        // Create a league copy with up-to-date standings for the most recent tournament
-        var updatedLeague = league
-        let recentTournamentIndex = league.tournaments.firstIndex(where: { $0.id == recentTournament.id })!
-        updatedLeague.tournaments[recentTournamentIndex].standings = recentTournament.calculateStandings(league: league)
-        
         // Display the top 3 in the tournament standings
-        recentTournament.standings = updatedLeague.tournaments[recentTournamentIndex].standings
         recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "1st: \(recentTournament.standings[0].user.email) (\(recentTournament.standings[0].formattedScore))" : ""
         recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "2nd: \(recentTournament.standings[1].user.email) (\(recentTournament.standings[1].formattedScore))" : ""
         recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "3rd: \(recentTournament.standings[2].user.email) (\(recentTournament.standings[2].formattedScore))" : ""
@@ -113,7 +112,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         // League Standings
         
         // Calculate the current league standings and display the top 3
-        let leagueStandings = updatedLeague.calculateLeagueStandings()
+        let leagueStandings = league.calculateLeagueStandings()
         let standingsKeysSorted = leagueStandings.keys.sorted()
         leagueStandingFirstLabel.text = standingsKeysSorted.indices.contains(0) ? "1st: \(standingsKeysSorted[0]) - \(leagueStandings[standingsKeysSorted[0]]!) win(s)" : ""
         leagueStandingSecondLabel.text = standingsKeysSorted.indices.contains(1) ? "2nd: \(standingsKeysSorted[1]) - \(leagueStandings[standingsKeysSorted[1]]!) win(s)" : ""

@@ -116,6 +116,11 @@ struct League: Hashable {
         
         // Fetch each tournament's winner and add 1 to that member's value
         for tournament in tournaments {
+            
+            // Make sure the tournament has ended
+            guard tournament.status == .completed else { continue }
+            
+            // Continue the loop gracefully if we don't find a standings entry for a given tournament winner
             guard standings[tournament.winner] != nil else {
                 print("No standings info found for winner of \(name) - \(tournament.name)")
                 continue

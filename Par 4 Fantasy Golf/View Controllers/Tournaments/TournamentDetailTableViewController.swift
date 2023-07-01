@@ -37,7 +37,7 @@ class TournamentDetailTableViewController: UITableViewController {
     var updateTimer = Timer()
     
     // Timer update interval in seconds
-    let updateInterval: Double = 15
+    let updateInterval: Double = 5*60
     
     // MARK: - Initializers
     
@@ -47,7 +47,6 @@ class TournamentDetailTableViewController: UITableViewController {
         self.tournamentIndex = tournamentIndex
         league = dataStore.leagues[leagueIndex]
         tournament = league.tournaments[tournamentIndex]
-        tournament.standings = tournament.calculateStandings(league: league)
         super.init(coder: coder)
     }
     
@@ -76,14 +75,12 @@ class TournamentDetailTableViewController: UITableViewController {
         dismissLoadingIndicator(animated: false)
         
         // Set timer label text depending on tournament status
-        if Date.now.timeIntervalSince1970 < tournament.startDate {
-            // Tournament hasn't started yet
+        switch tournament.status {
+        case .scheduled:
             lastUpdateTimeLabel.text = "Tournament begins on \(tournament.startDate.formattedDate())"
-        } else if Date.now.timeIntervalSince1970 <= tournament.endDate {
-            // Tournament is active
+        case .live:
             initializeUpdateTimer()
-        } else {
-            // Tournament has ended
+        case .completed:
             lastUpdateTimeLabel.text = "Tournament ended on \(tournament.endDate.formattedDate())"
         }
     }
@@ -121,7 +118,6 @@ class TournamentDetailTableViewController: UITableViewController {
             // Update VC local league variable
             strongSelf.league = leagues[strongSelf.leagueIndex]
             strongSelf.tournament = leagues[strongSelf.leagueIndex].tournaments[strongSelf.tournamentIndex]
-            //strongSelf.standings = strongSelf.tournament.calculateStandings(league: strongSelf.league)
             
             // TODO: Ony update table view when view is visible
             strongSelf.updateTableView()
@@ -141,21 +137,25 @@ class TournamentDetailTableViewController: UITableViewController {
         }
         
         // Calculate the standings and update the table view
-        //standings = tournament.calculateStandings(league: league)
         updateTableView()
     }
     
     // Set the state of the Make Picks button
     func setMakePicksButtonState() {
-        makePicksButton.isEnabled = false
+        makePicksButton.isEnabled = true //false
         
-        // Set make picks button text and state
-        if tournament.athletes.isEmpty {
-            //makePicksButton.title = "Make Picks (Players not yet available)"
-        } else if Date.now.timeIntervalSince1970 >= tournament.startDate {
-            //makePicksButton.title = "Make Picks (Tournament has started)"
-        } else {
+        guard !tournament.athletes.isEmpty else {
+            makePicksButton.title = "Make Picks (Players data not yet available)"
+            return
+        }
+        
+        switch tournament.status {
+        case .scheduled:
             makePicksButton.isEnabled = true
+        case .live:
+            makePicksButton.title = "Make Picks (Tournament has started)"
+        case .completed:
+            makePicksButton.title = "Make Picks (Tournament has completed)"
         }
     }
     
@@ -218,27 +218,9 @@ class TournamentDetailTableViewController: UITableViewController {
             Int((nextUpdateTime - Date.now.timeIntervalSince1970).rounded())
         }
         
-        // Helper code to set values when update is needed
-        let finishUpdateCycle = {
-            self.dataStore.leagues[self.leagueIndex].tournaments[self.tournamentIndex].lastUpdateTime = Date.now.timeIntervalSince1970
-            self.tournament.databaseReference.child("lastUpdateTime").setValue(self.tournament.lastUpdateTime)
-            nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval).timeIntervalSince1970
-            
-            // Fetch updated tournament data and update UI
-//            Task {
-//                //try await self.fetchScoreData()
-//
-//                //self.standings = self.tournament.calculateStandings(league: self.league)
-//                self.updateTableView()
-//
-//                // Update athlete data in firebase
-//                //try await self.tournament.databaseReference.setValue(self.tournament.toAnyObject())
-//            }
-        }
-        
         // Calculate the next update timestamp
         if tournament.lastUpdateTime < Date.now.addingTimeInterval(-updateInterval).timeIntervalSince1970 { // 15 minutes ago
-            finishUpdateCycle()
+            nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval).timeIntervalSince1970
         } else {
             nextUpdateTime = tournament.lastUpdateTime + (updateInterval) // lastUpdateTime + 15 minutes
         }
@@ -252,7 +234,7 @@ class TournamentDetailTableViewController: UITableViewController {
             
             // Check if the countdown has completed
             if timeLeft < 0 {
-                finishUpdateCycle()
+                nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval).timeIntervalSince1970
             }
             
             // Format and present the time remaining until the next update
