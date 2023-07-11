@@ -26,16 +26,6 @@ struct Athlete: Hashable, Codable {
     var value: Int
     var score: Int
     var isCut: Bool
-    var formattedScore: String {
-        switch score {
-        case 1...:
-            return "+\(score)"
-        case ..<0:
-            return "\(score)"
-        default:
-            return "E"
-        }
-    }
     
     // MARK: - Initializers
     

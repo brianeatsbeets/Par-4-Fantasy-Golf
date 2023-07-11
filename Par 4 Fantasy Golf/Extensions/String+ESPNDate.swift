@@ -7,10 +7,10 @@
 
 import Foundation
 
-// This extension converts the ESPN date string into more usable formats
+// This extension houses a date formatting helper function for the ESPN date format
 extension String {
     
-    // Return a since-epoch double
+    // Convert the ESPN date string into a more usable format
     func espnDateStringToDouble() -> Double? {
         let formatter = ISO8601DateFormatter()
         formatter.timeZone = TimeZone.current

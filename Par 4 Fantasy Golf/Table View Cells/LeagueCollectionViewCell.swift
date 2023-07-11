@@ -42,7 +42,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     weak var delegate: TournamentTimerDelegate?
 
     // Timer update interval in seconds
-    let updateInterval: Double = 5*60
+    let updateInterval: Double = 1*60
     
     override func awakeFromNib() {
         mainContentView.layer.cornerRadius = 12.0
@@ -77,7 +77,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         // Recent Tournament
         
         // Calculate and display most recent tournament data
-        var recentTournament = league.tournaments.sorted { $0.endDate > $1.endDate }.first!
+        let recentTournament = league.tournaments.sorted { $0.endDate > $1.endDate }.first!
         recentTournamentNameLabel.text = recentTournament.name
         
         // Update UI based on tournament status
@@ -105,9 +105,9 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         }
         
         // Display the top 3 in the tournament standings
-        recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "1st: \(recentTournament.standings[0].user.email) (\(recentTournament.standings[0].formattedScore))" : ""
-        recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "2nd: \(recentTournament.standings[1].user.email) (\(recentTournament.standings[1].formattedScore))" : ""
-        recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "3rd: \(recentTournament.standings[2].user.email) (\(recentTournament.standings[2].formattedScore))" : ""
+        recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "1st: \(recentTournament.standings[0].user.email) (\(recentTournament.standings[0].totalScore.formattedScore()))" : ""
+        recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "2nd: \(recentTournament.standings[1].user.email) (\(recentTournament.standings[1].totalScore.formattedScore()))" : ""
+        recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "3rd: \(recentTournament.standings[2].user.email) (\(recentTournament.standings[2].totalScore.formattedScore()))" : ""
         
         // League Standings
         

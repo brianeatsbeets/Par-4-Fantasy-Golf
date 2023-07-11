@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E114002D2A43267300C08608 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E114002C2A43267300C08608 /* DataStore.swift */; };
+		E13736A32A5CDD83006CA721 /* Int+FormattedScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13736A22A5CDD83006CA721 /* Int+FormattedScore.swift */; };
 		E138DE5C29AE88D300BBE47F /* CreateLeagueTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138DE5B29AE88D300BBE47F /* CreateLeagueTableViewController.swift */; };
 		E138DE5F29AE89E400BBE47F /* League.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138DE5E29AE89E400BBE47F /* League.swift */; };
 		E138DE6129AE940000BBE47F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E138DE6029AE940000BBE47F /* GoogleService-Info.plist */; };
@@ -52,6 +53,7 @@
 
 /* Begin PBXFileReference section */
 		E114002C2A43267300C08608 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		E13736A22A5CDD83006CA721 /* Int+FormattedScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+FormattedScore.swift"; sourceTree = "<group>"; };
 		E138DE5B29AE88D300BBE47F /* CreateLeagueTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateLeagueTableViewController.swift; sourceTree = "<group>"; };
 		E138DE5E29AE89E400BBE47F /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
 		E138DE6029AE940000BBE47F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 			children = (
 				E147320529F99A9D009C000A /* UIViewController+Indications.swift */,
 				E160CB7D2A44E7A8000E5116 /* Double+FormattedDate.swift */,
+				E13736A22A5CDD83006CA721 /* Int+FormattedScore.swift */,
 				E160CB7F2A44E7EF000E5116 /* String+ESPNDate.swift */,
 			);
 			path = Extensions;
@@ -388,6 +391,7 @@
 				E1AB1C2F29AFE537002A354B /* RegistrationViewController.swift in Sources */,
 				E1E0179C29CFD14600A5A546 /* TournamentStanding.swift in Sources */,
 				E114002D2A43267300C08608 /* DataStore.swift in Sources */,
+				E13736A32A5CDD83006CA721 /* Int+FormattedScore.swift in Sources */,
 				E1EC0BDE2A16BE2800D9EF1D /* LeagueCollectionViewCell.swift in Sources */,
 				E16C1B8F29EAD5AA0034762C /* GoogleSheetsIDTableViewController.swift in Sources */,
 				E16C1B8B29E5D3640034762C /* EventApiResponse.swift in Sources */,

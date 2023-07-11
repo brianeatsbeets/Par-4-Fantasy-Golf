@@ -68,7 +68,7 @@ extension TournamentUserDetailTableViewController {
             
             var config = cell.defaultContentConfiguration()
             config.text = athlete.isCut ? athlete.name + " (CUT)" : athlete.name
-            config.secondaryText = "Value: \(athlete.value) | Odds: \(athlete.odds) | Score: \(athlete.score)"
+            config.secondaryText = "Value: \(athlete.value) | Odds: \(athlete.odds) | Score: \(athlete.score.formattedScore())"
             cell.contentConfiguration = config
 
             return cell

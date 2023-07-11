@@ -31,7 +31,7 @@ class TournamentStandingTableViewCell: UITableViewCell {
             }
         }()
         
-        config.text = "\(standing.place): \(standing.user.email): \(standing.formattedScore)" + penaltiesText
+        config.text = "\(standing.place): \(standing.user.email): \(standing.totalScore.formattedScore())" + penaltiesText
         
         // Format the top athletes listing
         let topAthletesFormatted = {
@@ -39,7 +39,7 @@ class TournamentStandingTableViewCell: UITableViewCell {
             
             if !standing.topAthletes.isEmpty {
                 for athlete in standing.topAthletes {
-                    text.append(athlete.name + ": " + athlete.formattedScore)
+                    text.append(athlete.name + ": " + athlete.score.formattedScore())
                     if athlete != standing.topAthletes.last {
                         text.append(" | ")
                     }

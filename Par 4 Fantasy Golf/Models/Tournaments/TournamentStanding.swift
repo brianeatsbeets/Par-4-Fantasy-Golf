@@ -21,16 +21,6 @@ struct TournamentStanding: Hashable {
     var totalScore: Int {
         score + penalties
     }
-    var formattedScore: String {
-        switch totalScore {
-        case 1...:
-            return "+\(totalScore)"
-        case ..<0:
-            return "\(totalScore)"
-        default:
-            return "E"
-        }
-    }
     
     // MARK: - Initializers
     

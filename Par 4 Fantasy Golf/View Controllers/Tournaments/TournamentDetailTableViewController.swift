@@ -37,7 +37,7 @@ class TournamentDetailTableViewController: UITableViewController {
     var updateTimer = Timer()
     
     // Timer update interval in seconds
-    let updateInterval: Double = 5*60
+    let updateInterval: Double = 1*60
     
     // MARK: - Initializers
     
@@ -92,8 +92,6 @@ class TournamentDetailTableViewController: UITableViewController {
         if firstLoad {
             firstLoad = false
         } else {
-            // I feel like the below isn't needed since the standings are updated in LeaguesCollection
-            //dataStore.leagues[leagueIndex].tournaments[tournamentIndex].standings = tournament.calculateStandings(league: league)
             updateTableView()
         }
     }
@@ -141,6 +139,7 @@ class TournamentDetailTableViewController: UITableViewController {
     }
     
     // Set the state of the Make Picks button
+    // TODO: Fix button text being too long when user is not league owner
     func setMakePicksButtonState() {
         makePicksButton.isEnabled = true //false
         
