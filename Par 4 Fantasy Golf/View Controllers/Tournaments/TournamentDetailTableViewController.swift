@@ -69,22 +69,6 @@ class TournamentDetailTableViewController: UITableViewController {
 //        }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        dismissLoadingIndicator(animated: false)
-        
-        // Set timer label text depending on tournament status
-        switch tournament.status {
-        case .scheduled:
-            lastUpdateTimeLabel.text = "Tournament begins on \(tournament.startDate.formattedDate())"
-        case .live:
-            initializeUpdateTimer()
-        case .completed:
-            lastUpdateTimeLabel.text = "Tournament ended on \(tournament.endDate.formattedDate())"
-        }
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -94,11 +78,6 @@ class TournamentDetailTableViewController: UITableViewController {
         } else {
             updateTableView()
         }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        updateTimer.invalidate()
     }
     
     // MARK: - Other functions
@@ -117,6 +96,13 @@ class TournamentDetailTableViewController: UITableViewController {
             strongSelf.league = leagues[strongSelf.leagueIndex]
             strongSelf.tournament = leagues[strongSelf.leagueIndex].tournaments[strongSelf.tournamentIndex]
             
+            // Initialize the timer if the tournament is live
+            if strongSelf.tournament.status == .live {
+                strongSelf.initializeUpdateTimer()
+            } else {
+                strongSelf.lastUpdateTimeLabel.text = "Tournament ended on \(strongSelf.tournament.endDate.formattedDate())"
+            }
+            
             // TODO: Ony update table view when view is visible
             strongSelf.updateTableView()
         })
@@ -128,6 +114,8 @@ class TournamentDetailTableViewController: UITableViewController {
         
         setMakePicksButtonState()
         
+        setTournamentStatusText()
+        
         // If the current user is not the tournament owner, hide administrative actions
         if tournament.creator != currentFirebaseUser.email {
             tournamentActionBarButtonItemGroup.isHidden = true
@@ -136,6 +124,18 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Calculate the standings and update the table view
         updateTableView()
+    }
+    
+    // Set timer label text depending on tournament status
+    func setTournamentStatusText() {
+        switch tournament.status {
+        case .scheduled:
+            lastUpdateTimeLabel.text = "Tournament begins on \(tournament.startDate.formattedDate())"
+        case .completed:
+            lastUpdateTimeLabel.text = "Tournament ended on \(tournament.endDate.formattedDate())"
+        case .live:
+            break
+        }
     }
     
     // Set the state of the Make Picks button
@@ -229,16 +229,24 @@ class TournamentDetailTableViewController: UITableViewController {
         self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
         
         // Create the timer
-        updateTimer = Timer(timeInterval: 1, repeats: true) { _ in
+        updateTimer = Timer(timeInterval: 1, repeats: true) { timer in
             
             // Check if the countdown has completed
-            if timeLeft < 0 {
-                nextUpdateTime = Date.now.addingTimeInterval(self.updateInterval).timeIntervalSince1970
+            if timeLeft < 1 {
+                
+                timer.invalidate()
+                
+                if self.tournament.status == .completed {
+                    self.lastUpdateTimeLabel.text = "Fetching final results..."
+                } else {
+                    self.lastUpdateTimeLabel.text = "Updating..."
+                }
+            } else {
+                
+                // Format and present the time remaining until the next update
+                formattedTime = formatter.string(from: TimeInterval(timeLeft))!
+                self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
             }
-            
-            // Format and present the time remaining until the next update
-            formattedTime = formatter.string(from: TimeInterval(timeLeft))!
-            self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
         }
         
         // Add the timer to the .common runloop so it will update during user interaction
