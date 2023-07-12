@@ -323,6 +323,14 @@ class TournamentDetailTableViewController: UITableViewController {
         navigationController?.pushViewController(destinationViewController, animated: true)
     }
     
+    // Disable selection/segue for user standings that have no picks
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        guard let standing = dataSource.itemIdentifier(for: indexPath),
+              !standing.topAthletes.isEmpty else { return nil}
+        
+        return indexPath
+    }
+    
     // Handle the incoming new picks data
     @IBAction func unwindFromMakePicks(segue: UIStoryboardSegue) {
         
