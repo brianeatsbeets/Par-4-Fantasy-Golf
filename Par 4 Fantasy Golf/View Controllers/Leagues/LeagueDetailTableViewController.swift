@@ -89,6 +89,7 @@ class LeagueDetailTableViewController: UITableViewController {
             
             // Update VC local league variable
             strongSelf.league = leagues[strongSelf.leagueIndex]
+            strongSelf.league.tournaments = strongSelf.league.tournaments.sorted { $0.startDate > $1.startDate }
         })
     }
     
