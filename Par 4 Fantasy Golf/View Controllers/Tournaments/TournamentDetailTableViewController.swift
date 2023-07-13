@@ -278,6 +278,14 @@ class TournamentDetailTableViewController: UITableViewController {
         present(deleteTournamentAlert, animated: true)
     }
     
+    // Disable highlighting standing cells with no picked users
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        guard let standing = dataSource.itemIdentifier(for: indexPath),
+              !standing.topAthletes.isEmpty else { return false}
+        
+        return true
+    }
+    
     // MARK: - Navigation
     
     // Pass tournament data to MakePicksTableViewController
@@ -388,7 +396,7 @@ extension TournamentDetailTableViewController {
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "TournamentDetailCell", for: indexPath) as! TournamentStandingTableViewCell
-            cell.configure(with: standing)
+            cell.configure(with: standing, tournamentStarted: self.tournament.status != .scheduled)
 
             return cell
         }

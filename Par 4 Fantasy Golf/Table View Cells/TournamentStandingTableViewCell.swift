@@ -17,7 +17,13 @@ class TournamentStandingTableViewCell: UITableViewCell {
     // MARK: - Functions
     
     // Set up the cell UI elements
-    func configure(with standing: TournamentStanding) {
+    func configure(with standing: TournamentStanding, tournamentStarted: Bool) {
+        
+        if standing.topAthletes.isEmpty {
+            accessoryType = .none
+        } else {
+            accessoryType = .disclosureIndicator
+        }
         
         var config = defaultContentConfiguration()
         let penaltiesText: String = {
@@ -33,25 +39,32 @@ class TournamentStandingTableViewCell: UITableViewCell {
         
         config.text = "\(standing.place): \(standing.user.email): \(standing.totalScore.formattedScore())" + penaltiesText
         
-        // Format the top athletes listing
-        let topAthletesFormatted = {
-            var text = "Top picks: "
+        // Set the user picks text based on the tournament status
+        if tournamentStarted {
             
-            if !standing.topAthletes.isEmpty {
-                for athlete in standing.topAthletes {
-                    text.append(athlete.name + ": " + athlete.score.formattedScore())
-                    if athlete != standing.topAthletes.last {
-                        text.append(" | ")
+            // Format the top athletes listing
+            let topAthletesFormatted = {
+                var text = "Top picks: "
+                
+                if !standing.topAthletes.isEmpty {
+                    for athlete in standing.topAthletes {
+                        text.append(athlete.name + ": " + athlete.score.formattedScore())
+                        if athlete != standing.topAthletes.last {
+                            text.append(" | ")
+                        }
                     }
+                } else {
+                    text = "No picks made"
                 }
-            } else {
-                text = "No picks made"
-            }
+                
+                return text
+            }()
             
-            return text
-        }()
+            config.secondaryText = topAthletesFormatted
+        } else {
+            config.secondaryText = "Picks are hidden until tournament begins"
+        }
         
-        config.secondaryText = topAthletesFormatted
         contentConfiguration = config
     }
 
