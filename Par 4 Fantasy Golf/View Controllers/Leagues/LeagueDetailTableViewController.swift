@@ -147,7 +147,10 @@ class LeagueDetailTableViewController: UITableViewController {
         // Check that we have new tournament data to parse
         guard segue.identifier == "unwindCreateTournament",
               let sourceViewController = segue.source as? CreateTournamentTableViewController,
-              let newTournament = sourceViewController.tournament else { return }
+              var newTournament = sourceViewController.tournament else { return }
+        
+        // Calculate tournament standings
+        newTournament.standings = newTournament.calculateStandings(leagueMembers: league.members)
         
         // Save the tournament to the data store
         dataStore.leagues[leagueIndex].tournaments.append(newTournament)

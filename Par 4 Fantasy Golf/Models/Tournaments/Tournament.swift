@@ -118,12 +118,12 @@ struct Tournament: Hashable {
     // MARK: - Functions
     
     // Calculate the tournament standings
-    func calculateStandings(league: League) -> [TournamentStanding] {
+    func calculateStandings(leagueMembers: [User]) -> [TournamentStanding] {
         
         var newStandings = [TournamentStanding]()
         
         // Create a tournament standing object for each user
-        for user in league.members {
+        for user in leagueMembers {
             
             var topAthletes = [Athlete]()
             var cutAthleteCount = 0

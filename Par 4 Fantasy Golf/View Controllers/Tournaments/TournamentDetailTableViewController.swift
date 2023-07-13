@@ -366,7 +366,7 @@ class TournamentDetailTableViewController: UITableViewController {
         tempTournament.pickIds[currentFirebaseUser.uid] = pickArray
         
         // Update the tournament standings and refresh the table view
-        tempTournament.standings = tempTournament.calculateStandings(league: league)
+        tempTournament.standings = tempTournament.calculateStandings(leagueMembers: league.members)
         
         dataStore.leagues[leagueIndex].tournaments[tournamentIndex] = tempTournament
         

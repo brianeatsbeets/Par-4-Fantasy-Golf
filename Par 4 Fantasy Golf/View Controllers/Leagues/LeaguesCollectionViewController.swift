@@ -128,7 +128,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
                     
                     // Calculate tournament standings
                     league.tournaments.indices.forEach { index in
-                        league.tournaments[index].standings = league.tournaments[index].calculateStandings(league: league)
+                        league.tournaments[index].standings = league.tournaments[index].calculateStandings(leagueMembers: league.members)
                     }
                     
                     newLeagues.append(league)
@@ -328,7 +328,7 @@ extension LeaguesCollectionViewController: TournamentTimerDelegate {
             tournament.athletes = try await self.fetchScoreData(tournament: tournament)
             
             // Update the tournament standings
-            tournament.standings = tournament.calculateStandings(league: league)
+            tournament.standings = tournament.calculateStandings(leagueMembers: league.members)
             
             // Update the data store
             self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex] = tournament
