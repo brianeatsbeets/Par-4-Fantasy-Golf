@@ -68,10 +68,10 @@ class ManageUsersTableViewController: UITableViewController {
             print("ManageUsersTableVC received updated value for leagues")
             
             // If this view controller has been dismissed, skip assigning a self-referencing value below
-            guard let strongSelf = self else { return }
+            guard let self else { return }
 
             // Update VC local league variable
-            strongSelf.league = leagues[strongSelf.leagueIndex]
+            self.league = leagues[self.leagueIndex]
         })
     }
     
@@ -83,15 +83,12 @@ class ManageUsersTableViewController: UITableViewController {
         addUserAlert.addTextField()
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let search = UIAlertAction(title: "Search", style: .default) { [unowned addUserAlert] _ in
+        let search = UIAlertAction(title: "Search", style: .default) { _ in
             
             // Grab the user-entered email
             let email = addUserAlert.textFields![0].text
             
-            // Dismiss the current alert
-            addUserAlert.dismiss(animated: true)
-            
-            // Search for a user with the provided email
+            // Search for a user with the provided email unless they're already a league member
             if self.league.members.contains(where: { $0.email == email }) {
                 self.displayAlert(title: "User Already Added", message: "The user with the provided email address is already a member of this league.")
             } else {
@@ -112,7 +109,10 @@ class ManageUsersTableViewController: UITableViewController {
         
         // Query for a matching user
         let usersRef = Database.database().reference(withPath: "users")
-        usersRef.queryOrdered(byChild: "email").queryEqual(toValue: email).observeSingleEvent(of: .value) { snapshot in
+        usersRef.queryOrdered(byChild: "email").queryEqual(toValue: email).observeSingleEvent(of: .value) { [weak self] snapshot in
+            
+            // Make sure self is still allocated; otherwise, cancel the operation
+            guard let self else { return }
             
             // Check if we have a result
             if snapshot.exists() {

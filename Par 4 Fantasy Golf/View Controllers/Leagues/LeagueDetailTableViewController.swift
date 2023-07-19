@@ -85,11 +85,11 @@ class LeagueDetailTableViewController: UITableViewController {
             print("LeagueDetailTableVC received updated value for leagues")
             
             // If this view controller has been dismissed, skip assigning a self-referencing value below
-            guard let strongSelf = self else { return }
+            guard let self else { return }
             
             // Update VC local league variable
-            strongSelf.league = leagues[strongSelf.leagueIndex]
-            strongSelf.league.tournaments = strongSelf.league.tournaments.sorted { $0.startDate > $1.startDate }
+            self.league = leagues[self.leagueIndex]
+            self.league.tournaments = self.league.tournaments.sorted { $0.startDate > $1.startDate }
         })
     }
     
@@ -98,10 +98,7 @@ class LeagueDetailTableViewController: UITableViewController {
         let deleteLeagueAlert = UIAlertController(title: "Are you sure?", message: "All of the league data will be permenantly deleted.", preferredStyle: .alert)
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let confirm = UIAlertAction(title: "Delete League", style: .destructive) { [unowned deleteLeagueAlert] _ in
-            
-            // Dismiss the current alert
-            deleteLeagueAlert.dismiss(animated: true)
+        let confirm = UIAlertAction(title: "Delete League", style: .destructive) { _ in
             
             // Cancel the subscription early to prevent updating the local league variable with league data that no longer exists
             self.subscription?.cancel()

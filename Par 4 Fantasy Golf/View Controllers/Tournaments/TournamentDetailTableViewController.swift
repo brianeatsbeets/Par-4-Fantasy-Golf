@@ -90,21 +90,21 @@ class TournamentDetailTableViewController: UITableViewController {
             print("TournamentDetailTableVC received updated value for leagues")
             
             // If this view controller has been dismissed, skip assigning self-referencing values below
-            guard let strongSelf = self else { return }
+            guard let self else { return }
             
             // Update VC local league variable
-            strongSelf.league = leagues[strongSelf.leagueIndex]
-            strongSelf.tournament = leagues[strongSelf.leagueIndex].tournaments[strongSelf.tournamentIndex]
+            self.league = leagues[self.leagueIndex]
+            self.tournament = leagues[self.leagueIndex].tournaments[self.tournamentIndex]
             
             // Initialize the timer if the tournament is live
-            if strongSelf.tournament.status == .live {
-                strongSelf.initializeUpdateTimer()
+            if self.tournament.status == .live {
+                self.initializeUpdateTimer()
             } else {
-                strongSelf.lastUpdateTimeLabel.text = "Tournament ended on \(strongSelf.tournament.endDate.formattedDate())"
+                self.lastUpdateTimeLabel.text = "Tournament ended on \(self.tournament.endDate.formattedDate())"
             }
             
             // TODO: Ony update table view when view is visible
-            strongSelf.updateTableView()
+            self.updateTableView()
         })
     }
     
@@ -258,10 +258,7 @@ class TournamentDetailTableViewController: UITableViewController {
         let deleteTournamentAlert = UIAlertController(title: "Are you sure?", message: "All of the tournament data will be permenantly deleted.", preferredStyle: .alert)
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let confirm = UIAlertAction(title: "Delete Tournament", style: .destructive) { [unowned deleteTournamentAlert] _ in
-            
-            // Dismiss the current alert
-            deleteTournamentAlert.dismiss(animated: true)
+        let confirm = UIAlertAction(title: "Delete Tournament", style: .destructive) { _ in
             
             self.updateTimer.invalidate()
             

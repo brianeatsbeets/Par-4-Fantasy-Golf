@@ -75,15 +75,15 @@ class SignInViewController: UIViewController {
         resetPasswordAlert.addTextField()
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let search = UIAlertAction(title: "OK", style: .default) { [unowned resetPasswordAlert] _ in
+        let search = UIAlertAction(title: "OK", style: .default) { _ in
             
             // Grab the user-entered email
             let email = resetPasswordAlert.textFields![0].text ?? ""
             
-            // Dismiss the current alert
-            resetPasswordAlert.dismiss(animated: true)
-            
-            Auth.auth().sendPasswordReset(withEmail: email) { error in
+            Auth.auth().sendPasswordReset(withEmail: email) { [weak self] error in
+                
+                // Make sure self is still allocated; otherwise, cancel the operation
+                guard let self else { return }
                 
                 // If there was an error, present it to the user. Otherwise, transition to the Leagues view
                 if let error = error as NSError? {
