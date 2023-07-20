@@ -176,9 +176,8 @@ class LeagueDetailTableViewController: UITableViewController {
         // Remove the tournament from the data store
         dataStore.leagues[leagueIndex].tournaments.removeAll { $0.id == tournament.id }
         
-        // Remove the tournament data from the tournaments and tournamentIds trees
+        // Remove the tournament data from the tournaments tree
         tournament.databaseReference.removeValue()
-        Database.database().reference().child("tournamentIds").child(tournament.id).removeValue()
         
         // Remove the tournament data from the league tournamentIds tree
         league.databaseReference.child("tournamentIds").child(tournament.id).removeValue()

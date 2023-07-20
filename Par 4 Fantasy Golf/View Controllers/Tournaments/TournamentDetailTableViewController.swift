@@ -301,7 +301,6 @@ class TournamentDetailTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         // Make sure we have picks for the selected user
-        // TODO: Make cells not selectable if there are no picks for the user
         guard let tournamentStanding = dataSource.itemIdentifier(for: indexPath),
               let userPicks = tournament.pickIds[tournamentStanding.user.id] else { print("No picks for this user"); return }
         

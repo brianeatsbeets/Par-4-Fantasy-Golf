@@ -31,7 +31,6 @@ class LeaguesCollectionViewController: UICollectionViewController {
     var leagues = [League]()
     var dataStore = DataStore()
     
-    let leagueIdsRef = Database.database().reference(withPath: "leagueIds")
     let userLeaguesRef = Database.database().reference(withPath: "users/\(Auth.auth().currentUser!.uid)/leagues")
     
     var subscription: AnyCancellable?
