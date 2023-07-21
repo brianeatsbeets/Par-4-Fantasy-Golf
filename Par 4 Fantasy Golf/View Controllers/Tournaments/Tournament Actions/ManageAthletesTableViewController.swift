@@ -139,6 +139,17 @@ class ManageAthletesTableViewController: UITableViewController {
 extension ManageAthletesTableViewController: ManageAthletesSwipeToDeleteDelegate {
     func removeAthlete(athlete: Athlete) {
         dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes.removeAll { $0.id == athlete.id }
+        
+        // Remove the athlete from the tournament in firebase
+        tournament.databaseReference.child("athletes").child(athlete.id).removeValue()
+        
+        // Remove the athlete pick from each user's picks in this tournament, both in the local data source and in firebase
+        for userPicks in tournament.pickIds {
+            if let index = userPicks.value.firstIndex(of: athlete.espnId) {
+                tournament.pickIds[userPicks.key]?.remove(at: index)
+                tournament.databaseReference.child("pickIds").child(userPicks.key).child(athlete.espnId).removeValue()
+            }
+        }
         updateTableView()
     }
 }
@@ -153,9 +164,6 @@ extension ManageAthletesTableViewController {
         
         // MARK: - Properties
         
-        var tournamentAthletesRef = DatabaseReference()
-        var tournamentPicksRef = DatabaseReference()
-        var selectedTournament: Tournament!
         weak var swipeToDeleteDelegate: ManageAthletesSwipeToDeleteDelegate?
         
         // MARK: - Other functions
@@ -172,17 +180,6 @@ extension ManageAthletesTableViewController {
             
             // Alert delegate of removed user
             swipeToDeleteDelegate?.removeAthlete(athlete: athlete)
-            
-            // Remove the athlete from the tournament in firebase
-            tournamentAthletesRef.child(athlete.id).removeValue()
-            
-            // Remove the athlete pick from each user's picks in this tournament, both in the local data source and in firebase
-            for userPicks in selectedTournament.pickIds {
-                if let index = userPicks.value.firstIndex(of: athlete.id) {
-                    selectedTournament.pickIds[userPicks.key]?.remove(at: index)
-                    tournamentPicksRef.child(userPicks.key).child(athlete.id).removeValue()
-                }
-            }
         }
     }
     
@@ -211,10 +208,7 @@ extension ManageAthletesTableViewController {
             return cell
         }
         
-        // Variables that allow the custom data source to access the current tournament's firebase database reference to delete data
-        dataSource.tournamentAthletesRef = tournament.databaseReference.child("athletes")
-        dataSource.tournamentPicksRef = tournament.databaseReference.child("pickIds")
-        dataSource.selectedTournament = tournament
+        // Set table view controller as the custom data source's delegate
         dataSource.swipeToDeleteDelegate = self
         
         return dataSource

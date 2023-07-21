@@ -234,9 +234,14 @@ class LeaguesCollectionViewController: UICollectionViewController {
         // Remove the league from the dataStore
         dataStore.leagues.removeAll { $0.id == league.id }
         
-        // Remove the league from each user's leagues
+        // Remove the league from each user's leagues in firebase
         for user in league.members {
             user.databaseReference.child("leagues").child(league.id).removeValue()
+        }
+        
+        // Remove each tournament in the league in firebase
+        for id in league.tournamentIds {
+            Database.database().reference().child("tournaments").child(id).removeValue()
         }
         
         // Remove the league data from the leagues tree
