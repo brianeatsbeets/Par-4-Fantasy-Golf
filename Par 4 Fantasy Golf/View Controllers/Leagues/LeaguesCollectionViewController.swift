@@ -40,10 +40,10 @@ class LeaguesCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        displayLoadingIndicator(animated: false)
+        
         collectionView.collectionViewLayout = createLayout()
         collectionView.dataSource = dataSource
-        
-        displayLoadingIndicator(animated: false)
         
         subscribeToDataStore()
 

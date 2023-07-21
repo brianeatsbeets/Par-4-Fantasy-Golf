@@ -54,6 +54,10 @@ class TournamentDetailTableViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("TournamentDetailTableViewController deinitialized")
+    }
+    
     // MARK: - View life cycle functions
     
     override func viewDidLoad() {

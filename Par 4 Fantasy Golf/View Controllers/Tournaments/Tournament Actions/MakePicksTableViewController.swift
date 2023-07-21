@@ -47,10 +47,7 @@ class MakePicksTableViewController: UITableViewController {
         
         tableView.dataSource = dataSource
         getPickItems()
-        saveButton.isEnabled = pickCount >= 6
-        title = "Picks for \(tournament.name)"
-        budgetLabel.text = "Budget: $\(tournament.budget)"
-        spentLabel.text = "Total Spent: $\(totalSpent)"
+        updateUI()
         
         updateTableView(animated: false)
     }
@@ -81,6 +78,14 @@ class MakePicksTableViewController: UITableViewController {
         
         // Sort picks by odds
         pickItems = pickItems.sorted(by: { $0.athlete.odds < $1.athlete.odds })
+    }
+    
+    // Update the UI elements
+    func updateUI() {
+        saveButton.isEnabled = pickCount >= 6
+        title = "Picks for \(tournament.name)"
+        budgetLabel.text = "Budget: $\(tournament.budget)"
+        spentLabel.text = "Total Spent: $\(totalSpent)"
     }
     
     // Update the data source when a cell is selected

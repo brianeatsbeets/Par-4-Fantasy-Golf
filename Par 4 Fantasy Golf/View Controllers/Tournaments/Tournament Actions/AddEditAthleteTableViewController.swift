@@ -44,6 +44,14 @@ class AddEditAthleteTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        updateUI()
+    }
+    
+    // MARK: - Other functions
+    
+    // Update the UI elements
+    func updateUI() {
+        
         // Pre-populate data if we're editing an existing athlete
         if let athlete = athlete {
             nameTextField.text = athlete.name
@@ -57,8 +65,6 @@ class AddEditAthleteTableViewController: UITableViewController {
             updateSaveButtonState()
         }
     }
-    
-    // MARK: - Other functions
     
     // Toggle enabled state of save button based on text field validation
     func updateSaveButtonState() {
