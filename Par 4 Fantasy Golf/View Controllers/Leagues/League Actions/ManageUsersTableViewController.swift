@@ -145,6 +145,11 @@ class ManageUsersTableViewController: UITableViewController {
             }
         }
     }
+    
+    // Set the text of the 'Delete' view when swiping-to-delete a cell
+    override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+         return "Remove"
+    }
 }
 
 // MARK: - Extensions
