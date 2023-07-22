@@ -19,21 +19,36 @@ class AccountViewController: UIViewController {
     
     @IBOutlet var emailLabel: UILabel!
     
+    var authListener: AuthStateDidChangeListenerHandle?
+    
     // MARK: - View life cycle functions
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         updateUI()
+        initializeAuthListener()
     }
     
     // MARK: - Other functions
     
+    // Update the UI elements
     func updateUI() {
         if let user = Auth.auth().currentUser {
             emailLabel.text = "Email: " + user.email!
         } else {
             emailLabel.text = "No email found"
+        }
+    }
+    
+    // Create an auth state change listener to navigate back to sign in view AFTER successfully signing out
+    func initializeAuthListener() {
+        authListener = Auth.auth().addStateDidChangeListener { [unowned self] auth, user in
+            if user == nil {
+                print("User is nil, so we're signing out")
+                Auth.auth().removeStateDidChangeListener(self.authListener!)
+                self.transitionToAuthenticationViewController()
+            }
         }
     }
     
@@ -43,7 +58,7 @@ class AccountViewController: UIViewController {
         // Display a confirmation alert
         let confirmAlert = UIAlertController(title: "Are you sure?", message: "You won't be able to access any of your data until you sign in again.", preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        let signOutAction = UIAlertAction(title: "Sign Out", style: .destructive) { action in
+        let signOutAction = UIAlertAction(title: "Sign Out", style: .destructive) { [unowned self] action in
             
             // Dismiss the current alert
             confirmAlert.dismiss(animated: true)
@@ -67,8 +82,6 @@ class AccountViewController: UIViewController {
                 
                 return
             }
-            
-            self.transitionToAuthenticationViewController()
         }
         
         confirmAlert.addAction(signOutAction)
@@ -90,6 +103,4 @@ class AccountViewController: UIViewController {
         // Set a new root view controller
         sceneDelegate.setRootViewController(to: authenticationRootViewController)
     }
-    
-
 }

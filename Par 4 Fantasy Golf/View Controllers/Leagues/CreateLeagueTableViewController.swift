@@ -22,7 +22,7 @@ class CreateLeagueTableViewController: UITableViewController {
     
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var saveButton: UIBarButtonItem!
-    
+
     // MARK: - View life cycle functions
     
     override func viewDidLoad() {

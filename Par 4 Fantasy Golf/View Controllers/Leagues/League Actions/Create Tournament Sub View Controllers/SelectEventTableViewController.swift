@@ -33,7 +33,7 @@ class SelectEventTableViewController: UITableViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - View life cycle functions
     
     override func viewDidLoad() {

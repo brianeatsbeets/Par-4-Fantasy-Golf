@@ -35,6 +35,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
     
     var subscription: AnyCancellable?
     
+
     // MARK: - View life cycle functions
 
     override func viewDidLoad() {
@@ -108,8 +109,11 @@ class LeaguesCollectionViewController: UICollectionViewController {
     func fetchLeagueData(completion: @escaping () -> Void) {
         
         // Fetch user league Ids
-        userLeaguesRef.observeSingleEvent(of: .value) { snapshot in
-            guard let userLeagueIdValues = snapshot.value as? [String: Bool] else {
+        userLeaguesRef.observeSingleEvent(of: .value) { [weak self] snapshot in
+            
+            // Make sure self is still allocated; otherwise, cancel the operation
+            guard let self,
+                  let userLeagueIdValues = snapshot.value as? [String: Bool] else {
                 completion()
                 return
             }
@@ -283,10 +287,10 @@ extension LeaguesCollectionViewController {
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> UICollectionViewDiffableDataSource<Section, League> {
         
-        return .init(collectionView: collectionView, cellProvider: { (collectionView, indexPath, league) -> LeagueCollectionViewCell? in
+        return .init(collectionView: collectionView, cellProvider: { [weak self] (collectionView, indexPath, league) -> LeagueCollectionViewCell? in
             
             // Configure the cell
-            let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: LeagueCollectionViewCell.reuseIdentifier, for: indexPath) as! LeagueCollectionViewCell
+            let cell = self?.collectionView.dequeueReusableCell(withReuseIdentifier: LeagueCollectionViewCell.reuseIdentifier, for: indexPath) as! LeagueCollectionViewCell
             cell.delegate = self
             cell.configure(with: league)
             

@@ -162,52 +162,6 @@ class TournamentDetailTableViewController: UITableViewController {
         }
     }
     
-    // Fetch the updated score data
-    func fetchScoreData() async throws {
-        var updatedAthleteData = [Athlete]()
-        
-        // Attempt to fetch updated athlete data
-        do {
-            updatedAthleteData = try await Tournament.fetchEventAthleteData(eventId: self.tournament.espnId)
-        } catch EventAthleteDataError.dataTaskError {
-            self.displayAlert(title: "Update Tournament Error", message: "Looks like there was a network issue when fetching updated tournament data. Your connection could be slow, or it may have been interrupted.")
-        } catch EventAthleteDataError.invalidHttpResponse {
-            self.displayAlert(title: "Update Tournament Error", message: "Looks like there was an issue when fetching updated tournament data. The server might be temporarily unreachable.")
-        } catch EventAthleteDataError.decodingError {
-            self.displayAlert(title: "Update Tournament Error", message: "Looks like there was an issue when decoding the updated tournament data. If you see this message, please reach out to the developer.")
-        } catch EventAthleteDataError.noCompetitorData {
-            self.displayAlert(title: "Update Tournament Error", message: "It doesn't look like there is any player data for this tournament right now.")
-        } catch {
-            self.displayAlert(title: "Update Tournament Error", message: "Something went wrong, but we're not exactly sure why. If you continue to see this message, reach out to the developer for assistance.")
-        }
-        
-        var nonMatchingAthletes = [Athlete]()
-        
-        // Merge the new athlete data with the current data
-        self.dataStore.leagues[leagueIndex].tournaments[tournamentIndex].athletes = self.tournament.athletes.map({ athlete in
-            
-            // Find the matching athlete
-            guard var updatedAthlete = updatedAthleteData.first(where: { athleteToFind in
-                athleteToFind.espnId == athlete.espnId
-            }) else {
-                print("Couldn't find new data for \(athlete.name) (ID \(athlete.espnId))")
-                nonMatchingAthletes.append(athlete)
-                return athlete
-            }
-            
-            // Re-apply the value and odds data
-            updatedAthlete.value = athlete.value
-            updatedAthlete.odds = athlete.odds
-            return updatedAthlete
-        })
-        
-        // If there are non-matching athletes, display an alert containing them to the league owner
-        if !nonMatchingAthletes.isEmpty && self.tournament.creator == self.currentFirebaseUser.email {
-            let nonMatchingAthletesString = nonMatchingAthletes.map{ "\($0.name) (ESPN ID: \($0.espnId))" }.joined(separator: "\n")
-            self.displayAlert(title: "Mismatched Athlete IDs", message: "One or more athletes have incorrect ESPN IDs, so score data for those athletes could not be updated. Please correct their ESPN IDs in the Manage Athletes view.\n\nAffected athletes:\n\(nonMatchingAthletesString)")
-        }
-    }
-    
     // Set up the update countdown timer
     func initializeUpdateTimer() {
         
@@ -233,7 +187,10 @@ class TournamentDetailTableViewController: UITableViewController {
         self.lastUpdateTimeLabel.text = "Next update in \(formattedTime)"
         
         // Create the timer
-        updateTimer = Timer(timeInterval: 1, repeats: true) { timer in
+        updateTimer = Timer(timeInterval: 1, repeats: true) { [weak self] timer in
+            
+            // Make sure self is still allocated; otherwise, cancel the operation
+            guard let self else { return }
             
             // Check if the countdown has completed
             if timeLeft < 1 {
@@ -264,8 +221,6 @@ class TournamentDetailTableViewController: UITableViewController {
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         let confirm = UIAlertAction(title: "Delete Tournament", style: .destructive) { _ in
             
-            self.updateTimer.invalidate()
-            
             // Cancel the subscription early to prevent updating the local league variable with league data that no longer exists
             self.subscription?.cancel()
             
@@ -279,12 +234,20 @@ class TournamentDetailTableViewController: UITableViewController {
         present(deleteTournamentAlert, animated: true)
     }
     
-    // Disable highlighting standing cells with no picked users
+    // Disable highlighting for user standings that have no picks
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         guard let standing = dataSource.itemIdentifier(for: indexPath),
               !standing.topAthletes.isEmpty else { return false}
         
         return true
+    }
+    
+    // Disable selection/segue for user standings that have no picks
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        guard let standing = dataSource.itemIdentifier(for: indexPath),
+              !standing.topAthletes.isEmpty else { return nil}
+        
+        return indexPath
     }
     
     // MARK: - Navigation
@@ -329,14 +292,6 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Push the new view controller
         navigationController?.pushViewController(destinationViewController, animated: true)
-    }
-    
-    // Disable selection/segue for user standings that have no picks
-    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        guard let standing = dataSource.itemIdentifier(for: indexPath),
-              !standing.topAthletes.isEmpty else { return nil}
-        
-        return indexPath
     }
     
     // Handle the incoming new picks data
@@ -392,11 +347,11 @@ extension TournamentDetailTableViewController {
     // Create the the data source and specify what to do with a provided cell
     func createDataSource() -> UITableViewDiffableDataSource<Section, TournamentStanding> {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, standing in
+        return UITableViewDiffableDataSource(tableView: tableView) { [weak self] tableView, indexPath, standing in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "TournamentDetailCell", for: indexPath) as! TournamentStandingTableViewCell
-            cell.configure(with: standing, tournamentStarted: self.tournament.status != .scheduled)
+            cell.configure(with: standing, tournamentStarted: self?.tournament.status != .scheduled)
 
             return cell
         }

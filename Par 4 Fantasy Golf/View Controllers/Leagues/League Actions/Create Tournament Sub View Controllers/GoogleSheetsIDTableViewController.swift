@@ -21,7 +21,7 @@ class GoogleSheetsIDTableViewController: UITableViewController {
     
     var sheetId = ""
     var athleteBetData: String?
-    
+
     // MARK: - View life cycle functions
     
     override func viewDidLoad() {

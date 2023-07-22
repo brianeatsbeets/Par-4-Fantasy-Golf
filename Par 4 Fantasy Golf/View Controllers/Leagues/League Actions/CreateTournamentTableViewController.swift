@@ -28,7 +28,7 @@ class CreateTournamentTableViewController: UITableViewController {
     var selectedEvent: CalendarEvent?
     var googleSheetId: String?
     var athleteBetTsv: String?
-    
+
     // MARK: - View life cycle functions
     
     override func viewDidLoad() {

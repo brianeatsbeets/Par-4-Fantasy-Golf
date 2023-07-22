@@ -150,7 +150,10 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         recentTournamentTimerLabel.text = "Next update in \(formattedTime)"
         
         // Create the timer
-        updateTimer = Timer(timeInterval: 1, repeats: true) { timer in
+        updateTimer = Timer(timeInterval: 1, repeats: true) { [weak self] timer in
+            
+            // Make sure self is still allocated; otherwise, cancel the operation
+            guard let self else { return }
             
             // Check if the countdown has completed
             if timeLeft < 1 {
