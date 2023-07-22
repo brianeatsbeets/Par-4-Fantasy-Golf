@@ -121,12 +121,13 @@ struct League: Hashable {
             guard tournament.status == .completed else { continue }
             
             // Continue the loop gracefully if we don't find a standings entry for a given tournament winner
-            guard standings[tournament.winner] != nil else {
+            guard tournament.winner != nil,
+                  standings[tournament.winner!] != nil else {
                 print("No standings info found for winner of \(name) - \(tournament.name)")
                 continue
             }
             
-            standings[tournament.winner]! += 1
+            standings[tournament.winner!]! += 1
         }
         
         return standings

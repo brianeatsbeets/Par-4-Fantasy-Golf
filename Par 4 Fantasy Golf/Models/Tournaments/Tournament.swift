@@ -27,6 +27,8 @@ struct Tournament: Hashable {
     var startDate: Double
     var endDate: Double
     var status: TournamentStatus {
+        
+        // Set the tournament status based on the current date
         switch Date.now.timeIntervalSince1970 {
         case let date where date < startDate:
             return .scheduled
@@ -42,13 +44,22 @@ struct Tournament: Hashable {
     var budget: Int
     var lastUpdateTime: Double
     var standings = [TournamentStanding]()
-    var winner: String {
-        if !standings.isEmpty {
-            return standings[0].user.email
-        } else {
+    var winner: String? {
+        
+        // Make sure we have standings from which to calculate a winner
+        guard !standings.isEmpty else {
             print("Can't calculate tournament winner because standings are empty")
-            return creator
+            return nil
         }
+        
+        // If there is a tie, return nil
+        if standings.count > 1,
+           standings[0].totalScore == standings[1].totalScore {
+            return nil
+        }
+        
+        // Otherwise, return the first standing's user's email
+        return standings[0].user.email
     }
     
     // MARK: - Initializers

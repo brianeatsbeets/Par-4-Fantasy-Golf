@@ -105,9 +105,9 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         }
         
         // Display the top 3 in the tournament standings
-        recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "1st: \(recentTournament.standings[0].user.email) (\(recentTournament.standings[0].totalScore.formattedScore()))" : ""
-        recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "2nd: \(recentTournament.standings[1].user.email) (\(recentTournament.standings[1].totalScore.formattedScore()))" : ""
-        recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "3rd: \(recentTournament.standings[2].user.email) (\(recentTournament.standings[2].totalScore.formattedScore()))" : ""
+        recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "\(recentTournament.standings[0].place): \(recentTournament.standings[0].user.email) (\(recentTournament.standings[0].totalScore.formattedScore()))" : ""
+        recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "\(recentTournament.standings[1].place): \(recentTournament.standings[1].user.email) (\(recentTournament.standings[1].totalScore.formattedScore()))" : ""
+        recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "\(recentTournament.standings[2].place): \(recentTournament.standings[2].user.email) (\(recentTournament.standings[2].totalScore.formattedScore()))" : ""
         
         // League Standings
         
