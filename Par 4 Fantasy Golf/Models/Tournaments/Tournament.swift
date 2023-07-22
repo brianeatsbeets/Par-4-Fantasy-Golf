@@ -55,6 +55,7 @@ struct Tournament: Hashable {
         // If there is a tie, return nil
         if standings.count > 1,
            standings[0].totalScore == standings[1].totalScore {
+            print("\(name) ended in a tie")
             return nil
         }
         
@@ -207,7 +208,7 @@ struct Tournament: Hashable {
             pickDict[member.key] = memberPicks
         }
         
-        return [
+        var firebaseDict = [
             "name": name,
             "startDate": startDate,
             "endDate": endDate,
@@ -216,9 +217,14 @@ struct Tournament: Hashable {
             "pickIds": pickDict,
             "budget": budget,
             "espnId": espnId,
-            "lastUpdateTime": lastUpdateTime,
-            "winner": winner
+            "lastUpdateTime": lastUpdateTime
         ] as [String : Any]
+        
+        if winner != nil {
+            firebaseDict["winner"] = winner
+        }
+        
+        return firebaseDict
     }
     
     // Helper function to fetch a tournament object from a tournament id

@@ -120,10 +120,15 @@ struct League: Hashable {
             // Make sure the tournament has ended
             guard tournament.status == .completed else { continue }
             
+            // Continue the loop gracefully if we don't find a standalone tournament winner
+            guard tournament.winner != nil else {
+                print("No (standalone) winner found for \(name) - \(tournament.name)")
+                continue
+            }
+            
             // Continue the loop gracefully if we don't find a standings entry for a given tournament winner
-            guard tournament.winner != nil,
-                  standings[tournament.winner!] != nil else {
-                print("No standings info found for winner of \(name) - \(tournament.name)")
+            guard standings[tournament.winner!] != nil else {
+                print("No standings info found for \(name) - \(tournament.name)")
                 continue
             }
             
