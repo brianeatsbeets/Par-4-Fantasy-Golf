@@ -4,9 +4,8 @@
 //
 //  Created by Aguirre, Brian P. on 4/1/23.
 //  Models created from ESPN JSON structure using https://app.quicktype.io/
+//  Unused API components are being retained/commented out for future use
 //
-
-// TODO: See if we can flatten these models to reduce the number and make the process more efficient
 
 import Foundation
 
@@ -47,15 +46,8 @@ struct CalendarEvent: Codable, Hashable, Equatable {
     let name: String // Event name
     let startDate: String // Event start date
     let endDate: String // Event end date
-    var urlContainer: CalendarEventUrl // Contains url with event ID
-    var eventId: String {
-        if let id = URL(string: urlContainer.url)?.lastPathComponent {
-            return id
-        } else {
-            print("Couldn't extract event ID from event URL")
-            return "nil"
-        }
-    }
+    var urlContainer: CalendarEventUrl // URL with event ID
+    var eventId: String? { URL(string: urlContainer.url)?.lastPathComponent } // Event ID
 
     enum CodingKeys: String, CodingKey {
         case name = "label"
@@ -160,17 +152,19 @@ struct CalendarEventUrl: Codable, Hashable, Equatable {
 //    }
 //}
 
-// MARK: - app.quicktype.io encode/decode helpers (unsure if needed)
-
+// MARK: - Encode/decode helpers
+//
 //class JSONNull: Codable, Hashable {
 //
 //    public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
 //        return true
 //    }
 //
-//    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(0)
-//    }
+////    public var hashValue: Int {
+////        return 0
+////    }
+//
+//    func hash(into hasher: inout Hasher) {}
 //
 //    public init() {}
 //
@@ -401,4 +395,3 @@ struct CalendarEventUrl: Codable, Hashable, Equatable {
 //        }
 //    }
 //}
-//

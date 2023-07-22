@@ -41,11 +41,12 @@ class AccountViewController: UIViewController {
         }
     }
     
-    // Create an auth state change listener to navigate back to sign in view AFTER successfully signing out
+    // Create a listener for firebase auth state changes
     func initializeAuthListener() {
         authListener = Auth.auth().addStateDidChangeListener { [unowned self] auth, user in
+            
+            // If the user signed out, navigate to the authentication stack
             if user == nil {
-                print("User is nil, so we're signing out")
                 Auth.auth().removeStateDidChangeListener(self.authListener!)
                 self.transitionToAuthenticationViewController()
             }

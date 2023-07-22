@@ -138,11 +138,11 @@ class CreateTournamentTableViewController: UITableViewController {
     @IBAction func saveButtonPressed(_ sender: Any) {
         guard let selectedEvent = selectedEvent,
               let startDate = selectedEvent.startDate.espnDateStringToDouble(),
-              let endDate = selectedEvent.endDate.espnDateStringToDouble() else { return }
+              let endDate = selectedEvent.endDate.espnDateStringToDouble(),
+              let eventId = selectedEvent.eventId else { return }
         
         //endDate += 86399 // Date time defaults to 12:00AM; add 23 hours, 59 mins, and 59 seconds to set the end time to 11:59PM
         let budget = Int(budgetTextField.text ?? "") ?? 0
-        let eventId = selectedEvent.eventId
         var athletes = [Athlete]()
         
         displayLoadingIndicator(animated: true)
