@@ -31,16 +31,6 @@ class GoogleSheetsIDTableViewController: UITableViewController {
     
     // MARK: - Table view functions
     
-    // Create a custom header view
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel()
-        label.font = label.font.withSize(12)
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
-        label.text = "If you would like to import player odds/value data from a Google Sheet, enter the Google Sheet ID in the field below. The ID can be found in the URL after the 'd' component, such as in the following example: https://docs.google.com/spreadsheets/d/GOOGLE_SHEET_ID/"
-        return label
-    }
-    
     // MARK: - Other functions
     
     // Toggle enabled state of save button
