@@ -137,8 +137,8 @@ class LeaguesCollectionViewController: UICollectionViewController {
                     newLeagues.append(league)
                 }
                 
-                // Sort leagues
-                self.dataStore.leagues = newLeagues.sorted(by: { $0.name > $1.name})
+                // Sort leagues alphabetically (case-insensitive)
+                self.dataStore.leagues = newLeagues.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
                 completion()
             }
         }
@@ -218,7 +218,9 @@ class LeaguesCollectionViewController: UICollectionViewController {
             
             // Save the league to the local data source
             dataStore.leagues.append(league)
-            dataStore.leagues = dataStore.leagues.sorted(by: { $0.name > $1.name})
+            
+            // Sort the leagues alphabetically (case-insensitive)
+            dataStore.leagues = dataStore.leagues.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
             
             updateCollectionView()
             
