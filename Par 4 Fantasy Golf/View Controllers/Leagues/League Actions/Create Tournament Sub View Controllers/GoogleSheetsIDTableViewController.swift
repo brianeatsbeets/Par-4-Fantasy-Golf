@@ -87,7 +87,7 @@ class GoogleSheetsIDTableViewController: UITableViewController {
         } catch GoogleSheetError.dataTaskError {
             self.displayAlert(title: "Google Sheets Error", message: "Looks like there was a network issue when fetching the Google Sheet data. Your connection could be slow, or it may have been interrupted.")
         } catch GoogleSheetError.invalidHttpResponse {
-            self.displayAlert(title: "Google Sheets Error", message: "Looks like there was an issue when fetching the Google Sheet data. The server might be temporarily unreachable.")
+            self.displayAlert(title: "Google Sheets Error", message: "Looks like the ID you provided did not return a valid Google Sheet. Please double-check your input and try again. If you continue to see this message, the server might be temporarily unreachable.")
         } catch GoogleSheetError.decodingError {
             self.displayAlert(title: "Google Sheets Error", message: "Looks like there was an issue when decoding the Google Sheet data. If you see this message, please reach out to the developer.")
         } catch {
@@ -102,7 +102,7 @@ class GoogleSheetsIDTableViewController: UITableViewController {
     @IBAction func saveButtonPressed(_ sender: Any) {
         
         // Create alert in case we have an invalid URL or Google Sheet ID
-        let invalidSheetIdAlert = UIAlertController(title: "Invalid Google Sheet ID", message: "The ID you provided did not return a valid Google Sheet. Please double-check your input and try again.", preferredStyle: .alert)
+        let invalidSheetIdAlert = UIAlertController(title: "Invalid Google Sheet ID", message: "The ID you provided contains one or more illegal characters. Please double-check your input and try again.", preferredStyle: .alert)
         invalidSheetIdAlert.addAction(UIAlertAction(title: "OK", style: .default))
         
         // Construct URL using the provided Google sheet id
@@ -116,16 +116,13 @@ class GoogleSheetsIDTableViewController: UITableViewController {
         Task {
             
             // Check if we received valid data from the Google sheet id
-            if let athleteBetData = await fetchGoogleSheetData(url: url) {
-                self.athleteBetData = athleteBetData
-                self.sheetId = googleSheetIdTextField.text!
-                
-                dismissLoadingIndicator(animated: false)
-                performSegue(withIdentifier: "unwindSaveSheetId", sender: nil)
-            } else {
-                dismissLoadingIndicator(animated: true)
-                self.present(invalidSheetIdAlert, animated: true)
-            }
+            guard let athleteBetData = await fetchGoogleSheetData(url: url) else { return }
+            
+            self.athleteBetData = athleteBetData
+            self.sheetId = googleSheetIdTextField.text!
+            
+            dismissLoadingIndicator(animated: false)
+            performSegue(withIdentifier: "unwindSaveSheetId", sender: nil)
         }
     }
 }

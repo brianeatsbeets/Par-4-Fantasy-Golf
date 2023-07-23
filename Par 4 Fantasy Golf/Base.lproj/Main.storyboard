@@ -419,21 +419,21 @@
         <scene sceneID="OwC-9A-Bi0">
             <objects>
                 <tableViewController id="Uh1-nH-dKc" customClass="CreateTournamentTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="hE4-oR-XCS">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="hE4-oR-XCS">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
                             <tableViewSection headerTitle="Event" id="DvC-6g-KPe">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="I55-QS-hS6">
-                                        <rect key="frame" x="20" y="55.333332061767578" width="350" height="43"/>
+                                        <rect key="frame" x="20" y="55.333332061767578" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="I55-QS-hS6" id="Zrg-1v-3Lw">
-                                            <rect key="frame" x="0.0" y="0.0" width="319.66666666666669" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="319.66666666666669" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading events..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IIg-dv-2Z5">
-                                                    <rect key="frame" x="20" y="11" width="279.66666666666669" height="21"/>
+                                                    <rect key="frame" x="20" y="11" width="279.66666666666669" height="22"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -455,14 +455,14 @@
                             <tableViewSection headerTitle="Google Sheets ID" id="N3a-TO-x3I">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="HYb-PO-rwd">
-                                        <rect key="frame" x="20" y="154.33333015441895" width="350" height="42.666667938232422"/>
+                                        <rect key="frame" x="20" y="155.33333015441895" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HYb-PO-rwd" id="2N8-Qb-kn2">
-                                            <rect key="frame" x="0.0" y="0.0" width="319.66666666666669" height="42.666667938232422"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="319.66666666666669" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No ID provided" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BhE-fE-Ajy">
-                                                    <rect key="frame" x="20" y="11.000000000000002" width="279.66666666666669" height="20.666666666666671"/>
+                                                    <rect key="frame" x="20" y="11" width="279.66666666666669" height="22"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -484,17 +484,14 @@
                             <tableViewSection headerTitle="Budget" id="hpP-bI-Eq1">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="FZN-4D-SGU">
-                                        <rect key="frame" x="20" y="252.99999809265137" width="350" height="44.333332061767578"/>
+                                        <rect key="frame" x="20" y="255.33333015441895" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FZN-4D-SGU" id="EDL-ri-m2r">
-                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hXf-MG-cON">
-                                                    <rect key="frame" x="20" y="5" width="310" height="34.333333333333336"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="34" id="h0U-vl-NzF"/>
-                                                    </constraints>
+                                                    <rect key="frame" x="20" y="5" width="310" height="34"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                     <connections>
@@ -615,24 +612,21 @@
         <scene sceneID="SeE-jY-4JA">
             <objects>
                 <tableViewController id="BsD-vQ-KIB" customClass="AddEditAthleteTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="nbM-FJ-4Pa">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="nbM-FJ-4Pa">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
                             <tableViewSection headerTitle="Name" id="Mzv-AL-FSq">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zLp-v0-Qcg">
-                                        <rect key="frame" x="20" y="55.333332061767578" width="350" height="44.333332061767578"/>
+                                        <rect key="frame" x="20" y="55.333332061767578" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zLp-v0-Qcg" id="8JJ-J4-Plo">
-                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Rd9-Yl-oWw">
-                                                    <rect key="frame" x="20" y="5" width="310" height="34.333333333333336"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="34" id="5AW-rg-DWr"/>
-                                                    </constraints>
+                                                    <rect key="frame" x="20" y="5" width="310" height="34"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
@@ -653,17 +647,14 @@
                             <tableViewSection headerTitle="ESPN ID" id="brJ-4x-PWs">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="iPU-AM-PZv">
-                                        <rect key="frame" x="20" y="155.66666221618652" width="350" height="44.333332061767578"/>
+                                        <rect key="frame" x="20" y="155.33333015441895" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="iPU-AM-PZv" id="yIb-kf-uOu">
-                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="HHu-Bo-CzJ">
-                                                    <rect key="frame" x="20" y="5" width="310" height="34.333333333333336"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="34" id="7fd-DG-4TR"/>
-                                                    </constraints>
+                                                    <rect key="frame" x="20" y="5" width="310" height="34"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                     <connections>
@@ -684,17 +675,14 @@
                             <tableViewSection headerTitle="Odds" id="uqF-zT-ivg">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="J0v-LI-Kw2">
-                                        <rect key="frame" x="20" y="255.9999942779541" width="350" height="44.333332061767578"/>
+                                        <rect key="frame" x="20" y="255.33333015441895" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="J0v-LI-Kw2" id="4Ql-yV-jbF">
-                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="C27-Hc-6fj">
-                                                    <rect key="frame" x="20" y="5" width="310" height="34.333333333333336"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="34" id="IQb-Ae-g0x"/>
-                                                    </constraints>
+                                                    <rect key="frame" x="20" y="5" width="310" height="34"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                     <connections>
@@ -715,17 +703,14 @@
                             <tableViewSection headerTitle="Value" id="T6X-HE-Gc2">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zCT-fp-xZk">
-                                        <rect key="frame" x="20" y="356.33332633972168" width="350" height="44.333332061767578"/>
+                                        <rect key="frame" x="20" y="355.33333015441895" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zCT-fp-xZk" id="bPb-54-Twx">
-                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FLf-51-RzC">
-                                                    <rect key="frame" x="20" y="5" width="310" height="34.333333333333336"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="34" id="n33-1J-zp1"/>
-                                                    </constraints>
+                                                    <rect key="frame" x="20" y="5" width="310" height="34"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                     <connections>
@@ -746,17 +731,14 @@
                             <tableViewSection headerTitle="Score" id="xrO-Qu-ZBT">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="JT2-IZ-Jbd">
-                                        <rect key="frame" x="20" y="456.66665840148926" width="350" height="44.333332061767578"/>
+                                        <rect key="frame" x="20" y="455.33333015441895" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JT2-IZ-Jbd" id="UiE-Yk-bZq">
-                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="j3y-i0-N3r">
-                                                    <rect key="frame" x="20" y="5" width="310" height="34.333333333333336"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="34" id="3SB-nd-4Gl"/>
-                                                    </constraints>
+                                                    <rect key="frame" x="20" y="5" width="310" height="34"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
@@ -810,24 +792,21 @@
         <scene sceneID="S54-ja-mGi">
             <objects>
                 <tableViewController id="mL8-7X-6yZ" customClass="CreateLeagueTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="iB7-Mb-C8o">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="iB7-Mb-C8o">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
                             <tableViewSection headerTitle="League Name" id="IJ3-aH-gXV">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="z5z-lw-0xq">
-                                        <rect key="frame" x="20" y="55.333332061767578" width="350" height="43.333332061767578"/>
+                                        <rect key="frame" x="20" y="55.333332061767578" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="z5z-lw-0xq" id="uY0-KS-FPt">
-                                            <rect key="frame" x="0.0" y="0.0" width="350" height="43.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ngi-Ue-kdf">
-                                                    <rect key="frame" x="20" y="4" width="310" height="34.333333333333336"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="34" id="464-NL-Ljk"/>
-                                                    </constraints>
+                                                    <rect key="frame" x="20" y="4" width="310" height="35"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
@@ -1282,25 +1261,22 @@
         <scene sceneID="YaA-Fb-bPi">
             <objects>
                 <tableViewController id="dlK-DA-ciN" customClass="GoogleSheetsIDTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="aJm-8f-pop">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="aJm-8f-pop">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
                             <tableViewSection id="hZs-KH-1yK">
-                                <string key="footerTitle">If you would like to import player odds/value data from a Google Sheet, enter the Google Sheet ID in the field below. The ID can be found in the URL after the 'd' component, such as in the following example: https://docs.google.com/spreadsheets/d/GOOGLE_SHEET_ID/</string>
+                                <mutableString key="footerTitle">If you would like to import player odds/value data from a Google Sheet, enter the Google Sheet ID in the field above.   The ID can be found in the URL after the 'd' component, such as in the following example: https://docs.google.com/spreadsheets/d/GOOGLE_SHEET_ID/</mutableString>
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="eX9-eN-jpx">
-                                        <rect key="frame" x="20" y="18" width="350" height="44.333332061767578"/>
+                                        <rect key="frame" x="20" y="18" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eX9-eN-jpx" id="h2Q-D3-Oyp">
-                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="w0J-Df-AUi">
-                                                    <rect key="frame" x="20" y="5" width="310" height="34.333333333333336"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="34" id="oDk-7p-K39"/>
-                                                    </constraints>
+                                                    <rect key="frame" x="20" y="5" width="310" height="34"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
