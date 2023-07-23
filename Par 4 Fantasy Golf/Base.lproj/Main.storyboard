@@ -1186,7 +1186,7 @@
         <scene sceneID="yLC-Je-fJU">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="KeV-us-jim" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Account" image="square.fill" catalog="system" id="X7N-Jd-ezZ"/>
+                    <tabBarItem key="tabBarItem" title="Account" image="person.circle" catalog="system" id="X7N-Jd-ezZ"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="fio-GA-zaf">
                         <rect key="frame" x="0.0" y="47" width="390" height="44"/>
@@ -1449,11 +1449,11 @@
             </objects>
             <point key="canvasLocation" x="10977" y="-28"/>
         </scene>
-        <!--Collection Leagues-->
+        <!--Leagues-->
         <scene sceneID="hQe-eK-3fe">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="fbo-Sd-FGa" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Collection Leagues" image="square.fill" catalog="system" id="wq6-n5-yjY"/>
+                    <tabBarItem key="tabBarItem" title="Leagues" image="trophy.circle" catalog="system" id="wq6-n5-yjY"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="q8k-a4-XZg">
                         <rect key="frame" x="0.0" y="47" width="390" height="44"/>
@@ -1473,7 +1473,8 @@
         <segue reference="qAz-oj-d79"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="square.fill" catalog="system" width="128" height="114"/>
+        <image name="person.circle" catalog="system" width="128" height="123"/>
+        <image name="trophy.circle" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
