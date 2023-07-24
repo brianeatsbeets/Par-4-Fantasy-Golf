@@ -646,9 +646,10 @@
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="ESPN ID" id="brJ-4x-PWs">
+                                <string key="footerTitle">This can be found in the URL of a player's ESPN page after the 'id' component: https://www.espn.com/golf/player/_/id/9478/scottie-scheffler (Player ID is 9478)</string>
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="iPU-AM-PZv">
-                                        <rect key="frame" x="20" y="155.33333015441895" width="350" height="44"/>
+                                        <rect key="frame" x="20" y="162.66666221618652" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="iPU-AM-PZv" id="yIb-kf-uOu">
                                             <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
@@ -676,7 +677,7 @@
                             <tableViewSection headerTitle="Odds" id="uqF-zT-ivg">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="J0v-LI-Kw2">
-                                        <rect key="frame" x="20" y="255.33333015441895" width="350" height="44"/>
+                                        <rect key="frame" x="20" y="322.66666030883789" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="J0v-LI-Kw2" id="4Ql-yV-jbF">
                                             <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
@@ -704,7 +705,7 @@
                             <tableViewSection headerTitle="Value" id="T6X-HE-Gc2">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zCT-fp-xZk">
-                                        <rect key="frame" x="20" y="355.33333015441895" width="350" height="44"/>
+                                        <rect key="frame" x="20" y="422.66666030883789" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zCT-fp-xZk" id="bPb-54-Twx">
                                             <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
@@ -732,7 +733,7 @@
                             <tableViewSection headerTitle="Score" id="xrO-Qu-ZBT">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="JT2-IZ-Jbd">
-                                        <rect key="frame" x="20" y="455.33333015441895" width="350" height="44"/>
+                                        <rect key="frame" x="20" y="522.66666030883789" width="350" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JT2-IZ-Jbd" id="UiE-Yk-bZq">
                                             <rect key="frame" x="0.0" y="0.0" width="350" height="44"/>
