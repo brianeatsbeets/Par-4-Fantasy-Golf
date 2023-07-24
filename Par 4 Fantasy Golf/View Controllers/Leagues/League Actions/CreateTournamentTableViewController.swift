@@ -50,6 +50,7 @@ class CreateTournamentTableViewController: UITableViewController {
     func fetchCalendarEvents() async {
         
         // Construct URL
+        // TODO: Have this URL hosted in Firebase to be easily update-able
         let url = URL(string: "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard")!
         
         do {
