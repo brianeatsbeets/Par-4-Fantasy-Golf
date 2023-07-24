@@ -34,6 +34,7 @@ class TournamentDetailTableViewController: UITableViewController {
     
     let currentFirebaseUser = Auth.auth().currentUser!
     var firstLoad = true
+    var makePicksAlertText = ""
     var updateTimer = Timer()
     
     // Timer update interval in seconds
@@ -52,10 +53,6 @@ class TournamentDetailTableViewController: UITableViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    deinit {
-        print("TournamentDetailTableViewController deinitialized")
     }
     
     // MARK: - View life cycle functions
@@ -143,22 +140,26 @@ class TournamentDetailTableViewController: UITableViewController {
     }
     
     // Set the state of the Make Picks button
-    // TODO: Fix button text being too long when user is not league owner
     func setMakePicksButtonState() {
-        makePicksButton.isEnabled = true //false
         
+        // Make sure we have athlete data for the tournament
         guard !tournament.athletes.isEmpty else {
-            makePicksButton.title = "Make Picks (Players data not yet available)"
+            makePicksButton.tintColor = .lightGray
+            makePicksAlertText = "Player data is not yet available for this tournament."
             return
         }
         
+        // Set the button state (and potential alert text) based on the tournament status
         switch tournament.status {
         case .scheduled:
+            makePicksButton.tintColor = nil
             makePicksButton.isEnabled = true
         case .live:
-            makePicksButton.title = "Make Picks (Tournament has started)"
+            makePicksButton.tintColor = .lightGray
+            makePicksAlertText = "You cannot update your picks after the tournament has started."
         case .completed:
-            makePicksButton.title = "Make Picks (Tournament has completed)"
+            makePicksButton.tintColor = .lightGray
+            makePicksAlertText = "You cannot update your picks after the tournament has completed."
         }
     }
     
@@ -255,6 +256,15 @@ class TournamentDetailTableViewController: UITableViewController {
     // Pass tournament data to MakePicksTableViewController
     @IBSegueAction func segueToMakePicks(_ coder: NSCoder) -> MakePicksTableViewController? {
         return MakePicksTableViewController(coder: coder, tournament: tournament)
+    }
+    
+    // Segue to Make Picks or display an alert based on tournament status
+    @IBAction func makePicksButtonPressed(_ sender: UIBarButtonItem) {
+        if tournament.status == .scheduled && !tournament.athletes.isEmpty {
+            performSegue(withIdentifier: "SegueToMakePicks", sender: nil)
+        } else {
+            displayAlert(title: "Picks Unavailable", message: makePicksAlertText)
+        }
     }
     
     // Pass tournament data to ManageAthletesTableViewController

@@ -266,7 +266,7 @@
                                 <barButtonItems>
                                     <barButtonItem title="Make Picks" id="nRR-j2-5FW">
                                         <connections>
-                                            <segue destination="6fB-c1-4RM" kind="presentation" modalPresentationStyle="fullScreen" id="KbW-xQ-KlO"/>
+                                            <action selector="makePicksButtonPressed:" destination="nTR-1R-Y3k" id="VOk-rD-Bbo"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem title="Manage Athletes" id="Buw-IN-skb" userLabel="Manage Athletes">
@@ -288,6 +288,7 @@
                         <outlet property="makePicksButton" destination="nRR-j2-5FW" id="9Ns-8w-CZJ"/>
                         <outlet property="tournamentActionBarButtonItemGroup" destination="Sb5-6h-Dd8" id="jhT-rp-Ed2"/>
                         <segue destination="a4l-UY-yC7" kind="unwind" identifier="unwindDeleteTournament" unwindAction="unwindFromDeleteTournamentWithSegue:" id="WHb-Qb-Nu3"/>
+                        <segue destination="6fB-c1-4RM" kind="presentation" identifier="SegueToMakePicks" modalPresentationStyle="fullScreen" id="omb-Dq-hlj"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Idz-HM-wJR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -298,7 +299,7 @@
         <!--Make Picks-->
         <scene sceneID="QBn-oE-bdY">
             <objects>
-                <tableViewController id="fXs-Nf-Z1i" customClass="MakePicksTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="MakePicks" id="fXs-Nf-Z1i" customClass="MakePicksTableViewController" customModule="Par_4_Fantasy_Golf" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" estimatedSectionHeaderHeight="-1" sectionFooterHeight="28" estimatedSectionFooterHeight="-1" id="MZI-hM-4Eg">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -123,7 +123,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
             var newLeagues = [League]()
             
             // Fetch leagues from user league Ids
-            // TODO: Send out league fetch request concurrently
+            // TODO: Send out league fetch requests concurrently
             Task {
                 for var league in await League.fetchMultipleLeagues(from: userLeagueIds) {
                     league.members = await User.fetchMultipleUsers(from: league.memberIds)
