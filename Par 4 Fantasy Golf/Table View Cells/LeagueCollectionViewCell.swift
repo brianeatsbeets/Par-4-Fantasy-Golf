@@ -104,19 +104,16 @@ class LeagueCollectionViewCell: UICollectionViewCell {
             }
         }
         
-        // Display the top 3 in the tournament standings
-        recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "\(recentTournament.standings[0].place): \(recentTournament.standings[0].user.email) (\(recentTournament.standings[0].totalScore.formattedScore()))" : ""
-        recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "\(recentTournament.standings[1].place): \(recentTournament.standings[1].user.email) (\(recentTournament.standings[1].totalScore.formattedScore()))" : ""
-        recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "\(recentTournament.standings[2].place): \(recentTournament.standings[2].user.email) (\(recentTournament.standings[2].totalScore.formattedScore()))" : ""
-        
-        // League Standings
-        
         // Calculate the current league standings and display the top 3
         let leagueStandings = league.calculateLeagueStandings()
-        let standingsKeysSorted = leagueStandings.keys.sorted()
-        leagueStandingFirstLabel.text = standingsKeysSorted.indices.contains(0) ? "1st: \(standingsKeysSorted[0]) - \(leagueStandings[standingsKeysSorted[0]]!) win(s)" : ""
-        leagueStandingSecondLabel.text = standingsKeysSorted.indices.contains(1) ? "2nd: \(standingsKeysSorted[1]) - \(leagueStandings[standingsKeysSorted[1]]!) win(s)" : ""
-        leagueStandingThirdLabel.text = standingsKeysSorted.indices.contains(2) ? "3rd: \(standingsKeysSorted[2]) - \(leagueStandings[standingsKeysSorted[2]]!) win(s)" : ""
+        leagueStandingFirstLabel.text = leagueStandings.indices.contains(0) ? "1st | \(leagueStandings[0].user.username): \(leagueStandings[0].score) win(s)" : ""
+        leagueStandingSecondLabel.text = leagueStandings.indices.contains(1) ? "2nd | \(leagueStandings[1].user.username): \(leagueStandings[1].score) win(s)" : ""
+        leagueStandingThirdLabel.text = leagueStandings.indices.contains(2) ? "3rd | \(leagueStandings[2].user.username): \(leagueStandings[2].score) win(s)" : ""
+        
+        // Display the top 3 in the tournament standings
+        recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "\(recentTournament.standings[0].place) | \(recentTournament.standings[0].user.username): \(recentTournament.standings[0].totalScore.formattedScore())" : ""
+        recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "\(recentTournament.standings[1].place) | \(recentTournament.standings[1].user.username): \(recentTournament.standings[1].totalScore.formattedScore())" : ""
+        recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "\(recentTournament.standings[2].place) | \(recentTournament.standings[2].user.username): \(recentTournament.standings[2].totalScore.formattedScore())" : ""
     }
     
     // Set up the update countdown timer

@@ -129,7 +129,7 @@ class ManageUsersTableViewController: UITableViewController {
                 updatedLeague.memberIds.append(newUser.id)
                 
                 // Sort the members
-                updatedLeague.members = updatedLeague.members.sorted(by: { $0.email < $1.email })
+                updatedLeague.members = updatedLeague.members.sorted(by: { $0.username < $1.username })
                 
                 // Save the updated league values to the data store and update the table view
                 self.dataStore.leagues[self.leagueIndex] = updatedLeague
@@ -250,7 +250,8 @@ extension ManageUsersTableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath)
             
             var config = cell.defaultContentConfiguration()
-            config.text = user.email
+            config.text = user.username
+            config.secondaryText = user.email
             
             if let creator = self?.league.creator,
                user.id == creator {

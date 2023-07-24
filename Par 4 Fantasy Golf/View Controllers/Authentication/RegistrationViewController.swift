@@ -19,6 +19,7 @@ class RegistrationViewController: UIViewController {
     // MARK: - Properties
     
     @IBOutlet var emailTextField: UITextField!
+    @IBOutlet var usernameTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var confirmPasswordTextField: UITextField!
     @IBOutlet var registerButton: UIButton!
@@ -73,7 +74,7 @@ class RegistrationViewController: UIViewController {
                 
                 // Get user data
                 let userId = authResult!.user.uid
-                let user = User(id: userId, email: self.emailTextField.text!)
+                let user = User(id: userId, email: self.emailTextField.text!, username: self.usernameTextField.text!)
                 
                 // Save the user to Firebase
                 user.databaseReference.setValue(user.toAnyObject())

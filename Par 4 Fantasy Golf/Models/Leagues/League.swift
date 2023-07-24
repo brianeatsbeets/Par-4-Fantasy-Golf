@@ -103,15 +103,15 @@ struct League: Hashable {
     }
     
     // Calculate the overall league standings
-    func calculateLeagueStandings() -> [String: Int] {
+    func calculateLeagueStandings() -> [LeagueStanding] {
         
-        // Create a dictionary pre-filled with the league members' emails and a value of 0
-        var standings: [String: Int] = {
-            var dict = [String: Int]()
+        // Create an array pre-filled with the league members' emails and a score of 0
+        var standings: [LeagueStanding] = {
+            var array = [LeagueStanding]()
             for member in members {
-                dict[member.email] = 0
+                array.append(LeagueStanding(user: member, score: 0))
             }
-            return dict
+            return array
         }()
         
         // Fetch each tournament's winner and add 1 to that member's value
@@ -126,16 +126,24 @@ struct League: Hashable {
                 continue
             }
             
+            // Continue the loop gracefully if we don't find a matching user for the tournament winner
+            guard let winningUser = members.first(where: { $0.email == tournament.winner }) else {
+                print("No matching user found for \(tournament.winner!)")
+                continue
+            }
+            
             // Continue the loop gracefully if we don't find a standings entry for a given tournament winner
-            guard standings[tournament.winner!] != nil else {
+            guard let winningUserStandingIndex = standings.firstIndex(where: { $0.user == winningUser }) else {
                 print("No standings info found for \(name) - \(tournament.name)")
                 continue
             }
             
-            standings[tournament.winner!]! += 1
+            standings[winningUserStandingIndex].score += 1
         }
         
-        return standings
+        let sortedStandings = standings.sorted()
+        
+        return sortedStandings
     }
     
     // Helper function to fetch a league object from a league id

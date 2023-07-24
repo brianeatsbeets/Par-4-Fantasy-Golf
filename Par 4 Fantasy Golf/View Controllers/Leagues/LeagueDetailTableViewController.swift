@@ -222,19 +222,3 @@ extension LeagueDetailTableViewController {
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
-
-// This extention conforms to the ManageUsersDelegate protocol
-//extension LeagueDetailTableViewController: ManageUsersDelegate {
-//    
-//    // Add a new user
-//    func addUser(user: User) {
-//        dataStore.leagues[leagueIndex].members.append(user)
-//        dataStore.leagues[leagueIndex].memberIds.append(user.id)
-//    }
-//    
-//    // Remove an existing user
-//    func removeUser(user: User) {
-//        dataStore.leagues[leagueIndex].members.removeAll { $0.id == user.id }
-//        dataStore.leagues[leagueIndex].memberIds.removeAll { $0 == user.id }
-//    }
-//}

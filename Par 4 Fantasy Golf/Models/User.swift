@@ -18,14 +18,16 @@ struct User: Hashable {
     
     let id: String
     var email: String
+    var username: String
     let databaseReference: DatabaseReference
     
     // MARK: - Initializers
     
     // Standard init
-    init(id: String, email: String) {
+    init(id: String, email: String, username: String) {
         self.id = id
         self.email = email
+        self.username = username
         databaseReference = Database.database().reference(withPath: "users/\(id)")
     }
     
@@ -34,10 +36,12 @@ struct User: Hashable {
         print("User created")
         // Validate and set the incoming values
         guard let value = snapshot.value as? [String: AnyObject],
-              let email = value["email"] as? String else { return nil }
+              let email = value["email"] as? String,
+              let username = value["username"] as? String else { return nil }
         
         self.id = snapshot.key
         self.email = email
+        self.username = username
         databaseReference = Database.database().reference(withPath: "users/\(id)")
     }
     
@@ -46,7 +50,8 @@ struct User: Hashable {
     // Convert the user to a Dictionary to be stored in Firebase
     func toAnyObject() -> Any {
         return [
-            "email": email
+            "email": email,
+            "username": username
         ]
     }
     
@@ -100,7 +105,7 @@ struct User: Hashable {
             }
             
             // Return the users sorted in ascending order
-            return users.sorted { $0.email < $1.email }
+            return users.sorted { $0.username < $1.username }
         }
     }
 }

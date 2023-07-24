@@ -18,13 +18,13 @@ class TournamentUserDetailTableViewController: UITableViewController {
     // MARK: - Properties
     
     lazy var dataSource = createDataSource()
-    let selectedUserEmail: String
+    let selectedUserUsername: String
     var selectedUserPicks: [Athlete]
     
     // MARK: - Initializers
     
-    init?(coder: NSCoder, selectedUserEmail: String, selectedUserPicks: [Athlete]) {
-        self.selectedUserEmail = selectedUserEmail
+    init?(coder: NSCoder, selectedUserUsername: String, selectedUserPicks: [Athlete]) {
+        self.selectedUserUsername = selectedUserUsername
         self.selectedUserPicks = selectedUserPicks
         super.init(coder: coder)
     }
@@ -38,7 +38,7 @@ class TournamentUserDetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Picks for \(selectedUserEmail)"
+        title = "\(selectedUserUsername)'s Picks"
         tableView.dataSource = dataSource
         updateTableView()
     }

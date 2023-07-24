@@ -882,7 +882,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="TEJ-Vj-QDa">
-                                <rect key="frame" x="16" y="116.00000000000001" width="358" height="194.33333333333337"/>
+                                <rect key="frame" x="16" y="116.00000000000001" width="358" height="253.33333333333337"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FF4-Ej-HiJ">
                                         <rect key="frame" x="0.0" y="0.0" width="358" height="34"/>
@@ -892,8 +892,16 @@
                                             <action selector="textEditingChanged" destination="VgN-6T-cKO" eventType="editingChanged" id="PQ3-h5-aBS"/>
                                         </connections>
                                     </textField>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="y03-N6-aEF">
+                                        <rect key="frame" x="0.0" y="59" width="358" height="34"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no"/>
+                                        <connections>
+                                            <action selector="textEditingChanged" destination="VgN-6T-cKO" eventType="editingChanged" id="ZwJ-Oj-34E"/>
+                                        </connections>
+                                    </textField>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="clS-d0-hhD">
-                                        <rect key="frame" x="0.0" y="59" width="358" height="76"/>
+                                        <rect key="frame" x="0.0" y="118" width="358" height="76"/>
                                         <subviews>
                                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Tcv-7c-Fuy">
                                                 <rect key="frame" x="0.0" y="0.0" width="358" height="34"/>
@@ -914,7 +922,7 @@
                                         </subviews>
                                     </stackView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ez5-sS-Byn">
-                                        <rect key="frame" x="135.66666666666666" y="160" width="87" height="34.333333333333343"/>
+                                        <rect key="frame" x="135.66666666666666" y="219" width="87" height="34.333333333333343"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Register"/>
                                         <connections>
@@ -926,6 +934,8 @@
                                     <constraint firstItem="clS-d0-hhD" firstAttribute="leading" secondItem="TEJ-Vj-QDa" secondAttribute="leading" id="ZIL-NT-jAo"/>
                                     <constraint firstAttribute="trailing" secondItem="clS-d0-hhD" secondAttribute="trailing" id="diP-wX-gbr"/>
                                     <constraint firstAttribute="trailing" secondItem="FF4-Ej-HiJ" secondAttribute="trailing" id="uKC-DQ-VMm"/>
+                                    <constraint firstAttribute="trailing" secondItem="y03-N6-aEF" secondAttribute="trailing" id="vmA-Qb-ic0"/>
+                                    <constraint firstItem="y03-N6-aEF" firstAttribute="leading" secondItem="TEJ-Vj-QDa" secondAttribute="leading" id="wF0-Cs-6Sc"/>
                                     <constraint firstItem="FF4-Ej-HiJ" firstAttribute="leading" secondItem="TEJ-Vj-QDa" secondAttribute="leading" id="yNM-Fh-Ulo"/>
                                 </constraints>
                             </stackView>
@@ -944,6 +954,7 @@
                         <outlet property="emailTextField" destination="FF4-Ej-HiJ" id="eqZ-uU-MoC"/>
                         <outlet property="passwordTextField" destination="Tcv-7c-Fuy" id="kMI-7H-fnH"/>
                         <outlet property="registerButton" destination="Ez5-sS-Byn" id="8o1-4C-f1z"/>
+                        <outlet property="usernameTextField" destination="y03-N6-aEF" id="0E2-h8-cSn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CN6-Aa-Hsp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

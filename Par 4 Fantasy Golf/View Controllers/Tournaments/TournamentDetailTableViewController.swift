@@ -297,7 +297,7 @@ class TournamentDetailTableViewController: UITableViewController {
         
         // Verify we can instantiate an instance of TournamentUserDetailTableViewController
         guard let destinationViewController = storyboard?.instantiateViewController(identifier: "TournamentUserDetail", creator: { coder in
-            TournamentUserDetailTableViewController(coder: coder, selectedUserEmail: tournamentStanding.user.email, selectedUserPicks: selectedUserPicks)
+            TournamentUserDetailTableViewController(coder: coder, selectedUserUsername: tournamentStanding.user.username, selectedUserPicks: selectedUserPicks)
         }) else { return }
         
         // Push the new view controller

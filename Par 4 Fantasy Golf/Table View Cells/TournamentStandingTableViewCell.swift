@@ -37,7 +37,7 @@ class TournamentStandingTableViewCell: UITableViewCell {
             }
         }()
         
-        config.text = "\(standing.place): \(standing.user.email): \(standing.totalScore.formattedScore())" + penaltiesText
+        config.text = "\(standing.place) | \(standing.user.username): \(standing.totalScore.formattedScore())" + penaltiesText
         
         // Set the user picks text based on the tournament status
         if tournamentStarted {
