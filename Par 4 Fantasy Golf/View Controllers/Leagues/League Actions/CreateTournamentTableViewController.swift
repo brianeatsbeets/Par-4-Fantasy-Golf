@@ -179,9 +179,13 @@ class CreateTournamentTableViewController: UITableViewController {
                 } catch EventAthleteDataError.noCompetitorData {
                     
                     // Create a custom alert with a completion handler in order to wait for user interaction before beginning segue
-                    let noCompetitorDataAlert = UIAlertController(title: "No Player Data", message: "Just as a heads up, it doesn't look like there is any player data in ESPN for this tournament right now. You can enter your own player data by re-creating this tournament and providing a Google Sheet ID, or you can manually enter player information in the Manage Athletes page.", preferredStyle: .alert)
+                    let noCompetitorDataAlert = UIAlertController(title: "No Player Data", message: "Just as a heads up, it doesn't look like there is any player data in ESPN for this tournament yet. You can enter your own player data by going back and providing a Google Sheet ID, or by manually enter player information in the Manage Athletes page after creating the tournament.", preferredStyle: .alert)
                     
-                    let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                    let cancelAction = UIAlertAction(title: "Go Back", style: .cancel) { _ in
+                        self.dismissLoadingIndicator(animated: true)
+                    }
+                    
+                    let okAction = UIAlertAction(title: "Create Anyway", style: .default) { _ in
                         noCompetitorDataAlert.dismiss(animated: true)
                         
                         // Create new tournament object
@@ -191,6 +195,7 @@ class CreateTournamentTableViewController: UITableViewController {
                         self.performSegue(withIdentifier: "unwindCreateTournament", sender: nil)
                     }
                     
+                    noCompetitorDataAlert.addAction(cancelAction)
                     noCompetitorDataAlert.addAction(okAction)
                     present(noCompetitorDataAlert, animated: true)
                     return
