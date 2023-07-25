@@ -19,10 +19,10 @@ class TournamentStandingTableViewCell: UITableViewCell {
     // Set up the cell UI elements
     func configure(with standing: TournamentStanding, tournamentStarted: Bool) {
         
-        if standing.topAthletes.isEmpty {
-            accessoryType = .none
-        } else {
+        if !standing.topAthletes.isEmpty && tournamentStarted {
             accessoryType = .disclosureIndicator
+        } else {
+            accessoryType = .none
         }
         
         var config = defaultContentConfiguration()

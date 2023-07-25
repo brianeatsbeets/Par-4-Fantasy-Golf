@@ -238,7 +238,7 @@ class TournamentDetailTableViewController: UITableViewController {
     // Disable highlighting for user standings that have no picks
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         guard let standing = dataSource.itemIdentifier(for: indexPath),
-              !standing.topAthletes.isEmpty else { return false}
+              (!standing.topAthletes.isEmpty) && (tournament.status != .scheduled) else { return false }
         
         return true
     }
@@ -246,7 +246,7 @@ class TournamentDetailTableViewController: UITableViewController {
     // Disable selection/segue for user standings that have no picks
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         guard let standing = dataSource.itemIdentifier(for: indexPath),
-              !standing.topAthletes.isEmpty else { return nil}
+              (!standing.topAthletes.isEmpty) && (tournament.status != .scheduled) else { return nil }
         
         return indexPath
     }
