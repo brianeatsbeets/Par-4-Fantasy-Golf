@@ -88,7 +88,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
             recentTournamentTimerLabel.isHidden = true
         case .live:
             recentTournamentStatusLabel.text = "LIVE"
-            recentTournamentStatusLabel.textColor = .red
+            recentTournamentStatusLabel.textColor = UIColor(red: 200/255, green: 38/255, blue: 0, alpha: 1) // Scarlet color; clashes less with bright green background than system red
             recentTournamentTimerLabel.isHidden = false
             initializeUpdateTimer(league: league, tournament: recentTournament)
         case .completed:

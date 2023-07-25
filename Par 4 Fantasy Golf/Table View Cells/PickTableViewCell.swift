@@ -24,7 +24,11 @@ class PickTableViewCell: UITableViewCell {
         contentConfiguration = config
         
         if pickItem.isSelected {
-            backgroundColor = UIColor(red: 202/255, green: 1, blue: 196/255, alpha: 1)
+            if traitCollection.userInterfaceStyle == .light {
+                backgroundColor = UIColor(red: 202/255, green: 1, blue: 196/255, alpha: 1)
+            } else {
+                backgroundColor = UIColor(red: 39/255, green: 84/255, blue: 41/255, alpha: 1)
+            }
         } else {
             backgroundColor = .systemBackground
         }
