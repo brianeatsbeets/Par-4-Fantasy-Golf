@@ -12,7 +12,7 @@ extension UIViewController {
     
     // MARK: - Loading Indicator
     
-    // Display an alert with a spinning loading indicator and a message
+    // Display an overlay with a spinning loading indicator
     func displayLoadingIndicator(animated: Bool) {
         
         // Identify the window to which we'll add the loading indicatory view and verify that a loading indicator view isn't already active
@@ -25,7 +25,7 @@ extension UIViewController {
         // Create and configure the UIActivityIndicatorView
         let loadingIndicatorView = UIActivityIndicatorView(frame: window.bounds)
         loadingIndicatorView.style = .large
-        loadingIndicatorView.backgroundColor = .white.withAlphaComponent(0.7)
+        loadingIndicatorView.backgroundColor = (traitCollection.userInterfaceStyle == .light) ? .white.withAlphaComponent(0.7) : .white.withAlphaComponent(0.3)
         loadingIndicatorView.alpha = animated ? 0 : 1
         loadingIndicatorView.startAnimating()
         loadingIndicatorView.tag = 100
@@ -41,7 +41,7 @@ extension UIViewController {
         }
     }
     
-    // Dismiss the loading indicator alert
+    // Dismiss the loading overlay
     func dismissLoadingIndicator(animated: Bool) {
         
         // Identify the window from which we'll remove the loading indicatory view, along with the existing loading indicator view
