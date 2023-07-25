@@ -21,6 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Instantiate Firebase services
         FirebaseApp.configure()
         
+        // Allow navigation bar titles to shrink the font size if it's too big to fit (most frequently tournament titles)
+        UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
+        
         return true
     }
 

@@ -146,6 +146,8 @@ class ManageUsersTableViewController: UITableViewController {
         }
     }
     
+    // MARK: - Table view functions
+    
     // Set the text of the 'Delete' view when swiping-to-delete a cell
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
          return "Remove"
@@ -230,13 +232,19 @@ extension ManageUsersTableViewController {
                 manageUsersViewController.present(removeUserAlert, animated: true)
             }
         }
+        
+        // Set section headers
+        override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+            return snapshot().sectionIdentifiers[section].rawValue
+        }
     }
     
     // MARK: - Section enum
     
     // This enum declares table view sections
-    enum Section: CaseIterable {
-        case one
+    enum Section: String, CaseIterable, Hashable {
+        case owner = "Owner"
+        case members = "Members"
     }
     
     // MARK: - Other functions
@@ -272,9 +280,30 @@ extension ManageUsersTableViewController {
     
     // Apply a snapshot with updated user data
     func updateTableView(animated: Bool = true) {
+        
+        // Make sure we have a league owner
+        guard let owner = league.members.first(where: { $0.id == league.creator }) else {
+            print("No owner found!")
+            return
+        }
+        
+        // Fetch the non-owner members
+        let members = league.members.filter { $0.id != league.creator }
+        
+        // Create the data source
         var snapshot = NSDiffableDataSourceSnapshot<Section, User>()
-        snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(league.members)
+        
+        // Append the owner section and the owner item
+        snapshot.appendSections([Section.owner])
+        snapshot.appendItems([owner], toSection: .owner)
+        
+        // Append the member section and member items, if any
+        if !members.isEmpty {
+            snapshot.appendSections([Section.members])
+            snapshot.appendItems(members, toSection: .members)
+        }
+        
+        // Apply the snapshot
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
