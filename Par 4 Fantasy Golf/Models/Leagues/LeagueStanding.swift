@@ -14,6 +14,7 @@ struct LeagueStanding: Hashable {
     
     let user: User
     var score: Int
+    var place = ""
     
     // MARK: - Initializers
     

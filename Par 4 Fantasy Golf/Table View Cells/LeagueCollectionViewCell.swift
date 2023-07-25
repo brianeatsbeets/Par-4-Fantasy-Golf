@@ -119,9 +119,9 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         
         // Calculate the current league standings and display the top 3
         let leagueStandings = league.calculateLeagueStandings()
-        leagueStandingFirstLabel.text = leagueStandings.indices.contains(0) ? "1st | \(leagueStandings[0].user.username): \(leagueWinsString(score: leagueStandings[0].score))" : ""
-        leagueStandingSecondLabel.text = leagueStandings.indices.contains(1) ? "2nd | \(leagueStandings[1].user.username): \(leagueWinsString(score: leagueStandings[1].score))" : ""
-        leagueStandingThirdLabel.text = leagueStandings.indices.contains(2) ? "3rd | \(leagueStandings[2].user.username): \(leagueWinsString(score: leagueStandings[2].score))" : ""
+        leagueStandingFirstLabel.text = leagueStandings.indices.contains(0) ? "\(leagueStandings[0].place) | \(leagueStandings[0].user.username): \(leagueWinsString(score: leagueStandings[0].score))" : ""
+        leagueStandingSecondLabel.text = leagueStandings.indices.contains(1) ? "\(leagueStandings[1].place) | \(leagueStandings[1].user.username): \(leagueWinsString(score: leagueStandings[1].score))" : ""
+        leagueStandingThirdLabel.text = leagueStandings.indices.contains(2) ? "\(leagueStandings[2].place) | \(leagueStandings[2].user.username): \(leagueWinsString(score: leagueStandings[2].score))" : ""
         
         // Display the top 3 in the tournament standings
         recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "\(recentTournament.standings[0].place) | \(recentTournament.standings[0].user.username): \(recentTournament.standings[0].totalScore.formattedScore())" : ""

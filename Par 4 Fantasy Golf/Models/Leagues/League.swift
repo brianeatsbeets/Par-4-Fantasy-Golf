@@ -141,9 +141,28 @@ struct League: Hashable {
             standings[winningUserStandingIndex].score += 1
         }
         
-        let sortedStandings = standings.sorted()
+        standings = standings.sorted()
         
-        return sortedStandings
+        //  Format and assign placements
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .ordinal
+        standings.indices.forEach { standings[$0].place = formatter.string(for: $0+1)! }
+        
+        // Account for ties
+        var i = 0
+        while i < standings.count-1 {
+            if standings[i].score == standings[i+1].score {
+                
+                // Don't add a 'T' if the place already has one
+                if !standings[i].place.hasPrefix("T") {
+                    standings[i].place = "T" + standings[i].place
+                }
+                standings[i+1].place = standings[i].place
+            }
+            i += 1
+        }
+        
+        return standings
     }
     
     // Helper function to fetch a league object from a league id
