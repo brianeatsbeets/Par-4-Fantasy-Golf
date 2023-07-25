@@ -88,8 +88,8 @@ extension TournamentUserDetailTableViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Athlete>()
         
         // Compile the athletes based on status
-        let activeAthletes = selectedUserPicks.filter { !$0.isCut }
-        let cutAthletes = selectedUserPicks.filter { $0.isCut }
+        let activeAthletes = selectedUserPicks.filter { !$0.isCut }.sorted(by: { $0.odds < $1.odds })
+        let cutAthletes = selectedUserPicks.filter { $0.isCut }.sorted(by: { $0.odds < $1.odds })
         
         // Append the active section and active athletes, if any
         if !activeAthletes.isEmpty {

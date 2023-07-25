@@ -19,7 +19,7 @@ class PickTableViewCell: UITableViewCell {
     // Set up the cell UI elements
     func configure(with pickItem: PickItem) {
         var config = defaultContentConfiguration()
-        config.text = "\(pickItem.athlete.name) - $\(pickItem.athlete.value)"
+        config.text = "\(pickItem.athlete.name)"
         config.secondaryText = "Odds: \(pickItem.athlete.odds) | Selected: \(pickItem.isSelected.description)"
         contentConfiguration = config
         

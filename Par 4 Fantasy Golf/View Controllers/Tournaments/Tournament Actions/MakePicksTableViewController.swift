@@ -28,6 +28,8 @@ class MakePicksTableViewController: UITableViewController {
         pickItems.filter { $0.isSelected }.count
     }
     var totalSpent = 0
+    var sections = [Int]()
+    var picksBySection = [Int: [PickItem]]()
     
     // MARK: - Initializers
     
@@ -45,8 +47,8 @@ class MakePicksTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = dataSource
         getPickItems()
+        tableView.dataSource = dataSource
         updateUI()
         
         updateTableView(animated: false)
@@ -78,6 +80,24 @@ class MakePicksTableViewController: UITableViewController {
         
         // Sort picks by odds
         pickItems = pickItems.sorted(by: { $0.athlete.odds < $1.athlete.odds })
+        
+        updatePicksBySection()
+    }
+    
+    // Update the section and item variables used by the data source
+    func updatePicksBySection() {
+        
+        // Populate sections
+        var sectionsSet = Set<Int>()
+        for item in pickItems {
+            sectionsSet.insert(item.athlete.value)
+        }
+        sections = sectionsSet.sorted(by: >)
+        
+        // Populate picksBySection
+        for section in sections {
+            picksBySection[section] = pickItems.filter { $0.athlete.value == section }
+        }
     }
     
     // Update the UI elements
@@ -100,6 +120,7 @@ class MakePicksTableViewController: UITableViewController {
         // Helper function to reduce code duplication
         let updatePicksTable = { [self] in
             pickItems[index].isSelected.toggle()
+            updatePicksBySection()
             spentLabel.text = "Total Spent: $\(totalSpent)"
             updateTableView(animated: true)
         }
@@ -124,19 +145,19 @@ class MakePicksTableViewController: UITableViewController {
 // This extention houses table view management functions that utilize the diffable data source API
 extension MakePicksTableViewController {
     
-    // MARK: - Section enum
-    
-    // This enum declares table view sections
-    enum Section: CaseIterable {
-        case one
+    // UITableViewDiffableDataSource subclass with custom section headers
+    class CustomHeaderDiffableDataSource: UITableViewDiffableDataSource<Int, PickItem> {
+        override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+            return "$" + snapshot().sectionIdentifiers[section].description
+        }
     }
     
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, PickItem> {
+    func createDataSource() -> CustomHeaderDiffableDataSource {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, pickItem in
+        return CustomHeaderDiffableDataSource(tableView: tableView) { tableView, indexPath, pickItem in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "PickCell", for: indexPath) as! PickTableViewCell
@@ -148,9 +169,17 @@ extension MakePicksTableViewController {
     
     // Apply a snapshot with updated user pick data
     func updateTableView(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, PickItem>()
-        snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(pickItems)
+        var snapshot = NSDiffableDataSourceSnapshot<Int, PickItem>()
+        
+        // Append the sections
+        snapshot.appendSections(sections)
+        
+        // Append the pick choices for each section
+        for (section, picks) in picksBySection {
+            snapshot.appendItems(picks, toSection: section)
+        }
+        
+        // Update the data source
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
