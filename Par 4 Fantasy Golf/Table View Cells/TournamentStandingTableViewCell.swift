@@ -29,9 +29,9 @@ class TournamentStandingTableViewCell: UITableViewCell {
         let penaltiesText: String = {
             switch standing.penalties {
             case 1:
-                return " (1 CUT)"
+                return " (1 Cut)"
             case 2...:
-                return " (\(standing.penalties) CUTs)"
+                return " (\(standing.penalties) Cuts)"
             default:
                 return ""
             }

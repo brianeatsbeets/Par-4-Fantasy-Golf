@@ -49,25 +49,33 @@ class TournamentUserDetailTableViewController: UITableViewController {
 // This extention houses table view management functions that utilize the diffable data source API
 extension TournamentUserDetailTableViewController {
     
+    // UITableViewDiffableDataSource subclass with custom section headers
+    class CustomHeaderDiffableDataSource: UITableViewDiffableDataSource<Section, Athlete> {
+        override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+            return snapshot().sectionIdentifiers[section].rawValue
+        }
+    }
+    
     // MARK: - Section enum
     
     // This enum declares table view sections
-    enum Section: CaseIterable {
-        case one
+    enum Section: String, CaseIterable, Hashable {
+        case active = "Active"
+        case cut = "Cut"
     }
     
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, Athlete> {
+    func createDataSource() -> CustomHeaderDiffableDataSource {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, athlete in
+        return CustomHeaderDiffableDataSource(tableView: tableView) { tableView, indexPath, athlete in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "PickedAthleteCell", for: indexPath)
             
             var config = cell.defaultContentConfiguration()
-            config.text = athlete.isCut ? athlete.name + " (CUT)" : athlete.name
+            config.text = athlete.name
             config.secondaryText = "Value: \(athlete.value) | Odds: \(athlete.odds) | Score: \(athlete.score.formattedScore())"
             cell.contentConfiguration = config
 
@@ -78,8 +86,24 @@ extension TournamentUserDetailTableViewController {
     // Apply a snapshot with updated athlete data
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Athlete>()
-        snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(selectedUserPicks)
+        
+        // Compile the athletes based on status
+        let activeAthletes = selectedUserPicks.filter { !$0.isCut }
+        let cutAthletes = selectedUserPicks.filter { $0.isCut }
+        
+        // Append the active section and active athletes, if any
+        if !activeAthletes.isEmpty {
+            snapshot.appendSections([.active])
+            snapshot.appendItems(activeAthletes, toSection: .active)
+        }
+        
+        // Append the cut section and cut athletes, if any
+        if !cutAthletes.isEmpty {
+            snapshot.appendSections([.cut])
+            snapshot.appendItems(cutAthletes, toSection: .cut)
+        }
+        
+        // Apply the snapshot
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }

@@ -226,9 +226,9 @@ extension LeagueDetailTableViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Tournament>()
         
         // Compile the tournaments based on status
-        let liveTournaments = league.tournaments.filter({ $0.status == .live })
-        let scheduledTournaments = league.tournaments.filter({ $0.status == .scheduled })
-        let completedTournaments = league.tournaments.filter({ $0.status == .completed })
+        let liveTournaments = league.tournaments.filter { $0.status == .live }
+        let scheduledTournaments = league.tournaments.filter { $0.status == .scheduled }
+        let completedTournaments = league.tournaments.filter { $0.status == .completed }
         
         // Append the live section and live tournaments, if any
         if !liveTournaments.isEmpty {
