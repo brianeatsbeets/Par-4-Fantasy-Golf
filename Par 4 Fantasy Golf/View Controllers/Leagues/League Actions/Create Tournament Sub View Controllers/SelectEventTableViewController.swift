@@ -79,7 +79,7 @@ extension SelectEventTableViewController {
             
             // Display tournament start and end date if they are convertible from the provided format
             if let startDate = event.startDate.espnDateStringToDouble(),
-               let endDate = event.endDate.espnDateStringToDouble() {
+               let endDate = event.endDate.espnDateStringToDouble(setToEndOfDay: true) {
                 config.secondaryText = "Start date: \(startDate.formattedDate()) | End date: \(endDate.formattedDate())"
             }
             

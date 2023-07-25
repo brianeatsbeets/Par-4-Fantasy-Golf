@@ -139,7 +139,7 @@ class CreateTournamentTableViewController: UITableViewController {
     @IBAction func saveButtonPressed(_ sender: Any) {
         guard let selectedEvent = selectedEvent,
               let startDate = selectedEvent.startDate.espnDateStringToDouble(),
-              let endDate = selectedEvent.endDate.espnDateStringToDouble(),
+              let endDate = selectedEvent.endDate.espnDateStringToDouble(setToEndOfDay: true),
               let eventId = selectedEvent.eventId else { return }
         
         //endDate += 86399 // Date time defaults to 12:00AM; add 23 hours, 59 mins, and 59 seconds to set the end time to 11:59PM

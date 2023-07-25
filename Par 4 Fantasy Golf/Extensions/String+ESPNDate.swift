@@ -11,7 +11,7 @@ import Foundation
 extension String {
     
     // Convert the ESPN date string into a more usable format
-    func espnDateStringToDouble() -> Double? {
+    func espnDateStringToDouble(setToEndOfDay: Bool = false) -> Double? {
         let formatter = ISO8601DateFormatter()
         formatter.timeZone = TimeZone.current
         formatter.formatOptions = [.withFullDate]
@@ -20,18 +20,22 @@ extension String {
             return nil
         }
         
-        // Get components from provided date
-        let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
-        
-        // Update hour, minute, and seconds components to 11:59PM
-        components.hour = 23
-        components.minute = 59
-        components.second = 59
-        
-        // Rebuild the date object with the updated time components
-        guard let endOfDay = calendar.date(from: components) else { return nil }
-        date = endOfDay
+        // Set the time to the end of the day (if desired)
+        if setToEndOfDay {
+            
+            // Get components from provided date
+            let calendar = Calendar.current
+            var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+            
+            // Update hour, minute, and seconds components to 11:59PM
+            components.hour = 23
+            components.minute = 59
+            components.second = 59
+            
+            // Rebuild the date object with the updated time components
+            guard let endOfDay = calendar.date(from: components) else { return nil }
+            date = endOfDay
+        }
         
         return date.timeIntervalSince1970
     }
