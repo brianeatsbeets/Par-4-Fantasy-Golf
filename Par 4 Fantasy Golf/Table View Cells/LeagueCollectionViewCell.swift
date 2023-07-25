@@ -104,11 +104,23 @@ class LeagueCollectionViewCell: UICollectionViewCell {
             }
         }
         
+        // Helper function to display grammatically correct win count
+        func leagueWinsString(score: Int) -> String {
+            switch score {
+            case 0:
+                return "No wins"
+            case 1:
+                return "1 win"
+            default:
+                return "\(score) wins"
+            }
+        }
+        
         // Calculate the current league standings and display the top 3
         let leagueStandings = league.calculateLeagueStandings()
-        leagueStandingFirstLabel.text = leagueStandings.indices.contains(0) ? "1st | \(leagueStandings[0].user.username): \(leagueStandings[0].score) win(s)" : ""
-        leagueStandingSecondLabel.text = leagueStandings.indices.contains(1) ? "2nd | \(leagueStandings[1].user.username): \(leagueStandings[1].score) win(s)" : ""
-        leagueStandingThirdLabel.text = leagueStandings.indices.contains(2) ? "3rd | \(leagueStandings[2].user.username): \(leagueStandings[2].score) win(s)" : ""
+        leagueStandingFirstLabel.text = leagueStandings.indices.contains(0) ? "1st | \(leagueStandings[0].user.username): \(leagueWinsString(score: leagueStandings[0].score))" : ""
+        leagueStandingSecondLabel.text = leagueStandings.indices.contains(1) ? "2nd | \(leagueStandings[1].user.username): \(leagueWinsString(score: leagueStandings[1].score))" : ""
+        leagueStandingThirdLabel.text = leagueStandings.indices.contains(2) ? "3rd | \(leagueStandings[2].user.username): \(leagueWinsString(score: leagueStandings[2].score))" : ""
         
         // Display the top 3 in the tournament standings
         recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "\(recentTournament.standings[0].place) | \(recentTournament.standings[0].user.username): \(recentTournament.standings[0].totalScore.formattedScore())" : ""

@@ -160,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				E138DE5E29AE89E400BBE47F /* League.swift */,
+				E16217F02A6F2BC0008C8595 /* LeagueStanding.swift */,
 			);
 			path = Leagues;
 			sourceTree = "<group>";
@@ -172,7 +173,6 @@
 				E16C1B8C29E9EC090034762C /* AthleteBetData.swift */,
 				E1E0179D29CFD17A00A5A546 /* PickItem.swift */,
 				E1E0179B29CFD14600A5A546 /* TournamentStanding.swift */,
-				E16217F02A6F2BC0008C8595 /* LeagueStanding.swift */,
 			);
 			path = Tournaments;
 			sourceTree = "<group>";
