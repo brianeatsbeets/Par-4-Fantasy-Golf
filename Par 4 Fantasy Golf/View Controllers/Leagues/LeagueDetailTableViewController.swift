@@ -190,19 +190,28 @@ class LeagueDetailTableViewController: UITableViewController {
 // This extention houses table view management functions that utilize the diffable data source API
 extension LeagueDetailTableViewController {
     
+    // UITableViewDiffableDataSource subclass with custom section headers
+    class CustomHeaderDiffableDataSource: UITableViewDiffableDataSource<Section, Tournament> {
+        override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+            return snapshot().sectionIdentifiers[section].rawValue
+        }
+    }
+    
     // MARK: - Section enum
     
     // This enum declares table view sections
-    enum Section: CaseIterable {
-        case one
+    enum Section: String, CaseIterable, Hashable {
+        case live = "Live"
+        case scheduled = "Scheduled"
+        case completed = "Completed"
     }
     
     // MARK: - Other functions
     
     // Create the the data source and specify what to do with a provided cell
-    func createDataSource() -> UITableViewDiffableDataSource<Section, Tournament> {
+    func createDataSource() -> CustomHeaderDiffableDataSource {
         
-        return UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, tournament in
+        return CustomHeaderDiffableDataSource(tableView: tableView) { tableView, indexPath, tournament in
             
             // Configure the cell
             let cell = tableView.dequeueReusableCell(withIdentifier: "LeagueDetailCell", for: indexPath) as! TournamentTableViewCell
@@ -215,8 +224,31 @@ extension LeagueDetailTableViewController {
     // Apply a snapshot with updated league data
     func updateTableView(animated: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Tournament>()
-        snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(league.tournaments)
+        
+        // Compile the tournaments based on status
+        let liveTournaments = league.tournaments.filter({ $0.status == .live })
+        let scheduledTournaments = league.tournaments.filter({ $0.status == .scheduled })
+        let completedTournaments = league.tournaments.filter({ $0.status == .completed })
+        
+        // Append the live section and live tournaments, if any
+        if !liveTournaments.isEmpty {
+            snapshot.appendSections([.live])
+            snapshot.appendItems(liveTournaments, toSection: .live)
+        }
+        
+        // Append the scheduled section and scheduled tournaments, if any
+        if !scheduledTournaments.isEmpty {
+            snapshot.appendSections([.scheduled])
+            snapshot.appendItems(scheduledTournaments, toSection: .scheduled)
+        }
+        
+        // Append the completed section and completed tournaments, if any
+        if !completedTournaments.isEmpty {
+            snapshot.appendSections([.completed])
+            snapshot.appendItems(completedTournaments, toSection: .completed)
+        }
+        
+        // Apply the snapshot
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
