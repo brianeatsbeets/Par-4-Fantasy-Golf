@@ -77,7 +77,8 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         // Recent Tournament
         
         // Calculate and display most recent tournament data
-        let recentTournament = league.tournaments.sorted { $0.endDate > $1.endDate }.first!
+        let presentAndPastTournaments = league.tournaments.filter { $0.startDate <= Date.now.timeIntervalSince1970 }
+        let recentTournament = presentAndPastTournaments.sorted { $0.endDate > $1.endDate }.first!
         recentTournamentNameLabel.text = recentTournament.name
         
         // Update UI based on tournament status
