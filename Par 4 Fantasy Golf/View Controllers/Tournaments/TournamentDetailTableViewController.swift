@@ -38,7 +38,7 @@ class TournamentDetailTableViewController: UITableViewController {
     var updateTimer = Timer()
     
     // Timer update interval in seconds
-    let updateInterval: Double = 1*60
+    let updateInterval: Double = 15*60
     
     // MARK: - Initializers
     

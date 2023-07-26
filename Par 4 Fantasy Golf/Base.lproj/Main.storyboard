@@ -1244,6 +1244,7 @@
                                     <outlet property="mainContentView" destination="Tyv-oT-PVB" id="zJ4-lX-iDw"/>
                                     <outlet property="noDataLabel" destination="0gm-NC-afL" id="bN3-2h-duK"/>
                                     <outlet property="recentTournamentFirstLabel" destination="uT7-fG-TqO" id="ZML-Rf-jtx"/>
+                                    <outlet property="recentTournamentHeaderLabel" destination="ia3-l9-cRk" id="fIg-NQ-40t"/>
                                     <outlet property="recentTournamentNameLabel" destination="nD0-rt-j5v" id="k5L-NM-08o"/>
                                     <outlet property="recentTournamentSecondLabel" destination="EmN-3v-bHE" id="Ag1-LY-NEk"/>
                                     <outlet property="recentTournamentStatusLabel" destination="5I7-oW-vx8" id="dsG-Oo-ziv"/>

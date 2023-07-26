@@ -29,6 +29,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     @IBOutlet var leagueStandingSecondLabel: UILabel!
     @IBOutlet var leagueStandingThirdLabel: UILabel!
     
+    @IBOutlet var recentTournamentHeaderLabel: UILabel!
     @IBOutlet var recentTournamentNameLabel: UILabel!
     @IBOutlet var recentTournamentStatusLabel: UILabel!
     @IBOutlet var recentTournamentTimerLabel: UILabel!
@@ -42,7 +43,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
     weak var delegate: TournamentTimerDelegate?
 
     // Timer update interval in seconds
-    let updateInterval: Double = 1*60
+    let updateInterval: Double = 15*60
     
     override func awakeFromNib() {
         mainContentView.layer.cornerRadius = 12.0
@@ -78,31 +79,51 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         
         // Calculate and display most recent tournament data
         let presentAndPastTournaments = league.tournaments.filter { $0.startDate <= Date.now.timeIntervalSince1970 }
-        let recentTournament = presentAndPastTournaments.sorted { $0.endDate > $1.endDate }.first!
-        recentTournamentNameLabel.text = recentTournament.name
         
-        // Update UI based on tournament status
-        switch recentTournament.status {
-        case .scheduled:
-            recentTournamentStatusLabel.text = "Begins \(recentTournament.startDate.formattedDate())"
-            recentTournamentStatusLabel.textColor = .black
-            recentTournamentTimerLabel.isHidden = true
-        case .live:
-            recentTournamentStatusLabel.text = "LIVE"
-            recentTournamentStatusLabel.textColor = UIColor(red: 200/255, green: 38/255, blue: 0, alpha: 1) // Scarlet color; clashes less with bright green background than system red
-            recentTournamentTimerLabel.isHidden = false
-            initializeUpdateTimer(league: league, tournament: recentTournament)
-        case .completed:
+        // Create a to-be-assigned tournament
+        var tournament: Tournament
+        
+        // Check to see if we have a recent tournament
+        if let recentTournament = presentAndPastTournaments.sorted(by: { $0.endDate > $1.endDate }).first {
+            recentTournamentNameLabel.text = recentTournament.name
+            
+            // Update UI based on tournament status
+            switch recentTournament.status {
+            case .scheduled:
+                break
+            case .live:
+                recentTournamentStatusLabel.text = "LIVE"
+                recentTournamentStatusLabel.textColor = UIColor(red: 200/255, green: 38/255, blue: 0, alpha: 1) // Scarlet color; clashes less with bright green background than system red
+                recentTournamentTimerLabel.isHidden = false
+                initializeUpdateTimer(league: league, tournament: recentTournament)
+            case .completed:
+                recentTournamentStatusLabel.textColor = .black
+                recentTournamentTimerLabel.isHidden = true
+                
+                // If the tournament ended but the last update was before the end of the tournament, pull the final scores
+                if recentTournament.lastUpdateTime < recentTournament.endDate {
+                    delegate?.timerDidReset(league: league, tournament: recentTournament)
+                    recentTournamentStatusLabel.text = "Fetching final scores..."
+                } else {
+                    recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
+                }
+            }
+            
+            tournament = recentTournament
+        } else {
+            // If we only have scheduled (future) tournaments, display the soonest occurring one
+            
+            // Get the soonest scheduled tournament
+            let soonestTournament = league.tournaments.sorted(by: { $0.startDate < $1.startDate }).first!
+            
+            // Update the UI
+            recentTournamentHeaderLabel.text = "Next Upcoming Tournament"
+            recentTournamentNameLabel.text = soonestTournament.name
+            recentTournamentStatusLabel.text = "Begins \(soonestTournament.startDate.formattedDate())"
             recentTournamentStatusLabel.textColor = .black
             recentTournamentTimerLabel.isHidden = true
             
-            // If the tournament ended but the last update was before the end of the tournament, pull the final scores
-            if recentTournament.lastUpdateTime < recentTournament.endDate {
-                delegate?.timerDidReset(league: league, tournament: recentTournament)
-                recentTournamentStatusLabel.text = "Fetching final scores..."
-            } else {
-                recentTournamentStatusLabel.text = "Ended \(recentTournament.endDate.formattedDate())"
-            }
+            tournament = soonestTournament
         }
         
         // Helper function to display grammatically correct win count
@@ -124,9 +145,9 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         leagueStandingThirdLabel.text = leagueStandings.indices.contains(2) ? "\(leagueStandings[2].place) | \(leagueStandings[2].user.username): \(leagueWinsString(score: leagueStandings[2].score))" : ""
         
         // Display the top 3 in the tournament standings
-        recentTournamentFirstLabel.text = recentTournament.standings.indices.contains(0) ? "\(recentTournament.standings[0].place) | \(recentTournament.standings[0].user.username): \(recentTournament.standings[0].totalScore.formattedScore())" : ""
-        recentTournamentSecondLabel.text = recentTournament.standings.indices.contains(1) ? "\(recentTournament.standings[1].place) | \(recentTournament.standings[1].user.username): \(recentTournament.standings[1].totalScore.formattedScore())" : ""
-        recentTournamentThirdLabel.text = recentTournament.standings.indices.contains(2) ? "\(recentTournament.standings[2].place) | \(recentTournament.standings[2].user.username): \(recentTournament.standings[2].totalScore.formattedScore())" : ""
+        recentTournamentFirstLabel.text = tournament.standings.indices.contains(0) ? "\(tournament.standings[0].place) | \(tournament.standings[0].user.username): \(tournament.standings[0].totalScore.formattedScore())" : ""
+        recentTournamentSecondLabel.text = tournament.standings.indices.contains(1) ? "\(tournament.standings[1].place) | \(tournament.standings[1].user.username): \(tournament.standings[1].totalScore.formattedScore())" : ""
+        recentTournamentThirdLabel.text = tournament.standings.indices.contains(2) ? "\(tournament.standings[2].place) | \(tournament.standings[2].user.username): \(tournament.standings[2].totalScore.formattedScore())" : ""
     }
     
     // Set up the update countdown timer
