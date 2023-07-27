@@ -85,6 +85,7 @@ class LeagueCollectionViewCell: UICollectionViewCell {
         
         // Check to see if we have a recent tournament
         if let recentTournament = presentAndPastTournaments.sorted(by: { $0.endDate > $1.endDate }).first {
+            recentTournamentHeaderLabel.text = "Most Recent Tournament"
             recentTournamentNameLabel.text = recentTournament.name
             
             // Update UI based on tournament status
