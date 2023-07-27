@@ -319,7 +319,19 @@ struct Tournament: Hashable {
         
         // Parse each competitor and create an Athlete from each one
         for competitor in competitors {
-            let scoreString = competitor.score.displayValue
+            
+            // Fetch the score
+            let scoreString = {
+                
+                // Attempt to fetch the "live" overall score
+                if let score: String = competitor.statistics[0]["displayValue"]?.value as? String {
+                    return score
+                } else {
+                    
+                    // Fetch the overall score that updates at the end of each round
+                    return competitor.score.displayValue
+                }
+            }()
             let id = competitor.id
             var isCut = false
             var score = 0
