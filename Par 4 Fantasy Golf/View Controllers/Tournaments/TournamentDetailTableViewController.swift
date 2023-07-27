@@ -144,7 +144,6 @@ class TournamentDetailTableViewController: UITableViewController {
             makePicksAlertText = "Player data is not yet available for this tournament."
             return
         }
-        
         // Set the button state (and potential alert text) based on the tournament status
         switch tournament.status {
         case .scheduled:
@@ -262,7 +261,8 @@ class TournamentDetailTableViewController: UITableViewController {
         if tournament.status == .scheduled && !tournament.athletes.isEmpty {
             performSegue(withIdentifier: "SegueToMakePicks", sender: nil)
         } else {
-            displayAlert(title: "Picks Unavailable", message: makePicksAlertText)
+            performSegue(withIdentifier: "SegueToMakePicks", sender: nil) // Remove this line to re-disable picks
+            //displayAlert(title: "Picks Unavailable", message: makePicksAlertText)
         }
     }
     
