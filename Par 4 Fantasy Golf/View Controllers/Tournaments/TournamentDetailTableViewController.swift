@@ -97,12 +97,8 @@ class TournamentDetailTableViewController: UITableViewController {
             self.league = leagues[self.leagueIndex]
             self.tournament = leagues[self.leagueIndex].tournaments[self.tournamentIndex]
             
-            // Initialize the timer if the tournament is live
-            if self.tournament.status == .live {
-                self.initializeUpdateTimer()
-            } else {
-                self.lastUpdateTimeLabel.text = "Tournament ended on \(self.tournament.endDate.formattedDate())"
-            }
+            // Update the timer label text
+            setTournamentStatusText()
             
             // TODO: Ony update table view when view is visible
             self.updateTableView()
@@ -114,8 +110,6 @@ class TournamentDetailTableViewController: UITableViewController {
         title = tournament.name
         
         setMakePicksButtonState()
-        
-        setTournamentStatusText()
         
         // If the current user is not the tournament owner, hide administrative actions
         if tournament.creator != currentFirebaseUser.email {
@@ -135,7 +129,9 @@ class TournamentDetailTableViewController: UITableViewController {
         case .completed:
             lastUpdateTimeLabel.text = "Tournament ended on \(tournament.endDate.formattedDate())"
         case .live:
-            break
+            
+            // Initialize the timer, which will update the timer label
+            initializeUpdateTimer()
         }
     }
     
@@ -165,6 +161,9 @@ class TournamentDetailTableViewController: UITableViewController {
     
     // Set up the update countdown timer
     func initializeUpdateTimer() {
+        
+        // Invalidate any existing timer
+        updateTimer.invalidate()
         
         // Create a string formatter to display the time how we want
         let formatter = DateComponentsFormatter()
