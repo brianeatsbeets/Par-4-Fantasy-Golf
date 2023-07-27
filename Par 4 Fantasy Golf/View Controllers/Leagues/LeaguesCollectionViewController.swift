@@ -145,7 +145,7 @@ class LeaguesCollectionViewController: UICollectionViewController {
     }
     
     // Fetch the updated score data for a given tournament
-    func fetchScoreData(tournament: Tournament) async throws -> [Athlete] {
+    func fetchScoreData(league: League, tournament: Tournament) async throws -> [Athlete] {
         var updatedAthleteData = [Athlete]()
         
         // Attempt to fetch updated athlete data
@@ -186,8 +186,10 @@ class LeaguesCollectionViewController: UICollectionViewController {
         
         // If there are non-matching athletes, display an alert containing them to the league owner
         if !nonMatchingAthletes.isEmpty && tournament.creator == Auth.auth().currentUser!.email {
-            let nonMatchingAthletesString = nonMatchingAthletes.map{ "\($0.name) (ESPN ID: \($0.espnId))" }.joined(separator: "\n")
-            self.displayAlert(title: "Mismatched Athlete IDs", message: "One or more athletes have incorrect ESPN IDs, so score data for those athletes could not be updated. Please correct their ESPN IDs in the Manage Athletes view.\n\nAffected athletes:\n\(nonMatchingAthletesString)")
+            let nonMatchingAthletesString = nonMatchingAthletes.map{ "\($0.name)" }.joined(separator: "\n")
+            self.displayAlert(title: "Mismatched Athlete IDs", message:
+                                "One or more athletes have incorrect ESPN IDs, so score data for those athletes could not be updated. Instructions on finding the correct ID are listed under the ESPN ID field for the athlete in the Manage Athletes page.\n\nLeague: \(league.name)\nTournament: \(tournament.name)\n\nAffected athletes:\n\(nonMatchingAthletesString)"
+            )
         }
         
         return athletes
@@ -335,7 +337,7 @@ extension LeaguesCollectionViewController: TournamentTimerDelegate {
         Task {
             
             // Fetch updated tournament data
-            tournament.athletes = try await self.fetchScoreData(tournament: tournament)
+            tournament.athletes = try await self.fetchScoreData(league: league, tournament: tournament)
             
             // Update the tournament standings
             tournament.standings = tournament.calculateStandings(leagueMembers: league.members)
