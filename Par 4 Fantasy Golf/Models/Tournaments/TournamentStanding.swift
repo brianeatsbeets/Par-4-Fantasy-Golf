@@ -38,6 +38,6 @@ struct TournamentStanding: Hashable {
 // This extension conforms to the Comparable protocol
 extension TournamentStanding: Comparable {
     static func < (lhs: TournamentStanding, rhs: TournamentStanding) -> Bool {
-        lhs.score < rhs.score
+        lhs.totalScore < rhs.totalScore
     }
 }

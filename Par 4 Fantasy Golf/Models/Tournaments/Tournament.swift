@@ -174,7 +174,7 @@ struct Tournament: Hashable {
         // Account for ties
         var i = 0
         while i < newStandings.count-1 {
-            if newStandings[i].score == newStandings[i+1].score {
+            if newStandings[i].totalScore == newStandings[i+1].totalScore {
                 
                 // Don't add a 'T' if the place already has one
                 if !newStandings[i].place.hasPrefix("T") {
