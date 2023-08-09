@@ -261,8 +261,8 @@ class TournamentDetailTableViewController: UITableViewController {
         if tournament.status == .scheduled && !tournament.athletes.isEmpty {
             performSegue(withIdentifier: "SegueToMakePicks", sender: nil)
         } else {
-            performSegue(withIdentifier: "SegueToMakePicks", sender: nil) // Remove this line to re-disable picks
-            //displayAlert(title: "Picks Unavailable", message: makePicksAlertText)
+            //performSegue(withIdentifier: "SegueToMakePicks", sender: nil) // Comment this line to re-disable picks
+            displayAlert(title: "Picks Unavailable", message: makePicksAlertText)
         }
     }
     

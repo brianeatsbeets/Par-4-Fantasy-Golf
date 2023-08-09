@@ -48,14 +48,12 @@ struct Tournament: Hashable {
         
         // Make sure we have standings from which to calculate a winner
         guard !standings.isEmpty else {
-            print("Can't calculate tournament winner because standings are empty")
             return nil
         }
         
         // If there is a tie, return nil
         if standings.count > 1,
            standings[0].totalScore == standings[1].totalScore {
-            print("\(name) ended in a tie")
             return nil
         }
         
